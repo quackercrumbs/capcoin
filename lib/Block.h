@@ -1,8 +1,9 @@
+#ifndef BLOCK_H
+#define BLOCK_H
+
 #include <time.h>
 #include <Transaction.h>
 #include <string>
-
-
 
 class Block {
 public:
@@ -21,3 +22,5 @@ private:
     const std::string prevHash_;
     const Transaction* data_;
 };
+
+#endif
