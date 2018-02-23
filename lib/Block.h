@@ -13,11 +13,11 @@ public:
             data_{data}{}
 
 private:
-    size_t index_;
-    time_t timestamp_;
-    size_t difficulty_;
-    size_t nonce_;
-    std::string currHash_;
-    std::string prevHash_;
-    Transaction* data_;
+    const size_t index_;
+    const time_t timestamp_;
+    const size_t difficulty_;
+    const size_t nonce_;
+    const std::string currHash_;
+    const std::string prevHash_;
+    const Transaction* data_;
 };
