@@ -3,19 +3,19 @@ This folder will contain test drivers for all classes, methods, etc. Currently a
 
 ### To compile:
 ```
-	make all #compiles all tests
-	make transaction_test #compiles all files for transaction test
+make all #compiles all tests
+make transaction_test #compiles all files for transaction test
 ```
 
 ### To run:
 Transaction test
 ```
-	./transactionTest.o
+./transactionTest.o
 ```
 
 ### To clean:
 ```
-	make clean
+make clean
 ```
 
 ## Problems
