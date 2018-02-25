@@ -1,6 +1,6 @@
-#include "Transaction.h"
+#include "../lib/Transaction.h"
 
-TxIn::txIns (std::string id, std::string sig, size_t index):
+TxIn::TxIn (std::string id, std::string sig, size_t index):
             id_{id}, sig_{sig}, index_{index}{}
 
 std::string TxIn:: GetVal(){
@@ -9,7 +9,7 @@ std::string TxIn:: GetVal(){
     return ss.str();
 }
 
-TxOut::txOuts   (std::string address, double amount):
+TxOut::TxOut   (std::string address, double amount):
                 address_{address}, amount_{amount}{}
 
 std::string TxOut:: GetVal(){
