@@ -26,18 +26,17 @@ private:
 
 class Transaction{
 public:
-    Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs){
-        txIns_ = std::move(ins);
-        txOuts_ = std::move(outs);
+    Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs):
+                txIns_{std::move(ins)}, txOuts_{std::move(outs)}{
         //generate id
     }
 
 private:
     std::string id_;
     //TxIn* txIns_;
-    std::vector<TxIn> txIns_;
+    const std::vector<TxIn> txIns_;
     //TxOut* txOuts_;
-    std::vector<TxOut> txOuts_;
+    const std::vector<TxOut> txOuts_;
 };
 
 #endif
