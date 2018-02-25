@@ -9,7 +9,7 @@ std::string TxIn:: GetVal(){
     return ss.str();
 }
 
-TxOut::TxOut   (std::string address, double amount):
+TxOut::txOuts   (std::string address, double amount):
                 address_{address}, amount_{amount}{}
 
 std::string TxOut:: GetVal(){
