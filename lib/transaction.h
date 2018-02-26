@@ -35,4 +35,14 @@ private:
     const std::vector<TxOut> txOuts_;
 };
 
+class UnspentTxOut {
+public:
+    constructor(string txOutId, string  address, size_t txOutIndex, size_t amount);
+private:
+    string txOutId;
+    string address;
+    size_t txOutIndex;
+    size_t amount;
+}
+
 #endif
