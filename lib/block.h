@@ -8,7 +8,7 @@
 class Block {
 public:
     Block   (size_t index, time_t timestamp, size_t difficulty, size_t nonce,
-            std::string hash, std::string prevHash, Transaction* data);
+            std::string hash, std::string prevHash, vector<Transaction> data);
 
 private:
     const size_t index_;
