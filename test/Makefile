@@ -1,6 +1,7 @@
 C++FLAG = -g -std=c++11
 
 Transaction_OBJ = transaction_test.o ../src/transaction.o
+Block_OBJ = block_test.o ../src/transaction.o ../src/block.o
 
 EXEC_DIR = .
 
@@ -16,11 +17,18 @@ $(TRANSACTION_TEST): $(Transaction_OBJ) #Rule to compile transaction test driver
 	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Transaction_OBJ)
 
 
-all: transaction_test
+BLOCK_TEST=block_test.o
+$(BLOCK_TEST): $(Block_OBJ)
+	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Block_OBJ)
+
+all: transaction_test block_test
 
 #Command to compile transaction test files
 transaction_test:
 	make $(TRANSACTION_TEST)
+
+block_test:
+	make $(BLOCK_TEST)
 
 clean:
 	(rm -f *.o;)
