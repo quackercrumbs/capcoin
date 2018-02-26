@@ -17,7 +17,7 @@ private:
     const size_t nonce_;
     const std::string currHash_;
     const std::string prevHash_;
-    const Transaction* data_;
+    const vector<Transaction> data_;
 };
 
 #endif
