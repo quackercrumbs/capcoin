@@ -2,7 +2,7 @@
 #define BLOCK_H
 
 #include <time.h>
-#include <Transaction.h>
+#include "transaction.h"
 #include <string>
 
 class Block {
