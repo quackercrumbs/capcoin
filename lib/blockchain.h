@@ -1,6 +1,8 @@
 #ifndef BLOCK_CHAIN_H
 #define BLOCK_CHAIN_H
 
+#include "bloch.h"
+
 class Blockchain {
 public:
 	//Initalize the blockchain by loading data
