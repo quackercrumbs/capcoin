@@ -1,7 +1,7 @@
 #ifndef BLOCK_CHAIN_H
 #define BLOCK_CHAIN_H
 
-#include "bloch.h"
+#include "block.h"
 
 class Blockchain {
 public:
