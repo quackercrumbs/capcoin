@@ -1,12 +1,12 @@
-#ifndef BLOCK_CHAIN_H
-#define BLOCK_CHAIN_H
+#ifndef BLOCKCHAIN_H
+#define BLOCKCHAIN_H
 
 #include "block.h"
 
 class Blockchain {
 public:
 	//Initalize the blockchain by loading data
-	BlockChain ();
+	Blockchain ();
 
 	//Checks if the new block is valid by comparing it to the previous block
 	bool IsValidNewBlock(const Block& newBlock);
