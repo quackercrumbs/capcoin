@@ -1,6 +1,10 @@
+#include "../lib/blockchain.h"
+#include "../lib/block.h"
+
 Blockchain::Blockchain(){
     //create genesis block to initialize the chain
 }
+
 //
 //Block Blockchain::GetLastBlock(){
 //    return blocks_[length-1];
