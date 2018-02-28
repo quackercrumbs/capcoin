@@ -1,26 +1,41 @@
 #include "../lib/merkle.h"
 
-MerkleNode::MerkleNode(T &value): value_{value}, left_{nullptr},
+template<typename T, std::string (hashFunc)(const T&)>
+MerkleNode<T, hashFunc>::MerkleNode(T &value): value_{value}, left_{nullptr},
     right_{nullptr}, hash_{hashFunc(value)}{}
 
-MerkleNode::MerkleNode(const MerkleNode *left, const MerkleNode *right):
+template<typename T, std::string (hashFunc)(const T&)>
+MerkleNode<T, hashFunc>::MerkleNode(const MerkleNode *left, const MerkleNode *right):
     left_{left}, right_{right}, value_{nullptr}{}
 
-MerkleNode::MerkleNode(vector<MerkleNode>& nodes, size_t start, size_t end){
-    if (end - start == 0)
-        return new MerkleNode(nodes[start], nullptr);
-    if (end - start == 1)
-        return new MerkleNode(nodes[start], nodes[end]);
+template<typename T, std::string (hashFunc)(const T&)>
+MerkleNode<T, hashFunc>::MerkleNode(std::vector<T>& nodes, size_t start, size_t end){
+    if (end - start == 0){
+        left_   = new MerkleNode(nodes[start]);
+        right_  = nullptr;
+    }
+    //return new MerkleNode(new MerkleNode<T>(nodes[start]), nullptr);
+    if (end - start == 1){
+        left_   = new MerkleNode(nodes[start]);
+        right_  = new MerkleNode(nodes[end]);
+    }
+    //return new MerkleNode(new MerkleNode<T>(nodes[start]), new MerkleNode<T>(nodes[end]));
     size_t mid = ((end - start) / 2) + start;
-    return new MerkleNode(MerkleNode(nodes, start, mid), build_(nodes, mid+1, end));
+    left_   = new MerkleNode(nodes, start, mid);
+    right_  = new MerkleNode(nodes, mid+1, end);
 }
 
-const std::string MerkleNode::hash()const{
+template<typename T, std::string (hashFunc)(const T&)>
+const std::string MerkleNode<T, hashFunc>::hash()const{
     return hash_;
 }
-const MerkleNode* MerkleNode::left()const{
+
+template<typename T, std::string (hashFunc)(const T&)>
+const MerkleNode<T, hashFunc>* MerkleNode<T, hashFunc>::left()const{
     return left_.get();
 }
-const MerkleNode* MerkleNode::right()const{
+
+template<typename T, std::string (hashFunc)(const T&)>
+const MerkleNode<T, hashFunc>* MerkleNode<T, hashFunc>::right()const{
     return right_.get();
 }
