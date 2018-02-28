@@ -14,9 +14,8 @@ public:
     //this constructor takes two MerkleNodes, and creates a new parent node for them
     MerkleNode(const MerkleNode *left, const MerkleNode *right);
     //Constructor recursively builds the Tree from a vector.
-    MerkleNode (std::vector<T>& nodes, size_t start, size_t end);
-
-    virtual bool validate() const;
+    MerkleNode(std::vector<T>& nodes, size_t start, size_t end);
+    bool validate() const;
     const std::string hash() const;
     const MerkleNode* left() const;
     const MerkleNode* right() const;
@@ -24,7 +23,7 @@ private:
     std::unique_ptr<const MerkleNode> left_, right_;
     const std::string hash_;
     const std::shared_ptr<T> value_;
-    virtual const std::string computeHash() const;
+    const std::string computeHash() const;
 };
 
 #endif

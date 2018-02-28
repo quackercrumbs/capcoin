@@ -37,3 +37,23 @@ template<typename T, std::string (hashFunc)(const T&)>
 const MerkleNode<T, hashFunc>* MerkleNode<T, hashFunc>::right()const{
     return right_.get();
 }
+
+
+template<typename T, std::string (hashFunc)(const T&)>
+bool MerkleNode<T, hashFunc>::validate() const{
+    //if left is not null and left is not validated
+    if (left_ && !left_->validate()) {
+      return false;
+    }
+    //if right is not null and right is not validated
+    if (right_ && !right_->validate()) {
+      return false;
+    }
+    //NOTE ERROR MIGHT BE HERE, HASHFUNC MAY BE USING VALUE WRONG
+    //OR PERHAPS THE UNIQUE POINTER SHOULD NOT BE OF CHAR TYPE
+    //HASH_ IS OF STRING TYPE RATHER THAN CHAR* TYPE
+    //ITS 5 AM IM GOING TO SLEEP
+    std::unique_ptr<const char> computedHash(left_ || right_ ? computeHash() : hashFunc(*value_));
+    return hash_ == computedHash.get() ? true : false;
+}
+
