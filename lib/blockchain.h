@@ -29,11 +29,11 @@ public:
     //Checks if the provided hash matches the current mining difficulty
     bool HashMatchesDifficulty(std::string hash, size_t difficulty);
 
-	//Generates a new block
-	Block GenerateNextBlock();
+    //Generates a new block
+    Block GenerateNextBlock();
 
-	//Pushes the new block onto the blockchain
-	bool Push(Block& newBlock);
+    //Pushes the new block onto the blockchain
+    bool Push(Block& newBlock);
 
     //Returns the latest block on the chain
     Block GetLastBlock();
