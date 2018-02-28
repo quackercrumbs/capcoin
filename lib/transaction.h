@@ -37,12 +37,12 @@ private:
 
 class UnspentTxOut {
 public:
-    constructor(string txOutId, string  address, size_t txOutIndex, size_t amount);
+    UnspentTxOut(std::string txOutId, std::string address, size_t txOutIndex, size_t amount);
 private:
-    const string txOutId;
-    const string address;
-    const size_t txOutIndex;
-    const size_t amount;
+    const std::string txOutId_;
+    const std::string address_;
+    const size_t txOutIndex_;
+    const size_t amount_;
 }
 
 #endif
