@@ -39,10 +39,10 @@ class UnspentTxOut {
 public:
     constructor(string txOutId, string  address, size_t txOutIndex, size_t amount);
 private:
-    string txOutId;
-    string address;
-    size_t txOutIndex;
-    size_t amount;
+    const string txOutId;
+    const string address;
+    const size_t txOutIndex;
+    const size_t amount;
 }
 
 #endif
