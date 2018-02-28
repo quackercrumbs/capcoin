@@ -1,5 +1,6 @@
 #include "../lib/blockchain.h"
 #include "../lib/block.h"
+#include "../lib/transaction.h"
 
 Blockchain::Blockchain(){
     //create genesis block to initialize the chain
