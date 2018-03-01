@@ -15,13 +15,11 @@ public:
     //Returns the current mining difficulty
     size_t GetDifficulty();
 
-	//possibly not necessary, might just ignore this function
-	//Block GetLastBlock();
+	//Returns latest block on chain
+	Block GetLastBlock();
 
-    //Imma try to put this into the block class as Validate()
-    //If that doesnt work out, ill just uncomment
 	//Checks if the new block is valid by comparing it to the previous block
-	//bool IsValidNewBlock(const Block& newBlock);
+	bool IsValidNewBlock(const Block& newBlock);
 
     //Calculates the hash of the block's data.
     std::string CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, std::vector<Transaction>& data, size_t difficulty, size_t nonce);
