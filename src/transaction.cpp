@@ -13,6 +13,3 @@ Transaction::Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs):
     //add the two strings and hash them for the id
     id_ = hashifier(accuInTx + accuOutTx);
 }
-
-UnspentTxOut::  UnspentTxOut(string txOutId, string address, size_t txOutIndex, size_t amount):
-                txOutId_{txOutId}, address_{address}, txOutIndex_{txOutIndex}, amount_{amount}{}
