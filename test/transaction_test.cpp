@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include "../lib/transaction.h"
+#include "../lib/txin.h"
+#include "../lib/txout.h"
 
 using namespace std;
 

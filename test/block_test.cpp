@@ -6,6 +6,8 @@
 #include <string>
 #include "../lib/block.h"
 #include "../lib/transaction.h"
+#include "../lib/txin.h"
+#include "../lib/txout.h"
 #include <time.h>
 #include <vector>
 
