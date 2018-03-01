@@ -9,7 +9,7 @@ class Block {
 public:
     Block   (size_t index, time_t timestamp, size_t difficulty, size_t nonce,
             std::string hash, std::string prevHash, vector<Transaction> &data);
-    Validate();
+
 private:
     const size_t index_;
     const time_t timestamp_;
