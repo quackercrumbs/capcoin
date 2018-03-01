@@ -5,15 +5,6 @@
 #include <vector>
 #include <sstream>
 
-class TxOut{
-public:
-    TxOut(std::string address, double amount);
-    std::string GetVal();
-private:
-    const std::string address_;
-    const double amount_;
-};
-
 class Transaction{
 public:
     Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs);

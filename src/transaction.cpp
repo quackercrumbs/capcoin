@@ -1,14 +1,5 @@
 #include "../lib/transaction.h"
 
-TxOut::TxOut   (std::string address, double amount):
-                address_{address}, amount_{amount}{}
-
-std::string TxOut:: GetVal(){
-    std::stringstream ss;
-    ss << address_ << amount_;
-    return ss.str();
-}
-
 Transaction::Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs):
                         txIns_{std::move(ins)}, txOuts_{std::move(outs)}{
     std::string accuInTx = "", accuOutTx = "";
