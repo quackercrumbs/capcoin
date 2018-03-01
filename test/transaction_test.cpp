@@ -8,9 +8,7 @@
 
 using namespace std;
 
-
 int main () {
     Transaction t = CreateFakeTransaction();
     return 0;
 }
-
