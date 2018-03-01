@@ -1,14 +1,5 @@
 #include "../lib/transaction.h"
 
-TxIn::TxIn (std::string id, std::string sig, size_t index):
-            id_{id}, sig_{sig}, index_{index}{}
-
-std::string TxIn:: GetVal(){
-    std::stringstream ss;
-    ss << id_ << index_;
-    return ss.str();
-}
-
 TxOut::TxOut   (std::string address, double amount):
                 address_{address}, amount_{amount}{}
 
