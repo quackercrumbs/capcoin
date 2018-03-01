@@ -17,5 +17,5 @@ Block CreateFakeBlock() {
 	string prevHash = "4567";
 
 	Block fake_block {block_index, timestamp, difficulty, nonce, hash, prevHash, transaction_list};
-
+	return fake_block;
 }
