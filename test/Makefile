@@ -1,7 +1,7 @@
 C++FLAG = -g -std=c++11
 
-Transaction_OBJ = transaction_test.o ../src/transaction.o
-Block_OBJ = block_test.o ../src/transaction.o ../src/block.o
+Transaction_OBJ = transaction_test.o test_transaction_utils.o ../src/transaction.o ../src/txin.o ../src/txout.o
+Block_OBJ = block_test.o test_transaction_utils.o test_block_utils.o ../src/transaction.o ../src/block.o
 
 EXEC_DIR = .
 
