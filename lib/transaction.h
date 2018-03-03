@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include "txin.h"
+#include "txout.h"
 
 class Transaction{
 public:
