@@ -6,6 +6,10 @@
 #include "../lib/txout.h"
 #include "../lib/block.h"
 
+#include <time.h>
+#include <string>
+#include <vector>
+
 //Creates a fake Block. The Block will contain fake/dummy data for transactions
 Block CreateFakeBlock();
 

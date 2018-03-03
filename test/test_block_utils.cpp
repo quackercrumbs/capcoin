@@ -1,9 +1,9 @@
 #include "../lib/transaction.h"
-#include <time.h>
-#include <string>
 
 #include "test_block_utils.h"
 #include "test_transaction_utils.h"
+
+using namespace std;
 
 Block CreateFakeBlock() {
 	Transaction t = CreateFakeTransaction();
