@@ -1,5 +1,7 @@
 #ifndef TXIN_H
 #define TXIN_H
+#include <string>
+#include <sstream>
 
 class TxIn{
 public:

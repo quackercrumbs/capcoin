@@ -1,6 +1,9 @@
 #ifndef TXOUT_H
 #define TXOUT_H
 
+#include <string>
+#include <sstream>
+
 class TxOut{
 public:
     TxOut(std::string address, double amount);
