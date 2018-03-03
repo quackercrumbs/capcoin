@@ -1,5 +1,7 @@
 #include "test_transaction_utils.h"
 
+using namespace std;
+
 TxIn CreateFakeTxIn() {
 	string id = "12345";
     string sig = "5677";
@@ -18,7 +20,7 @@ TxOut CreateFakeTxOut() {
 Transaction CreateFakeTransaction() {
 	//Create fake txIns
 	vector<TxIn> txIns;
-	txIn.push_back(CreateFakeTxIn());
+	txIns.push_back(CreateFakeTxIn());
 	//Create fake txOuts
 	vector<TxOut> txOuts;
 	txOuts.push_back(CreateFakeTxOut());
