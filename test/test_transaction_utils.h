@@ -5,6 +5,11 @@
 #include "../lib/txin.h"
 #include "../lib/txout.h"
 
+#include <string>
+#include <vector>
+
+
+
 //Creates a fake TxIn with dummy data
 TxIn CreateFakeTxIn();
 
