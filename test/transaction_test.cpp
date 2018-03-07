@@ -1,14 +1,14 @@
 #include <iostream>
 #include <string>
 #include "../lib/transaction.h"
+#include "../lib/txin.h"
+#include "../lib/txout.h"
+
+#include "test_transaction_utils.h"
 
 using namespace std;
 
 int main () {
-    string id = "12345";
-    string sig = "5677";
-    size_t index = 2;
-    TxIn testTransactionIn{id,sig,index};
-    cout << testTransactionIn.GetVal() << endl;
+    Transaction t = CreateFakeTransaction();
     return 0;
 }

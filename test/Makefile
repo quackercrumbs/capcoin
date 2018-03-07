@@ -1,7 +1,7 @@
 C++FLAG = -g -std=c++11
 
-Transaction_OBJ = transaction_test.o ../src/transaction.o
-Block_OBJ = block_test.o ../src/transaction.o ../src/block.o
+Transaction_OBJ = transaction_test.o test_transaction_utils.o ../src/transaction.o ../src/txin.o ../src/txout.o
+Block_OBJ = block_test.o test_transaction_utils.o test_block_utils.o ../src/transaction.o ../src/block.o ../src/txin.o ../src/txout.o
 
 EXEC_DIR = .
 
@@ -17,7 +17,7 @@ $(TRANSACTION_TEST): $(Transaction_OBJ) #Rule to compile transaction test driver
 	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Transaction_OBJ)
 
 
-BLOCK_TEST=block_test.o
+BLOCK_TEST=blockTest.o
 $(BLOCK_TEST): $(Block_OBJ)
 	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Block_OBJ)
 
