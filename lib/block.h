@@ -11,6 +11,14 @@ public:
     Block   (size_t index, time_t timestamp, size_t difficulty, size_t nonce,
             std::string hash, std::string prevHash, std::vector<Transaction> &data);
 
+    size_t GetIndex();
+    time_t GetTimestamp();
+    size_t GetDifficulty();
+    size_t GetNonce();
+    std::string GetHash();
+    std::string GetPreviousHash();
+    std::vector<Transaction> GetData();
+
 private:
     const size_t index_;
     const time_t timestamp_;
