@@ -10,6 +10,11 @@
 class Transaction{
 public:
     Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs);
+
+    std::string GetId();
+    std::vector<TxIn> GetTxIns();
+    std::vector<TxOut> GetTxOuts();
+
 private:
     std::string id_;
     //TxIn* txIns_;
