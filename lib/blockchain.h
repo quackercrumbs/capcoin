@@ -9,17 +9,17 @@
 
 class Blockchain {
 public:
-	//Initalize the blockchain by loading data
-	Blockchain ();
+    //Initalize the blockchain by loading data
+    Blockchain ();
 
     //Returns the current mining difficulty
     size_t GetDifficulty();
 
-	//Returns latest block on chain
-	Block GetLastBlock();
+    //Returns latest block on chain
+    Block GetLastBlock();
 
-	//Checks if the new block is valid by comparing it to the previous block
-	bool IsValidNewBlock(const Block& newBlock);
+    //Checks if the new block is valid by comparing it to the previous block
+    bool IsValidNewBlock(const Block& newBlock);
 
     //Calculates the hash of the block's data.
     std::string CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, std::vector<Transaction>& data, size_t difficulty, size_t nonce);
