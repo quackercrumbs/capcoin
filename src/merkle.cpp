@@ -1,59 +1,68 @@
 #include "../lib/merkle.h"
 
-template<typename T, std::string (hashFunc)(const T&)>
-MerkleNode<T, hashFunc>::MerkleNode(T &value): value_{value}, left_{nullptr},
-    right_{nullptr}, hash_{hashFunc(value)}{}
-
-template<typename T, std::string (hashFunc)(const T&)>
-MerkleNode<T, hashFunc>::MerkleNode(const MerkleNode *left, const MerkleNode *right):
-    left_{left}, right_{right}, value_{nullptr}{}
-
-template<typename T, std::string (hashFunc)(const T&)>
-MerkleNode<T, hashFunc>::MerkleNode(std::vector<T>& nodes, size_t start, size_t end){
-    if (end - start == 0){
-        left_   = new MerkleNode(nodes[start]);
-        right_  = nullptr;
-    }
-    if (end - start == 1){
-        left_   = new MerkleNode(nodes[start]);
-        right_  = new MerkleNode(nodes[end]);
-    }
-    size_t mid = ((end - start) / 2) + start;
-    left_   = new MerkleNode(nodes, start, mid);
-    right_  = new MerkleNode(nodes, mid+1, end);
+size_t combine(size_t a, size_t b) {
+   size_t times = 1;
+   while (times <= b)
+      times *= 10;
+   return a*times + b;
 }
 
-template<typename T, std::string (hashFunc)(const T&)>
-const std::string MerkleNode<T, hashFunc>::hash()const{
+MerkleNode::MerkleNode(Transaction &value): value_{std::move(std::make_shared<Transaction>(value))},
+            left_{nullptr}, right_{nullptr}, hash_{value.hash()}{}
+
+MerkleNode::MerkleNode(MerkleNode *left, MerkleNode *right):
+    left_{left}, right_{right}, value_{nullptr}{}
+
+MerkleNode::MerkleNode(std::vector<Transaction>& nodes){
+    *this = MerkleNode(nodes, 0, nodes.size()-1);
+}
+
+
+
+MerkleNode::MerkleNode(std::vector<Transaction>& nodes, size_t start, size_t end){
+    std::hash<size_t> hashify;
+    if (end == start){
+        left_ = std::move(std::unique_ptr<MerkleNode>(new MerkleNode(nodes[start])));
+        right_ = std::move(std::unique_ptr<MerkleNode>(nullptr));
+        hash_ = hashify(combine(nodes[start].hash(), nodes[start].hash()));
+    }
+    else if (end - start == 1){
+        left_ = std::move(std::unique_ptr<MerkleNode>(new MerkleNode(nodes[start])));
+        right_ = std::move(std::unique_ptr<MerkleNode>(new MerkleNode(nodes[end])));
+        hash_ = hashify(combine(nodes[start].hash(), nodes[end].hash()));
+    }
+    else{
+        size_t mid = ((end - start) / 2) + start;
+        left_ = std::move(std::unique_ptr<MerkleNode>(new MerkleNode(nodes, start, mid)));
+        right_ = std::move(std::unique_ptr<MerkleNode>(new MerkleNode(nodes, start+1, mid)));
+        hash_ = hashify(combine(left_->hash(), right_->hash()));
+    }
+}
+
+const size_t MerkleNode::hash()const{
     return hash_;
 }
 
-template<typename T, std::string (hashFunc)(const T&)>
-const MerkleNode<T, hashFunc>* MerkleNode<T, hashFunc>::left()const{
-    return left_.get();
+const MerkleNode* MerkleNode::left()const{
+    return left_ ? left_.get() : nullptr;
 }
 
-template<typename T, std::string (hashFunc)(const T&)>
-const MerkleNode<T, hashFunc>* MerkleNode<T, hashFunc>::right()const{
-    return right_.get();
+const MerkleNode* MerkleNode::right()const{
+    return right_ ? right_.get() : nullptr;
+}
+size_t MerkleNode::computeHash()const{
+    std::hash<size_t>hashify;
+    return left_ && right_ ?hashify(combine(left_->hash_, right_->hash_)):
+                            hashify(combine(left_->hash_, left_->hash_));
 }
 
-
-template<typename T, std::string (hashFunc)(const T&)>
-bool MerkleNode<T, hashFunc>::validate() const{
-    //if left is not null and left is not validated
+bool MerkleNode::validate() const{
     if (left_ && !left_->validate()) {
       return false;
     }
-    //if right is not null and right is not validated
     if (right_ && !right_->validate()) {
       return false;
     }
-    //NOTE ERROR MIGHT BE HERE, HASHFUNC MAY BE USING VALUE WRONG
-    //OR PERHAPS THE UNIQUE POINTER SHOULD NOT BE OF CHAR TYPE
-    //HASH_ IS OF STRING TYPE RATHER THAN CHAR* TYPE
-    //ITS 5 AM IM GOING TO SLEEP
-    std::unique_ptr<const char> computedHash(left_ || right_ ? computeHash() : hashFunc(*value_));
-    return hash_ == computedHash.get() ? true : false;
+    size_t computedHash = (left_ || right_ ? computeHash() : (*value_).hash());
+    return hash_ == computedHash ? true : false;
 }
-

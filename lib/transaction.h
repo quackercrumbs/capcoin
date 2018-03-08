@@ -10,8 +10,9 @@
 class Transaction{
 public:
     Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs);
+    size_t hash();
 private:
-    std::string id_;
+    size_t id_;
     //TxIn* txIns_;
     const std::vector<TxIn> txIns_;
     //TxOut* txOuts_;
