@@ -2,7 +2,7 @@ C++FLAG = -g -std=c++11
 
 Transaction_OBJ = transaction_test.o test_transaction_utils.o ../src/transaction.o ../src/txin.o ../src/txout.o
 Block_OBJ = block_test.o test_transaction_utils.o test_block_utils.o ../src/transaction.o ../src/block.o ../src/txin.o ../src/txout.o
-Merkle_OBJ = merkle_test.o merkle_test_utils.o test_transaction_utils.o ../src/transaction.o ../src/txin.o ../src/txout.o ../src/merkle.o
+Merkle_OBJ = merkle_test.o test_merkle_utils.o test_transaction_utils.o ../src/transaction.o ../src/txin.o ../src/txout.o ../src/merkle.o
 
 EXEC_DIR = .
 
