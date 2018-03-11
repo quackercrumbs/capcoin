@@ -3,9 +3,10 @@
 
 #include "../lib/merkle.h"
 #include "../lib/transaction.h"
+#include <vector>
 
 //Creates a fake merkle tree root pointer. The tree contains fake/dummy data.
-MerkleNode* CreateFakeMerkleTree(vector<Transaction> txs);
+MerkleNode* CreateFakeMerkleTree(std::vector<Transaction> txs);
 
 //Set of test comparing merkle trees
 //Test Cases: same trees and different trees

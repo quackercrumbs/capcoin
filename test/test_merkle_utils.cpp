@@ -1,4 +1,4 @@
-#include "merkle_test_utils.h"
+#include "test_merkle_utils.h"
 #include "test_transaction_utils.h"
 
 #include <iostream>
@@ -35,8 +35,8 @@ bool CompareMerkleTrees() {
 bool test_tree_same() {
     bool pass = true;
 
-    MerkleNode* root1 = CreateFakeMerkleTree();
-    MerkleNode* root2 = CreateFakeMerkleTree();
+    //MerkleNode* root1 = CreateFakeMerkleTree();
+    //MerkleNode* root2 = CreateFakeMerkleTree();
 
     return pass;
 }
@@ -45,8 +45,8 @@ bool test_tree_same() {
 bool test_tree_different_transaction() {
     bool pass = true;
 
-    MerkleNode* root1 = CreateFakeMerkleTree();
-    MerkleNode* root2 = CreateFakeMerkleTree();
+    //MerkleNode* root1 = CreateFakeMerkleTree();
+    //MerkleNode* root2 = CreateFakeMerkleTree();
 
     return pass;
 }
