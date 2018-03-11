@@ -2,6 +2,7 @@ C++FLAG = -g -std=c++11
 
 Transaction_OBJ = transaction_test.o test_transaction_utils.o ../src/transaction.o ../src/txin.o ../src/txout.o
 Block_OBJ = block_test.o test_transaction_utils.o test_block_utils.o ../src/transaction.o ../src/block.o ../src/txin.o ../src/txout.o
+Merkle_OBJ = merkle_test.o merkle_test_utils.o test_transaction_utils.o ../src/transaction.o ../src/txin.o ../src/txout.o ../src/merkle.o
 
 EXEC_DIR = .
 
@@ -21,6 +22,10 @@ BLOCK_TEST=blockTest.o
 $(BLOCK_TEST): $(Block_OBJ)
 	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Block_OBJ)
 
+MERKLE_TEST=merkleTest.o
+$(MERKLE_TEST): $(Merkle_OBJ)
+	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Merkle_OBJ)
+
 all: transaction_test block_test
 
 #Command to compile transaction test files
@@ -29,6 +34,9 @@ transaction_test:
 
 block_test:
 	make $(BLOCK_TEST)
+
+merkle_test:
+	make $(MERKLE_TEST)
 
 clean:
 	(rm -f *.o;)
