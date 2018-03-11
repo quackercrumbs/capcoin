@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+using namespace std;
+
 MerkleNode* CreateFakeMerkleTree(vector<Transaction> txs) {
 
     Transaction t = CreateFakeTransaction();
@@ -35,8 +37,11 @@ bool CompareMerkleTrees() {
 bool test_tree_same() {
     bool pass = true;
 
-    //MerkleNode* root1 = CreateFakeMerkleTree();
-    //MerkleNode* root2 = CreateFakeMerkleTree();
+    vector<Transaction> t_list1 = CreateFakeTransactionList();
+    vector<Transaction> t_list2 = CreateFakeTransactionList();
+
+    MerkleNode* root1 = CreateFakeMerkleTree(t_list1);
+    MerkleNode* root2 = CreateFakeMerkleTree(t_list2);
 
     return pass;
 }
@@ -50,3 +55,4 @@ bool test_tree_different_transaction() {
 
     return pass;
 }
+
