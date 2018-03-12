@@ -22,12 +22,12 @@ bool CompareMerkleTrees() {
         all_pass = false;
         cout << "FAIL: The trees have same transaction and same hashes" << endl;
     }
-    
     //Test Case: The trees have different transactions
     if(test_tree_different_transaction()) {
         all_pass = false;
         cout << "FAIL: The trees have different transactions" << endl;
     }
+
     if(all_pass) {
         cout << "All test passes!" << endl;
     }
@@ -38,10 +38,11 @@ bool test_tree_same() {
     bool pass = true;
 
     vector<Transaction> t_list1 = CreateFakeTransactionList(3);
-    vector<Transaction> t_list2 = CreateFakeTransactionList(3);
 
     MerkleNode* root1 = CreateFakeMerkleTree(t_list1);
-    MerkleNode* root2 = CreateFakeMerkleTree(t_list2);
+    MerkleNode* root2 = CreateFakeMerkleTree(t_list1);
+
+    //Peform comparison
 
     return pass;
 }
@@ -50,8 +51,13 @@ bool test_tree_same() {
 bool test_tree_different_transaction() {
     bool pass = true;
 
-    //MerkleNode* root1 = CreateFakeMerkleTree();
-    //MerkleNode* root2 = CreateFakeMerkleTree();
+    vector<Transaction> t_list1 = CreateFakeTransactionList(3);
+    vector<Transaction> t_list1 = CreateFakeTransactionList(3);
+
+    MerkleNode* root1 = CreateFakeMerkleTree(t_list1);
+    MerkleNode* root2 = CreateFakeMerkleTree(t_list1);
+
+    //Peform comparison
 
     return pass;
 }
