@@ -7,8 +7,8 @@
 
 using namespace std;
 
-TxIn CreateFakeTxIn() {
-    srand(time(NULL));
+TxIn CreateFakeTxIn(size_t seed) {
+    srand(seed);
 	string id = random_string(8);
     string sig = random_string(8);
     size_t index = rand() % 1000;
@@ -16,15 +16,15 @@ TxIn CreateFakeTxIn() {
     return fakeTxIn;
 }
 
-TxOut CreateFakeTxOut() {
-    srand(time(NULL));
+TxOut CreateFakeTxOut(size_t seed) {
+    srand(seed);
     string addr = random_string(8);
 	double amt = rand() % 1000;
 	TxOut fakeTxOut{addr,amt};
 	return fakeTxOut;
 }
 
-Transaction CreateFakeTransaction() {
+Transaction CreateFakeTransaction(size_t in, size_t out) {
 	//Create fake txIns
 	vector<TxIn> txIns;
 	txIns.push_back(CreateFakeTxIn());
@@ -36,9 +36,9 @@ Transaction CreateFakeTransaction() {
 	return fakeTransaction;
 }
 
-vector<Transaction> CreateFakeTransactionList() {
+vector<Transaction> CreateFakeTransactionList(size_t size) {
     vector<Transaction> t_list;
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < size; i++) {
         t_list.push_back(CreateFakeTransaction());
     }
     return t_list;
