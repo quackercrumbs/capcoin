@@ -12,11 +12,14 @@ MerkleNode* CreateFakeMerkleTree(std::vector<Transaction> txs);
 //Test Cases: same trees and different trees
 bool CompareMerkleTrees();
 
+
+//INCOMPLETE
 //Create two hash trees with the same transactions
 //Then compares the hashses at each tree level
 //Return true if the trees match
 bool test_tree_same();
 
+//INCOMPLETE
 //Creates two trees with different transactions
 //Then compares the hashes at each tree level
 //Return true if the hashes are different
