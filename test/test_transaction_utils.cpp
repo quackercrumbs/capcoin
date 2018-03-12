@@ -27,10 +27,11 @@ TxOut CreateFakeTxOut(size_t seed) {
 Transaction CreateFakeTransaction(size_t in, size_t out) {
 	//Create fake txIns
 	vector<TxIn> txIns;
-	txIns.push_back(CreateFakeTxIn());
+
+	txIns.push_back(CreateFakeTxIn(time(0)));
 	//Create fake txOuts
 	vector<TxOut> txOuts;
-	txOuts.push_back(CreateFakeTxOut());
+	txOuts.push_back(CreateFakeTxOut(time(0)));
 	//Create fake transaction with fake ins and outs
 	Transaction fakeTransaction{txIns,txOuts};
 	return fakeTransaction;
