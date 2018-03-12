@@ -40,7 +40,7 @@ Transaction CreateFakeTransaction(size_t in, size_t out) {
 vector<Transaction> CreateFakeTransactionList(size_t size) {
     vector<Transaction> t_list;
     for(int i = 0; i < size; i++) {
-        t_list.push_back(CreateFakeTransaction());
+        t_list.push_back(CreateFakeTransaction(5,3));
     }
     return t_list;
 }
