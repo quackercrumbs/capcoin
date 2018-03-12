@@ -7,7 +7,7 @@ using namespace std;
 
 MerkleNode* CreateFakeMerkleTree(vector<Transaction> txs) {
 
-    Transaction t = CreateFakeTransaction();
+    Transaction t = CreateFakeTransaction(5,3);
     MerkleNode* root = new MerkleNode(t);
     return root;
 }
@@ -37,8 +37,8 @@ bool CompareMerkleTrees() {
 bool test_tree_same() {
     bool pass = true;
 
-    vector<Transaction> t_list1 = CreateFakeTransactionList();
-    vector<Transaction> t_list2 = CreateFakeTransactionList();
+    vector<Transaction> t_list1 = CreateFakeTransactionList(3);
+    vector<Transaction> t_list2 = CreateFakeTransactionList(3);
 
     MerkleNode* root1 = CreateFakeMerkleTree(t_list1);
     MerkleNode* root2 = CreateFakeMerkleTree(t_list2);
