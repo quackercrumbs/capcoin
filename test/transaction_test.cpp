@@ -9,6 +9,6 @@
 using namespace std;
 
 int main () {
-    Transaction t = CreateFakeTransaction();
+    Transaction t = CreateFakeTransaction(5,3);
     return 0;
 }

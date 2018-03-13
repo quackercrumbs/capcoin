@@ -13,3 +13,7 @@ Transaction::Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs):
     //add the two strings and hash them for the id
     id_ = hashifier(accuInTx + accuOutTx);
 }
+
+size_t Transaction::hash(){
+    return id_;
+}
