@@ -9,7 +9,7 @@ Blockchain::Blockchain(){
 
 Block Blockchain::GetLastBlock(){
     return blocks_[length-1];
-
+}
 
 Block Blockchain::GenerateNextBlock(vector <Transaction>& data){
     size_t index = blocks_[length-1].index_ + 1;
