@@ -31,3 +31,15 @@ Block Blockchain::GenerateNextBlock(vector <Transaction>& data){
     //Broadcast new block
 }
 
+bool HashMatchesDifficulty(std::string hash, size_t difficulty){
+    //convert hash from hex to binary
+    //test if binary has (difficulty) amount of 0s
+    //if true, return true, else false
+    return true;
+}
+    
+size_t GetDifficulty(){
+    //if the difficulty should not be modified
+    return blocks_[blocks_.size()-1].difficulty_;
+}
+    
