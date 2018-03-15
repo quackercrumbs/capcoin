@@ -26,7 +26,7 @@ Block Blockchain::GenerateNextBlock(vector <Transaction>& data){
         nonce++;
     }
     Block newBlock(index, timestamp, difficulty, nonce, hash, prevHash, data);
-    newBlock.Validate();
+    IsValidNewBlock(newBlock);
     blocks_.push_back(newBlock);
     //Broadcast new block
 }
@@ -41,5 +41,10 @@ bool HashMatchesDifficulty(std::string hash, size_t difficulty){
 size_t GetDifficulty(){
     //if the difficulty should not be modified
     return blocks_[blocks_.size()-1].difficulty_;
+}
+    
+bool IsValidNewBlock{
+    
+    
 }
     
