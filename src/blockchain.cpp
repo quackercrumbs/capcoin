@@ -3,13 +3,21 @@
 #include "../lib/transaction.h"
 
 Blockchain::Blockchain(){
-    //initialize the chain by reading blockchain datafile
+    //initialize the chain with the genesis block. 
+    //Change addresses and hashes in future
+    TxIn GenIn("", "", 0);
+    TxOut GenOut("32ba5334aafcd8e7266e47076996b55", 50);
+    std::vector<TxIn> TxIns{GenIn};
+    std::vector<TxOut> TxOuts{GenOut};
+    Transaction GenTxn(TxIns, TxOuts);
+    std::vector<Transaction> GenTxns{GenTxn};
+    Block Genesis(0, 1521001712, 0, 0, "cd4321ce128c5aab080299604b9ba347", "", GenTxns);
 }
 
 
 Block Blockchain::GetLastBlock(){
     return blocks_[length-1];
-
+}
 
 Block Blockchain::GenerateNextBlock(vector <Transaction>& data){
     size_t index = blocks_[length-1].index_ + 1;
