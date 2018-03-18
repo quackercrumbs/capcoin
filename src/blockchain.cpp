@@ -41,6 +41,11 @@ Block Blockchain::GenerateNextBlock(vector <Transaction>& data){
 }
 
 bool HashMatchesDifficulty(std::string hash, size_t difficulty){
+    //check to see if there are any non-hex characters.
+    //this can be placed in the following for loop to reduce time complexity
+    if (hash.find_first_not_of("abcdef0123456789") != std::string::npos)
+        return false;
+    
     //create empty string
     std::string binString = "";
     int charToBin;
