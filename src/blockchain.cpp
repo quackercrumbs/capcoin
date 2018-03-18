@@ -11,6 +11,7 @@ Blockchain::Blockchain(){
     std::vector<TxOut> TxOuts{GenOut};
     Transaction GenTxn(TxIns, TxOuts);
     std::vector<Transaction> GenTxns{GenTxn};
+     
     Block Genesis(0, 1521001712, 0, 0, "cd4321ce128c5aab080299604b9ba347", "", GenTxns);
 
     //Push genesis block onto blockchain
@@ -122,5 +123,6 @@ bool Blockchain::IsValidHash(const Block& newBlock){
 std::string Blockchain::CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, std::vector<Transaction> data, size_t difficulty, size_t nonce){
     std::string hashify = "";
     //in naivecoin, cryptojs is used. We should get crypto++ up and running. 
+    //TODO: MAKE SURE THIS IS THE SAME HASH FUNCTION USED FOR GENESIS BLOCK
     return hashify;
 }
