@@ -102,11 +102,18 @@ bool IsValidNewBlock(const Block& newBlock){
 
 bool isValidHash(const Block& newBlock){
     //if the hash does not match the content, return false
-    //if(calculate hash for contents != newBlock.hash_)
-    //    return false;
+    //the testing method, that uses a vector in place of a merkle tree, will be used for now.
+    if(CalculateHash(newBlock.index_, newBlock.prevHash, newBlock.timestamp_, newBlock.data_, newBlock.difficulty_, newBlock.nonce_) != newBlock.hash_)
+        return false;
     //if the hash does not match the difficulty, return false
     if(!HashMatchesDifficulty(newBlock.hash_, newBlock.difficulty_))
         return false;
     //otherwise, return true
     return true;
+}
+
+std::string CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, std::vector<Transaction>& data, size_t difficulty, size_t nonce){
+    std::string hashify = "";
+    //in naivecoin, cryptojs is used. We should get crypto++ up and running. 
+    return hashify;
 }
