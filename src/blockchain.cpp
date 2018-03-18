@@ -1,4 +1,5 @@
 #include "../lib/blockchain.h"
+
 #include <bitset>
 
 Blockchain::Blockchain(){
@@ -36,9 +37,14 @@ Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
         nonce++;
     }
     Block newBlock(index, timestamp, difficulty, nonce, hash_, prevHash, data);
-    IsValidNewBlock(newBlock);
-    blocks_.push_back(newBlock);
-    //Broadcast new block
+
+    if(IsValidNewBlock(newBlock)) {
+        blocks_.push_back(newBlock);
+    }
+    //TODO : Broadcast new block
+    
+    return newBlock;
+
 }
 
 bool Blockchain::HashMatchesDifficulty(std::string hash, size_t difficulty){
