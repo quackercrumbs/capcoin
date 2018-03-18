@@ -1,6 +1,7 @@
 #include "../lib/blockchain.h"
 #include "../lib/block.h"
 #include "../lib/transaction.h"
+#include <bitset>
 
 Blockchain::Blockchain(){
     //initialize the chain with the genesis block. 
@@ -40,10 +41,25 @@ Block Blockchain::GenerateNextBlock(vector <Transaction>& data){
 }
 
 bool HashMatchesDifficulty(std::string hash, size_t difficulty){
-    //convert hash from hex to binary
-    //test if binary has (difficulty) amount of 0s
-    //if true, return true, else false
-    return true;
+    //create empty string
+    std::string binString = "";
+    int charToBin;
+    std::stringstream output;
+    //for each character in the length of hash
+    for (unsigned int i = 0; i < hash.length(); i++){
+        std::stringstream input;
+        //take char, put into input
+        input << hash[i];
+        input >> std::hex >> charToBin;
+        //convert to binary, then sent do output
+        output << (std::bitset<4>)charToBin;
+    }
+    //binString takes entire binary form of hash
+    output >> binString;
+    //if the difficulty is x, find the first character in binString that is not 0
+    int firstNot0 = binString.find_first_not_of("0");
+    //if the character has index < x, return false
+    return firstNot0 < difficulty? false : true;
 }
     
 size_t GetDifficulty(){
