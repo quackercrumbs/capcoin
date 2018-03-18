@@ -1,6 +1,4 @@
 #include "../lib/blockchain.h"
-#include "../lib/block.h"
-#include "../lib/transaction.h"
 #include <bitset>
 
 Blockchain::Blockchain(){
@@ -24,12 +22,12 @@ Block Blockchain::GetLastBlock(){
 }
 
 Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
-    size_t index = blocks_[blocks_.size()-1].index_ + 1;
+    size_t index = blocks_[blocks_.size()-1].GetIndex() + 1;
     time_t timestamp = time(0);
     size_t difficulty = GetDifficulty();
     size_t nonce = 0;
     std::string hash_;
-    std::string prevHash = blocks_[blocks_.size()-1].hash_;
+    std::string prevHash = blocks_[blocks_.size()-1].GetPreviousHash();
     while (true) {
         hash_ = CalculateHash(index, prevHash, timestamp, data, difficulty, nonce);
         if (HashMatchesDifficulty(hash_, difficulty)) {
@@ -75,26 +73,26 @@ size_t Blockchain::GetDifficulty(){
     if (blocks_.size() < 2)
         return 1;
     //if the time between the last two blocks is less than 10 min, increase difficulty
-    if (blocks_[blocks_.size()-1].timestamp_ - blocks_[blocks_.size()-2].timestamp_ < 600)
-        return blocks_[blocks_.size()-1].difficulty_ + 1;
+    if (blocks_[blocks_.size()-1].GetTimestamp() - blocks_[blocks_.size()-2].GetTimestamp() < 600)
+        return blocks_[blocks_.size()-1].GetDifficulty() + 1;
     //if the time between the last two blocks is more than 15 min, decrease difficulty
-    else if (900 < blocks_[blocks_.size()-1].timestamp_ - blocks_[blocks_.size()-2].timestamp_)
-        return blocks_[blocks_.size()-1].difficulty_ - 1;
+    else if (900 < blocks_[blocks_.size()-1].GetTimestamp() - blocks_[blocks_.size()-2].GetTimestamp())
+        return blocks_[blocks_.size()-1].GetDifficulty() - 1;
     //if in the 10-15 min range, keep difficulty
     else
-         return blocks_[blocks_.size()-1].difficulty_;
+         return blocks_[blocks_.size()-1].GetDifficulty();
 }
     
 bool Blockchain::IsValidNewBlock(const Block& newBlock){
     //check if index is valid
-    if (newBlock.index_ != blocks_[blocks_.size()-1].index_ + 1)
+    if (newBlock.GetIndex() != blocks_[blocks_.size()-1].GetIndex() + 1)
         return false;
     //check if timestamp is valid
     //if new time 20 min older than last time, or greater than the current time
-    if (blocks_[blocks_.size()-1].timestamp_ - 1200 > newBlock.timestamp_ || time(0) < newBlock.timestamp_)
+    if (blocks_[blocks_.size()-1].GetTimestamp() - 1200 > newBlock.GetTimestamp() || time(0) < newBlock.GetTimestamp())
         return false;
     //check if prevhash matches last block's hash
-    if (newBlock.prevHash_ != blocks_[blocks_.size()-1].hash_)
+    if (newBlock.GetPreviousHash() != blocks_[blocks_.size()-1].GetHash())
         return false;
     //check if hash is valid
     if (!IsValidHash(newBlock))
@@ -106,16 +104,16 @@ bool Blockchain::IsValidNewBlock(const Block& newBlock){
 bool Blockchain::IsValidHash(const Block& newBlock){
     //if the hash does not match the content, return false
     //the testing method, that uses a vector in place of a merkle tree, will be used for now.
-    if(CalculateHash(newBlock.index_, newBlock.prevHash, newBlock.timestamp_, newBlock.data_, newBlock.difficulty_, newBlock.nonce_) != newBlock.hash_)
+    if(CalculateHash(newBlock.GetIndex(), newBlock.GetPreviousHash(), newBlock.GetTimestamp(), newBlock.GetData(), newBlock.GetDifficulty(), newBlock.GetNonce()) != newBlock.GetHash())
         return false;
     //if the hash does not match the difficulty, return false
-    if(!HashMatchesDifficulty(newBlock.hash_, newBlock.difficulty_))
+    if(!HashMatchesDifficulty(newBlock.GetHash(), newBlock.GetDifficulty()))
         return false;
     //otherwise, return true
     return true;
 }
 
-std::string Blockchain::CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, std::vector<Transaction>& data, size_t difficulty, size_t nonce){
+std::string Blockchain::CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, std::vector<Transaction> data, size_t difficulty, size_t nonce){
     std::string hashify = "";
     //in naivecoin, cryptojs is used. We should get crypto++ up and running. 
     return hashify;
