@@ -13,34 +13,37 @@ Blockchain::Blockchain(){
     Transaction GenTxn(TxIns, TxOuts);
     std::vector<Transaction> GenTxns{GenTxn};
     Block Genesis(0, 1521001712, 0, 0, "cd4321ce128c5aab080299604b9ba347", "", GenTxns);
+
+    //Push genesis block onto blockchain
+    blocks_.push_back(Genesis);
 }
 
 
 Block Blockchain::GetLastBlock(){
-    return blocks_[length-1];
+    return blocks_[blocks_.size()-1];
 }
 
-Block Blockchain::GenerateNextBlock(vector <Transaction>& data){
-    size_t index = blocks_[length-1].index_ + 1;
+Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
+    size_t index = blocks_[blocks_.size()-1].index_ + 1;
     time_t timestamp = time(0);
     size_t difficulty = GetDifficulty();
     size_t nonce = 0;
     std::string hash_;
-    std::string prevHash = blocks_[length-1].hash_;
+    std::string prevHash = blocks_[blocks_.size()-1].hash_;
     while (true) {
-        hash = CalculateHash(index, prevHash, timestamp, data, difficulty, nonce);
-        if (HashMatchesDifficulty(hash, difficulty)) {
+        hash_ = CalculateHash(index, prevHash, timestamp, data, difficulty, nonce);
+        if (HashMatchesDifficulty(hash_, difficulty)) {
             break;
         }
         nonce++;
     }
-    Block newBlock(index, timestamp, difficulty, nonce, hash, prevHash, data);
+    Block newBlock(index, timestamp, difficulty, nonce, hash_, prevHash, data);
     IsValidNewBlock(newBlock);
     blocks_.push_back(newBlock);
     //Broadcast new block
 }
 
-bool HashMatchesDifficulty(std::string hash, size_t difficulty){
+bool Blockchain::HashMatchesDifficulty(std::string hash, size_t difficulty){
     //check to see if there are any non-hex characters.
     //this can be placed in the following for loop to reduce time complexity
     if (hash.find_first_not_of("abcdef0123456789") != std::string::npos)
@@ -67,7 +70,7 @@ bool HashMatchesDifficulty(std::string hash, size_t difficulty){
     return firstNot0 < difficulty? false : true;
 }
     
-size_t GetDifficulty(){
+size_t Blockchain::GetDifficulty(){
     //to avoid error, if less than 2 blocks, return a difficulty of 1
     if (blocks_.size() < 2)
         return 1;
@@ -82,7 +85,7 @@ size_t GetDifficulty(){
          return blocks_[blocks_.size()-1].difficulty_;
 }
     
-bool IsValidNewBlock(const Block& newBlock){
+bool Blockchain::IsValidNewBlock(const Block& newBlock){
     //check if index is valid
     if (newBlock.index_ != blocks_[blocks_.size()-1].index_ + 1)
         return false;
@@ -94,13 +97,13 @@ bool IsValidNewBlock(const Block& newBlock){
     if (newBlock.prevHash_ != blocks_[blocks_.size()-1].hash_)
         return false;
     //check if hash is valid
-    if (!isValidHash(newBlock))
+    if (!IsValidHash(newBlock))
         return false;
     //otherwise return true
     return true;
 }
 
-bool isValidHash(const Block& newBlock){
+bool Blockchain::IsValidHash(const Block& newBlock){
     //if the hash does not match the content, return false
     //the testing method, that uses a vector in place of a merkle tree, will be used for now.
     if(CalculateHash(newBlock.index_, newBlock.prevHash, newBlock.timestamp_, newBlock.data_, newBlock.difficulty_, newBlock.nonce_) != newBlock.hash_)
@@ -112,7 +115,7 @@ bool isValidHash(const Block& newBlock){
     return true;
 }
 
-std::string CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, std::vector<Transaction>& data, size_t difficulty, size_t nonce){
+std::string Blockchain::CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, std::vector<Transaction>& data, size_t difficulty, size_t nonce){
     std::string hashify = "";
     //in naivecoin, cryptojs is used. We should get crypto++ up and running. 
     return hashify;
