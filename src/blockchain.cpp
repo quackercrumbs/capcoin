@@ -87,8 +87,9 @@ bool IsValidNewBlock(const Block& newBlock){
     if (newBlock.index_ != blocks_[blocks_.size()-1].index_ + 1)
         return false;
     //check if timestamp is valid
-    //if (time is within correct amounts)
-    //    return false;
+    //if new time 20 min older than last time, or greater than the current time
+    if (blocks_[blocks_.size()-1].timestamp_ - 1200 > newBlock.timestamp_ || time(0) < newBlock.timestamp_)
+        return false;
     //check if prevhash matches last block's hash
     if (newBlock.prevHash_ != blocks_[blocks_.size()-1].hash_)
         return false;
