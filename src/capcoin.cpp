@@ -11,7 +11,7 @@ int main() {
     Blockchain bc;
     Block genBlock = bc.GetLastBlock();
     cout << "HashMatchesDifficulty: " << bc.HashMatchesDifficulty("0012321321312321",2) << endl;
-    
+    cout << "Hello world" << endl;
 
     return 0;
 }
