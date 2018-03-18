@@ -1,7 +1,7 @@
 C++FLAG = -g -std=c++11
 
 Transaction_OBJ = src/transaction.o src/txin.o src/txout.o
-Block_OBJ = src/block.o
+Block_OBJ = src/block.o src/blockchain.o
 Merkle_OBJ = src/merkle.o
 Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Merkle_OBJ)
 
