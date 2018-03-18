@@ -25,7 +25,9 @@ int main() {
     cout << "Hash Match Difficulty: " << bc.HashMatchesDifficulty("0012323123",2) << endl;
 
     vector<Transaction> t_list = CreateFakeTransactionList(6);
-    Block newBlock = bc.GenerateNextBlock(t_list);     
+    Block newBlock = bc.GenerateNextBlock(t_list);    
+
+    //DONT MATCH B/C HAVENT IMPLEMENT CALCULATE HASH() 
     cout << "Gen Block Hash: " << genBlock.GetHash()  << endl;    
     cout << "New Block Previous Hash: " << newBlock.GetPreviousHash()  << endl;    
 }
