@@ -63,6 +63,9 @@ bool HashMatchesDifficulty(std::string hash, size_t difficulty){
 }
     
 size_t GetDifficulty(){
+    //to avoid error, if less than 2 blocks, return a difficulty of 1
+    if (blocks_.size() < 2)
+        return 1;
     //if the time between the last two blocks is less than 10 min, increase difficulty
     if (blocks_[blocks_.size()-1].timestamp_ - blocks_[blocks_.size()-2].timestamp_ < 600)
         return blocks_[blocks_.size()-1].difficulty_ + 1;
