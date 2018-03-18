@@ -1,3 +1,4 @@
+
 # Capcoin
 	
 Current implementations of cryptocurrencies have various challenges to overcome, mainly characterized by their poor environmental sustainability and lack of consumer friendliness. 
@@ -25,4 +26,9 @@ There are two major components to this project, a linux-based full network node 
  - Enforces transactions anonymity  
  - UI to view current state of blockchain
 
+## To Run
+```
+make all //compiles all source code
+./bin/capcoin.o //run driver for capcoin
+```
 
