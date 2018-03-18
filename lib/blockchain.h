@@ -4,7 +4,7 @@
 #include "transaction.h"
 #include "block.h"
 #include <string>
-#include <time.h>
+#include <ctime>
 
 
 class Blockchain {
@@ -15,9 +15,6 @@ public:
 	//Returns the current mining difficulty
 	size_t GetDifficulty();
 	
-	//Returns latest block on chain
-	Block GetLastBlock();
-
 	//Checks if the new block is valid by comparing it to the previous block
 	bool IsValidNewBlock(const Block& newBlock);
 	
@@ -37,8 +34,8 @@ public:
 	Block GetLastBlock();
 
 private:
-	vector<Block> blocks_;
+    std::vector<Block> blocks_;
 	friend class Block;
-}
+};
 
 #endif
