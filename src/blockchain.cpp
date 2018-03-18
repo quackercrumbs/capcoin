@@ -79,11 +79,28 @@ size_t GetDifficulty(){
     
 bool IsValidNewBlock(const Block& newBlock){
     //check if index is valid
-    
+    if (newBlock.index_ != blocks_[blocks_.size()-1].index_ + 1)
+        return false;
     //check if timestamp is valid
-    
+    //if (time is within correct amounts)
+    //    return false;
     //check if prevhash matches last block's hash
-    
+    if (newBlock.prevHash_ != blocks_[blocks_.size()-1].hash_)
+        return false;
     //check if hash is valid
+    if (!isValidHash(newBlock))
+        return false;
+    //otherwise return true
+    return true;
 }
-    
+
+bool isValidHash(const Block& newBlock){
+    //if the hash does not match the content, return false
+    //if(calculate hash for contents != newBlock.hash_)
+    //    return false;
+    //if the hash does not match the difficulty, return false
+    if(!HashMatchesDifficulty(newBlock.hash_, newBlock.difficulty_))
+        return false;
+    //otherwise, return true
+    return true;
+}
