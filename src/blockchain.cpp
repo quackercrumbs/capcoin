@@ -77,8 +77,13 @@ size_t GetDifficulty(){
          return blocks_[blocks_.size()-1].difficulty_;
 }
     
-bool IsValidNewBlock{
+bool IsValidNewBlock(const Block& newBlock){
+    //check if index is valid
     
+    //check if timestamp is valid
     
+    //check if prevhash matches last block's hash
+    
+    //check if hash is valid
 }
     
