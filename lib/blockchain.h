@@ -17,7 +17,9 @@ public:
 	
 	//Checks if the new block is valid by comparing it to the previous block
 	bool IsValidNewBlock(const Block& newBlock);
-	
+
+    bool IsValidHash(const Block& block);
+
 	//Calculates the hash of the block's data.
 	std::string CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, std::vector<Transaction>& data, size_t difficulty, size_t nonce);
 	
@@ -25,7 +27,7 @@ public:
 	bool HashMatchesDifficulty(std::string hash, size_t difficulty);
 	
 	//Generates a new block
-	Block GenerateNextBlock();
+	Block GenerateNextBlock(std::vector<Transaction>& data);
 	
 	//Pushes the new block onto the blockchain
 	bool Push(Block& newBlock);
