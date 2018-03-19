@@ -7,7 +7,11 @@
 class TxOut{
 public:
     TxOut(std::string address, double amount);
+
     std::string GetVal();
+    std::string GetAddress();
+    double GetAmount();
+    
 private:
     const std::string address_;
     const double amount_;

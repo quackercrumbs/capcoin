@@ -10,6 +10,8 @@
 class Transaction{
 public:
     Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs);
+    std::vector<TxIn> GetTxIns();
+    std::vector<TxOut> GetTxOuts();
     size_t hash();
 private:
     size_t id_;
