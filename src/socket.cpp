@@ -222,6 +222,17 @@ TCPSocket::TCPSocket(const string &foreignAddress, unsigned short foreignPort)
 TCPSocket::TCPSocket(int newConnSD) throw(SocketException) : CommSocket(newConnSD) {
 }
 
+// TCPClientSocket Code
+TCPClientSocket::TCPClientSocket(const string &localAddress, unsigned short localPort)
+  throw(SocketException) : Socket(SOCK_STREAM, IPPROTO_TCP) {
+    setLocalAddressAndPort(localAddress, localPort);
+}
+
+TCPClientSocket::TCPClientSocket(unsigned short localPort)
+  throw(SocketException) : Socket(SOCK_STREAM, IPPROTO_TCP) {
+    setLocalPort(localPort);
+}
+
 // TCPServerSocket Code
 
 TCPServerSocket::TCPServerSocket(unsigned short localPort, int queueLen)

@@ -192,6 +192,16 @@ public:
 
 };
 
+class TCPClientSocket : public Socket {
+public:
+
+  TCPClientSocket(unsigned short localPort)
+      throw(SocketException);
+
+  TCPClientSocket(const string &localAddress, unsigned short localPort)
+      throw(SocketException);
+};
+
 /**
  *   TCP socket class for servers
  */

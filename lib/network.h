@@ -6,7 +6,8 @@ using namespace std;
 class Network{
 public:
   void startServer();
-  void test();
+  void startClient();
+
 };
 
 

@@ -2,8 +2,83 @@
 #include "../lib/network.h"
 #include <iostream>
 
-void Network::test(){
-  cout << "network test" << endl;
+void Network::startClient(){
+  TCPClientSocket client(1025);
+
+  int sock = 0, valread, activity, max_sd;
+  struct sockaddr_in serv_addr;
+
+  string ip_addr =  "127.0.0.1";
+
+  char buffer[1025];
+
+  fd_set readfds;
+
+  if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+  {
+    cout << "\n Socket creation error \n";
+    return;
+  }
+
+  memset(&serv_addr, '0', sizeof(serv_addr));
+
+  serv_addr.sin_family = AF_INET;
+  serv_addr.sin_port = htons(client.getLocalPort());
+
+  if(inet_pton(AF_INET, ip_addr.c_str(), &serv_addr.sin_addr) <= 0)
+  {
+    cout << "\nInvalid address\n";
+    return;
+  }
+
+  if(connect(sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
+  {
+    cout << "\nConnection Failed \n";
+    return;
+  }
+
+  while(1)
+  {
+    FD_ZERO(&readfds);
+
+    FD_SET(STDIN_FILENO, &readfds);
+    FD_SET(sock, &readfds);
+
+    // could probably remove this and just use sock
+    max_sd = (sock > 0) ? sock : 0;
+
+    activity = select(max_sd + 1, &readfds, nullptr, nullptr, nullptr);
+
+    if((activity < 0) && (errno != EINTR))
+    {
+      cout << "\nSelect error\n";
+    }
+
+    if(FD_ISSET(sock, &readfds))
+    {
+      valread = read(sock, buffer, 1024);
+      if(valread == 0)
+      {
+        close(sock);
+        cout << "\nConnection closed by host\n";
+        //exit(0);
+      }
+      buffer[valread] = '\0';
+      cout << string(buffer) << endl;
+      strcpy(buffer, "");
+      fflush(stdout);
+    }
+    if(FD_ISSET(0, &readfds))
+    {
+      valread = read(0, buffer, 1024);
+      buffer[valread] = '\0';
+      if(send(sock, buffer, strlen(buffer), 0) != strlen(buffer))
+      {
+        cout << "\nSend error\n";
+      }
+    }
+
+  }
 }
 
 void Network::startServer() {
