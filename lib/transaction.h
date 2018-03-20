@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include "picosha2.h"
 #include "txin.h"
 #include "txout.h"
 
