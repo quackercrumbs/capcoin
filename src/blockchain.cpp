@@ -122,8 +122,7 @@ bool Blockchain::IsValidHash(const Block& newBlock){
 }
 
 std::string Blockchain::CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, std::vector<Transaction> data, size_t difficulty, size_t nonce){
-    std::string hashify = "";
-    //in naivecoin, cryptojs is used. We should get crypto++ up and running. 
-    //TODO: MAKE SURE THIS IS THE SAME HASH FUNCTION USED FOR GENESIS BLOCK
+    std::string dataHash = picosha2::hash256_hex_string(data);
+    std::string hashify = (index + prevHash + timestamp + dataHash + difficulty + nonce);
     return hashify;
 }
