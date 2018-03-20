@@ -13,7 +13,7 @@ Blockchain::Blockchain(){
     std::vector<Transaction> GenTxns{GenTxn};
 
     //TODO: USE CALCULATE HASH TO HASH GENESIS BLOCK    
-    Block Genesis(0, 1521001712, 0, 0, "cd4321ce128c5aab080299604b9ba347", "", GenTxns);
+    Block Genesis(0, 1521001712, 0, 0, CalculateHash(0,"1521001712", 0, GenTxns, 0, 0), "", GenTxns);
 
     //Push genesis block onto blockchain
     blocks_.push_back(Genesis);
