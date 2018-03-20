@@ -5,6 +5,7 @@
 #include "block.h"
 #include <string>
 #include <ctime>
+#include <bitset>
 
 
 class Blockchain {
