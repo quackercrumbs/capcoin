@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include "picosha2.h"
 #include "txin.h"
 #include "txout.h"
 
@@ -12,9 +13,9 @@ public:
     Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs);
     std::vector<TxIn> GetTxIns();
     std::vector<TxOut> GetTxOuts();
-    size_t hash();
+    std::string hash();
 private:
-    size_t id_;
+    std::string id_;
     //TxIn* txIns_;
     const std::vector<TxIn> txIns_;
     //TxOut* txOuts_;

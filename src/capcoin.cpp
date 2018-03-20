@@ -12,6 +12,8 @@ int main() {
     Block genBlock = bc.GetLastBlock();
     cout << "HashMatchesDifficulty: " << bc.HashMatchesDifficulty("0012321321312321",2) << endl;
     cout << "Hello world" << endl;
-
+    string calculatedHash = bc.CalculateHash(genBlock.GetIndex(), genBlock.GetPreviousHash(), genBlock.GetTimestamp(), genBlock.GetData(), genBlock.GetDifficulty(), genBlock.GetNonce());
+    cout << calculatedHash << endl;
+    cout << genBlock.GetHash() << endl;
     return 0;
 }
