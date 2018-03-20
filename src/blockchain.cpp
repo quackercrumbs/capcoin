@@ -122,7 +122,16 @@ bool Blockchain::IsValidHash(const Block& newBlock){
 }
 
 std::string Blockchain::CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, std::vector<Transaction> data, size_t difficulty, size_t nonce){
-    std::string dataHash = picosha2::hash256_hex_string(data);
-    std::string hashify = (index + prevHash + timestamp + dataHash + difficulty + nonce);
-    return hashify;
+    std::string dataHash = "";
+    std::stringstream accumu;
+    for (Transaction i : data)
+        accumu << i.hash();
+    accumu >> dataHash;
+    dataHash = picosha2::hash256_hex_string(dataHash);
+    accumu.str(std::string());
+    accumu << index << prevHash << timestamp << dataHash << difficulty << nonce;
+    dataHash = "";
+    accumu >> dataHash;
+    dataHash = picosha2::hash256_hex_string(dataHash);
+    return dataHash;
 }
