@@ -77,7 +77,6 @@ void Network::startClient(){
         cout << "\nSend error\n";
       }
     }
-
   }
 }
 
