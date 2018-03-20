@@ -3,6 +3,7 @@
 
 #include "transaction.h"
 #include "block.h"
+#include "picosha2.h"
 #include <string>
 #include <ctime>
 
