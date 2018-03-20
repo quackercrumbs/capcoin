@@ -121,7 +121,7 @@ bool Blockchain::IsValidHash(const Block& newBlock){
     return true;
 }
 
-std::string Blockchain::CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, std::vector<Transaction> data, size_t difficulty, size_t nonce){
+std::string Blockchain::CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, const std::vector<Transaction>& data, size_t difficulty, size_t nonce){
     std::string dataHash = "";
     std::stringstream accumu;
     for (Transaction i : data)
