@@ -9,9 +9,8 @@ Transaction::Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs):
     //for each transaction in txOuts_, append its address and amount to accuOutTx
     for (auto i : txOuts_)
         accuOutTx = accuOutTx + i.GetVal();
-    std::hash<std::string> hashifier;
     //add the two strings and hash them for the id
-    id_ = hashifier(accuInTx + accuOutTx);
+    id_ = picosha2::hash256_hex_string(accuOutTx);
 }
 
 size_t Transaction::hash(){
