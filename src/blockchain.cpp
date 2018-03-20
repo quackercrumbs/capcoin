@@ -1,7 +1,5 @@
 #include "../lib/blockchain.h"
 
-#include <bitset>
-
 Blockchain::Blockchain(){
     //initialize the chain with the genesis block. 
     //Change addresses and hashes in future
