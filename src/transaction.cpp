@@ -13,6 +13,6 @@ Transaction::Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs):
     id_ = picosha2::hash256_hex_string(accuOutTx);
 }
 
-size_t Transaction::hash(){
+std::string Transaction::hash(){
     return id_;
 }
