@@ -16,3 +16,11 @@ Transaction::Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs):
 std::string Transaction::hash(){
     return id_;
 }
+
+bool Transaction:: operator < (Transaction& beta) const{
+  return timestamp_ < beta.timestamp_ ? true : false; 
+}
+
+bool Transaction:: operator == (Transaction& beta) const{
+  return id_ == beta.id_ ? true : false;
+}
