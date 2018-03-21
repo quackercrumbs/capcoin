@@ -8,7 +8,7 @@ public:
 	//Initialize the transaction pool (loads data from pool)
 	TransactionPool();
 	//Grabs unique transactions from other pool
-	void SharePool(const std::vector<Transactions>& beta);
+	bool AddTxn(Transaction& beta);
 private:
 	std::vector<Transaction> pool_;
 };
