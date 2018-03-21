@@ -17,10 +17,6 @@ std::string Transaction::hash(){
     return id_;
 }
 
-bool Transaction:: operator < (Transaction& beta) const{
-  return timestamp_ < beta.timestamp_ ? true : false; 
-}
-
-bool Transaction:: operator == (Transaction& beta) const{
+bool Transaction:: operator == (const Transaction& beta) const{
   return id_ == beta.id_ ? true : false;
 }
