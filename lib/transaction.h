@@ -14,6 +14,8 @@ public:
     std::vector<TxIn> GetTxIns();
     std::vector<TxOut> GetTxOuts();
     std::string hash();
+    bool operator < (const Transaction& beta) const;
+    bool operator == (const Transaction& beta) const;
 private:
     std::string id_;
     //TxIn* txIns_;
