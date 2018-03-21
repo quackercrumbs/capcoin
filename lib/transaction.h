@@ -11,6 +11,7 @@
 class Transaction{
 public:
     Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs);
+    Transaction(Transaction& beta);
     std::vector<TxIn> GetTxIns();
     std::vector<TxOut> GetTxOuts();
     std::string hash();
