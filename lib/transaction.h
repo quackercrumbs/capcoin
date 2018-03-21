@@ -15,8 +15,10 @@ public:
     std::vector<TxIn> GetTxIns();
     std::vector<TxOut> GetTxOuts();
     std::string hash();
+    bool Validate() const;
     bool operator == (const Transaction& beta) const;
 private:
+    std::string CalcHash();
     std::string id_;
     const std::vector<TxIn> txIns_;
     const std::vector<TxOut> txOuts_;
