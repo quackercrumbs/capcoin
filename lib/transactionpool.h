@@ -1,17 +1,17 @@
 #ifndef TRANSACTIONPOOL_H
 #define TRANSACTIONPOOL_H
 
-#include <set>
+#include <queue>
 #include "transaction.h"
 
 class TransactionPool {
 public:
 	//Initialize the transaction pool (loads data from pool)
 	TransactionPool();
-	//Shares a current pool with another pool
-	void SharePool(std::set<Transactions>& beta) const;
+	//Grabs unique transactions from other pool
+	void SharePool(const std::queue<Transactions>& beta);
 private:
-	std::set<Transaction> pool_;
+	std::queue<Transaction> pool_;
 };
 
 
