@@ -1,16 +1,20 @@
 #include "../lib/transactionpool.h"
 
-void TransactionPool:: SharePool(const std::vector<Transactions>& beta){
-  //for every txn in beta
-  for(Transaction x : beta){
-    int i = 0;
-    //search for an identical txn
-    while(i < pool_.length() && !(pool_[i] == x))i++;
-    if (pool_[i] == x)
-      continue;
-    else{
-      Transaction cpyTxn(x);
-      pool_.push_back(cpyTxn);
-    }
-  }
+bool TransactionPool:: AddTxn(Transaction& beta){
+  //check if already in the pool
+  if (!HasTxn(beta))
+    return false;
+  //check if valid
+  if (!beta.Validate())
+    return false;
+  pool_.push_back(beta);  
 }
+
+bool TransactionPool:: HasTxn(Transaction& beta){
+  for(Transaction x : pool_){
+    if (x == beta)
+      return true;
+  }
+  return false
+}
+
