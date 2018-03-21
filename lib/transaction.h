@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include <ctime>
 #include "picosha2.h"
 #include "txin.h"
 #include "txout.h"
@@ -15,11 +14,9 @@ public:
     std::vector<TxIn> GetTxIns();
     std::vector<TxOut> GetTxOuts();
     std::string hash();
-    bool operator < (const Transaction& beta) const;
     bool operator == (const Transaction& beta) const;
 private:
     std::string id_;
-    time_t timestamp_;
     const std::vector<TxIn> txIns_;
     const std::vector<TxOut> txOuts_;
 };
