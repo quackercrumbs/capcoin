@@ -10,7 +10,7 @@ public:
 	UnspentTxOutPool();
 	UnspentTxOut FindFromIn(const TxIn& input);
 private:
-	std::vector<UnspentTxOut> txOuts_;
+	std::vector<UnspentTxOut> uTxOuts_;
 };
 
 #endif
