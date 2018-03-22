@@ -1,8 +1,9 @@
 #ifndef UTXOPOOL_H
 #define UTXOPOOL_H
 
-#include "transaction.h"
-
+#include "utxout.h"
+#include "txin.h"
+#include <vector>
 //Container for all unspent transactions (coins)
 class UnspentTxOutPool{
 public:
