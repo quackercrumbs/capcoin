@@ -19,6 +19,7 @@ public:
     bool operator == (const Transaction& beta) const;
 private:
     std::string CalcHash();
+    bool OneToOne();
     std::string id_;
     const std::vector<TxIn> txIns_;
     const std::vector<TxOut> txOuts_;
