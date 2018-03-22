@@ -8,7 +8,7 @@ class UnspentTxOutPool {
 public:
 	//All unspent TxOuts are loaded through this constructor
 	UnspentTxOutPool();
-	TxOut FindFromIn(const TxIn& input);
+	UnspentTxOut FindFromIn(const TxIn& input);
 private:
 	std::vector<UnspentTxOut> txOuts_;
 };
