@@ -18,8 +18,8 @@ public:
     bool Validate() const;
     bool operator == (const Transaction& beta) const;
 private:
-    std::string CalcHash();
-    bool OneToOne();
+    std::string CalcHash() const;
+    bool OneToOne() const;
     std::string id_;
     const std::vector<TxIn> txIns_;
     const std::vector<TxOut> txOuts_;
