@@ -30,7 +30,7 @@ bool Transaction:: Validate() const{
 bool Transaction:: OneToOne(UnspentTxOutPool& source) const{
   double inAmt = 0, outAmt = 0;
   for (TxIn x: txIns_)
-    inAmt = inAmt + source.FindFromIn(x).GetAmount();
+    inAmt = inAmt + source.FindFromIn(x)->GetAmount();
   for (TxOut y: txOuts_)
     outAmt = outAmt + y.GetAmount();
   return inAmt == outAmt ? true : false;
