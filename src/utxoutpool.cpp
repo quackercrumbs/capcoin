@@ -9,3 +9,7 @@ UnspentTxOut* UnspentTxOutPool:: FindFromIn(const TxIn& input){
   return outptr;
 }
 
+bool UnspentTxOutPool:: AddTxn(UnspentTxOut& input){
+  uTxOuts_.push_back(input);
+  return true;
+}
