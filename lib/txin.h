@@ -6,8 +6,6 @@
 class TxIn{
 public:
     TxIn(std::string id, std::string sig, size_t index);
-
-    std::string GetVal();
     std::string GetId();
     std::string GetSignature();
     size_t GetIndex();
