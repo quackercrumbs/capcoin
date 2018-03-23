@@ -1,4 +1,4 @@
-#include "../lib/blockchain.h"
+#include "blockchain.h"
 
 Blockchain::Blockchain(){
     //initialize the chain with the genesis block. 
