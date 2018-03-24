@@ -8,9 +8,13 @@ Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ)
 #Where to store all drivers
 EXEC_DIR = ./bin/
 
+#Tells compiler where to find headers
+#Useful for importing header files (instead of listing full relative path)
+INCLUDES = -I ./lib/
+
 #Compiles all cpp files listed in the given OBJ variable
 .cpp.o:
-	g++ $(C++FLAG) -c $< -o $@
+	g++ $(C++FLAG) -c $< -o $@ $(INCLUDES)
 
 
 CAPCOIN=capcoin.o #Executable name
