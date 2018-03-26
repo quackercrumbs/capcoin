@@ -1,7 +1,6 @@
-#include "../lib/block.h"
-#include "../lib/blockchain.h"
-#include "../lib/network.h"
-
+#include "network.h"
+#include "block.h"
+#include "blockchain.h"
 
 #include <string.h>
 #include <iostream>
@@ -28,7 +27,6 @@ int main(int argc, char *argv[]) {
     else{
       network.startClient();
     }
-
     return 0;
 }
 

@@ -1,6 +1,4 @@
-#include "../lib/blockchain.h"
-
-#include <bitset>
+#include "blockchain.h"
 
 Blockchain::Blockchain(){
     //initialize the chain with the genesis block. 
@@ -12,8 +10,7 @@ Blockchain::Blockchain(){
     Transaction GenTxn(TxIns, TxOuts);
     std::vector<Transaction> GenTxns{GenTxn};
 
-    //TODO: USE CALCULATE HASH TO HASH GENESIS BLOCK    
-    Block Genesis(0, 1521001712, 0, 0, "cd4321ce128c5aab080299604b9ba347", "", GenTxns);
+    Block Genesis(0, 1521001712, 0, 0, CalculateHash(0,"1521001712", 0, GenTxns, 0, 0), "", GenTxns);
 
     //Push genesis block onto blockchain
     blocks_.push_back(Genesis);
@@ -121,9 +118,17 @@ bool Blockchain::IsValidHash(const Block& newBlock){
     return true;
 }
 
-std::string Blockchain::CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, std::vector<Transaction> data, size_t difficulty, size_t nonce){
-    std::string hashify = "";
-    //in naivecoin, cryptojs is used. We should get crypto++ up and running. 
-    //TODO: MAKE SURE THIS IS THE SAME HASH FUNCTION USED FOR GENESIS BLOCK
-    return hashify;
+std::string Blockchain::CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, const std::vector<Transaction>& data, size_t difficulty, size_t nonce){
+    std::string dataHash = "";
+    std::stringstream accumu;
+    for (Transaction i : data)
+        accumu << i.hash();
+    accumu >> dataHash;
+    dataHash = picosha2::hash256_hex_string(dataHash);
+    accumu.str(std::string());
+    accumu << index << prevHash << timestamp << dataHash << difficulty << nonce;
+    dataHash = "";
+    accumu >> dataHash;
+    dataHash = picosha2::hash256_hex_string(dataHash);
+    return dataHash;
 }

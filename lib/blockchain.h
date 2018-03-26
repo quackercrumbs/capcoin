@@ -3,8 +3,10 @@
 
 #include "transaction.h"
 #include "block.h"
+#include "picosha2.h"
 #include <string>
 #include <ctime>
+#include <bitset>
 
 
 class Blockchain {
@@ -18,10 +20,10 @@ public:
 	//Checks if the new block is valid by comparing it to the previous block
 	bool IsValidNewBlock(const Block& newBlock);
 
-    bool IsValidHash(const Block& block);
+	bool IsValidHash(const Block& block);
 
 	//Calculates the hash of the block's data.
-	std::string CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, std::vector<Transaction> data, size_t difficulty, size_t nonce);
+	std::string CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, const std::vector<Transaction>& data, size_t difficulty, size_t nonce);
 	
 	//Checks if the provided hash matches the current mining difficulty
 	bool HashMatchesDifficulty(std::string hash, size_t difficulty);
@@ -36,7 +38,7 @@ public:
 	Block GetLastBlock();
 
 private:
-    std::vector<Block> blocks_;
+	std::vector<Block> blocks_;
 	friend class Block;
 };
 
