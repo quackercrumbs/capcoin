@@ -2,6 +2,8 @@
 #include "../lib/blockchain.h"
 #include "../lib/network.h"
 
+
+#include <string.h>
 #include <iostream>
 
 using namespace std;

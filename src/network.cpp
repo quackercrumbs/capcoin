@@ -8,7 +8,12 @@ void Network::startClient(){
   int sock = 0, valread, activity, max_sd;
   struct sockaddr_in serv_addr;
 
-  string ip_addr =  "127.0.0.1";
+  //local ip
+  //string ip_addr =  "127.0.0.1";
+
+
+  // droplet ip
+  string ip_addr =  "167.99.12.102";
 
   char buffer[1025];
 
