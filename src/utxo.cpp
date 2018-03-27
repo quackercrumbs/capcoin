@@ -1,4 +1,4 @@
-#include "../lib/utxout.h"
+#include "utxout.h"
 
 UnspentTxOut::  UnspentTxOut(std::string txOutId, std::string address, size_t txOutIndex, double amount):
                 txOutId_{txOutId}, address_{address}, txOutIndex_{txOutIndex}, amount_{amount}{}

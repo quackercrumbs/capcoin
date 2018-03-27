@@ -1,4 +1,4 @@
-#include "../lib/transaction.h"
+#include "transaction.h"
 
 Transaction::Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs): txIns_{std::move(ins)}, txOuts_{std::move(outs)}{
   id_ = CalcHash();

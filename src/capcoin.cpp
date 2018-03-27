@@ -1,5 +1,5 @@
-#include "../lib/block.h"
-#include "../lib/blockchain.h"
+#include "block.h"
+#include "blockchain.h"
 
 #include <iostream>
 

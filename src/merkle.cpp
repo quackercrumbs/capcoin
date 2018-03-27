@@ -1,4 +1,4 @@
-#include "../lib/merkle.h"
+#include "merkle.h"
 
 size_t combine(size_t a, size_t b) {
    size_t times = 1;

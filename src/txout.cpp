@@ -1,4 +1,4 @@
-#include "../lib/txout.h"
+#include "txout.h"
 
 TxOut::TxOut   (std::string address, double amount):
                 address_{address}, amount_{amount}{}
