@@ -10,6 +10,8 @@ typedef void raw_type;       // Type used for raw data on this platform
 
 #include <iostream>
 
+using namespace std;
+
 void broadcast_all(int sd, int * client_socket, int max_clients, char * msg);
 void close_connection(int sd, int * client_socket, int i);
 

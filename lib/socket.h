@@ -13,16 +13,14 @@
 #include <netdb.h>
 #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macro
 
-#include <string>            // For string
+#include <string>            // For std::string
 #include <exception>         // For exception class
 #include <vector>
-
-using namespace std;
 
 /**
  *   Signals a problem with the execution of a socket call.
  */
-class SocketException : public exception {
+class SocketException : public std::exception {
 public:
   /**
    *   Construct a SocketException with a explanatory message.
@@ -30,7 +28,7 @@ public:
    *   @param incSysMsg true if system message (from strerror(errno))
    *   should be postfixed to the user provided message
    */
-  SocketException(const string &message, bool inclSysMsg = false) throw();
+  SocketException(const std::string &message, bool inclSysMsg = false) throw();
 
   /**
    *   Provided just to guarantee that no exceptions are thrown.
@@ -44,7 +42,7 @@ public:
   const char *what() const throw();
 
 private:
-  string userMessage;  // Exception message
+  std::string userMessage;  // Exception message
 };
 
 /**
@@ -62,7 +60,7 @@ public:
    *   @return local address of socket
    *   @exception SocketException thrown if fetch fails
    */
-  string getLocalAddress() throw(SocketException);
+  std::string getLocalAddress() throw(SocketException);
 
   /**
    *   Get the local port
@@ -87,7 +85,7 @@ public:
    *   @param localPort local port
    *   @exception SocketException thrown if setting local port or address fails
    */
-  void setLocalAddressAndPort(const string &localAddress,
+  void setLocalAddressAndPort(const std::string &localAddress,
     unsigned short localPort = 0) throw(SocketException);
 
   /**
@@ -96,8 +94,8 @@ public:
    *   @param service service to resolve (e.g., "http")
    *   @param protocol protocol of service to resolve.  Default is "tcp".
    */
-  static unsigned short resolveService(const string &service,
-                                       const string &protocol = "tcp");
+  static unsigned short resolveService(const std::string &service,
+                                       const std::string &protocol = "tcp");
 
   int getSockDesc();
 
@@ -125,7 +123,7 @@ public:
    *   @param foreignPort foreign port
    *   @exception SocketException thrown if unable to establish connection
    */
-  void connect(const string &foreignAddress, unsigned short foreignPort)
+  void connect(const std::string &foreignAddress, unsigned short foreignPort)
     throw(SocketException);
 
   /**
@@ -152,7 +150,7 @@ public:
    *   @return foreign address
    *   @exception SocketException thrown if unable to fetch foreign address
    */
-  string getForeignAddress() throw(SocketException);
+  std::string getForeignAddress() throw(SocketException);
 
   /**
    *   Get the foreign port.  Call connect() before calling recv()
@@ -187,7 +185,7 @@ public:
    *   @param foreignPort foreign port
    *   @exception SocketException thrown if unable to create TCP socket
    */
-  TCPSocket(const string &foreignAddress, unsigned short foreignPort)
+  TCPSocket(const std::string &foreignAddress, unsigned short foreignPort)
       throw(SocketException);
 
 };
@@ -198,7 +196,7 @@ public:
   TCPClientSocket(unsigned short localPort)
       throw(SocketException);
 
-  TCPClientSocket(const string &localAddress, unsigned short localPort)
+  TCPClientSocket(const std::string &localAddress, unsigned short localPort)
       throw(SocketException);
 };
 
@@ -230,7 +228,7 @@ public:
    *                   connection requests (default 5)
    *   @exception SocketException thrown if unable to create TCP server socket
    */
-  TCPServerSocket(const string &localAddress, unsigned short localPort,
+  TCPServerSocket(const std::string &localAddress, unsigned short localPort,
       int queueLen = 5) throw(SocketException);
 
   /**
@@ -248,9 +246,9 @@ public:
   int * getClients();
   unsigned int maxClients();
   void closeConnection(int);
-  void broadcastAll(int, const string&);
+  void broadcastAll(int, const std::string&);
 
-  vector<TCPSocket*> client_sockets;
+  std::vector<TCPSocket*> client_sockets;
 
 private:
   void setListen(int queueLen) throw(SocketException);
