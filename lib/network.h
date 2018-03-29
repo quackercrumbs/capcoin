@@ -7,6 +7,9 @@ class Network{
 public:
   void startServer();
   void startClient();
+
 };
+
+
 
 #endif

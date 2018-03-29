@@ -17,7 +17,7 @@
 #include <exception>         // For exception class
 #include <vector>
 
-// using namespace std;
+using namespace std;
 
 /**
  *   Signals a problem with the execution of a socket call.
