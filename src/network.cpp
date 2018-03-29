@@ -2,6 +2,8 @@
 #include "../lib/network.h"
 #include <iostream>
 
+using namespace std;
+
 void Network::startClient(){
   TCPClientSocket client(1025);
 
