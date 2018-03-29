@@ -3,6 +3,9 @@
 #include <iostream>
 
 void Network::startClient(){
+
+  cout << "client test" << endl;
+
   TCPClientSocket client(1025);
 
   int sock = 0, valread, activity, max_sd;
