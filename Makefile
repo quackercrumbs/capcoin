@@ -4,8 +4,9 @@ Transaction_OBJ = src/transaction.o src/txin.o src/txout.o
 Block_OBJ = src/block.o src/blockchain.o
 Merkle_OBJ = src/merkle.o
 Network_OBJ = src/network.o src/socket.o
+UserInterface_OBJ = src/userInterface.o
 
-Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Network_OBJ)
+Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Network_OBJ) $(UserInterface_OBJ)
 
 #Where to store all drivers
 EXEC_DIR = ./bin/
