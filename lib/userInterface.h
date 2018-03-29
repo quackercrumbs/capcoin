@@ -4,7 +4,12 @@
 
 class UserInterface{
 public:
+
   void test();
+
+  void welcome();
+
+  void displayMenu();
 
 
 };

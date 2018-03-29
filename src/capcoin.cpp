@@ -12,12 +12,12 @@ int main(int argc, char *argv[]) {
 
     Blockchain bc;
     Block genBlock = bc.GetLastBlock();
-    cout << "HashMatchesDifficulty: " << bc.HashMatchesDifficulty("0012321321312321",2) << endl;
+    // cout << "HashMatchesDifficulty: " << bc.HashMatchesDifficulty("0012321321312321",2) << endl;
 
 
     UserInterface ui;
+    ui.welcome();
 
-    ui.test();
 
 
     //create network, connect as server or client
@@ -29,6 +29,7 @@ int main(int argc, char *argv[]) {
       network.startClient();
     }
 
+    ui.displayMenu();
 
     return 0;
 }

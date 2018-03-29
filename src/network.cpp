@@ -91,7 +91,7 @@ void Network::startServer() {
   int sd, max_sd, valread, activity, i;
 
   char buffer[1025];  //data buffer of 1K
-  char *message = "ECHO Daemon v1.0 \r\n";
+  char *message = "Established Network Connection \r\n";
 
   struct sockaddr_in address;
 
