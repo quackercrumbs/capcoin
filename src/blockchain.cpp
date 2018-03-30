@@ -27,7 +27,7 @@ Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
     size_t difficulty = GetDifficulty();
     size_t nonce = 0;
     std::string hash_;
-    std::string prevHash = blocks_[blocks_.size()-1].GetPreviousHash();
+    std::string prevHash = blocks_[blocks_.size()-1].GetHash();
     while (true) {
         hash_ = CalculateHash(index, prevHash, timestamp, data, difficulty, nonce);
         if (HashMatchesDifficulty(hash_, difficulty)) {
@@ -121,14 +121,24 @@ bool Blockchain::IsValidHash(const Block& newBlock){
 std::string Blockchain::CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, const std::vector<Transaction>& data, size_t difficulty, size_t nonce){
     std::string dataHash = "";
     std::stringstream accumu;
+    //Feed transaction hash into sstream
     for (Transaction i : data)
         accumu << i.hash();
+    
+    //store hash for transactions temporarily in dataHash
     accumu >> dataHash;
     dataHash = picosha2::hash256_hex_string(dataHash);
+    
+    //Clear string stream
+    accumu.clear();
     accumu.str(std::string());
+    
+    //Feed block header and transaction hash to sstream
     accumu << index << prevHash << timestamp << dataHash << difficulty << nonce;
     dataHash = "";
     accumu >> dataHash;
+
+    //Calculate hash of block
     dataHash = picosha2::hash256_hex_string(dataHash);
     return dataHash;
 }
