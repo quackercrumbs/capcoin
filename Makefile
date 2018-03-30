@@ -6,14 +6,14 @@ Merkle_OBJ = src/merkle.o
 Network_OBJ = src/network.o src/socket.o
 
 #Create objects pack together test utils and src objects
-TestPack_Transaction = test/test_transaction_utils.o\
+TestPack_Transaction = test/utils/test_transaction_utils.o\
 					   $(Transaction_OBJ)
 
-TestPack_Block = test/test_block_utils.o\
+TestPack_Block = test/utils/test_block_utils.o\
 				 $(Block_OBJ)\
 				 $(TestPack_Transaction)
 
-TestPack_Merkle = test/test_merkle_utils.o\
+TestPack_Merkle = test/utils/test_merkle_utils.o\
 				  $(Merkle_OBJ)\
 				  $(TestPack_Block)
 
@@ -35,7 +35,7 @@ EXEC_DIR = ./bin/
 
 #Tells compiler where to find headers
 #Useful for importing header files (instead of listing full relative path)
-INCLUDES = -I ./lib/
+INCLUDES = -I ./lib/ -I ./test/utils
 
 #Compiles all cpp files listed in the given OBJ variable
 .cpp.o:
