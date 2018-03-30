@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
-#include "../lib/transaction.h"
-#include "../lib/txin.h"
-#include "../lib/txout.h"
+#include "transaction.h"
+#include "txin.h"
+#include "txout.h"
 
 #include "test_transaction_utils.h"
 

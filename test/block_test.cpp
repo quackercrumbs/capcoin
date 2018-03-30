@@ -4,11 +4,11 @@
 */
 #include <iostream>
 #include <string>
-#include "../lib/block.h"
-#include "../lib/transaction.h"
-#include "../lib/txin.h"
-#include "../lib/txout.h"
-#include "../lib/blockchain.h"
+#include "block.h"
+#include "transaction.h"
+#include "txin.h"
+#include "txout.h"
+#include "blockchain.h"
 #include <time.h>
 #include <vector>
 
