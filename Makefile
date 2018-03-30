@@ -65,7 +65,7 @@ $(TEST_MERKLE): $(Test_Merkle_OBJ)
 #General Rules to compile drivers
 all: capcoin
 
-tests: test_transaction test_block test_merkle
+tests: test_transaction test_block
 
 #Specific Rules to compile specific drivers
 capcoin:
