@@ -39,7 +39,7 @@ clean:
 	(rm -f bin/*.o;)
 	(rm -f src/*.o;)
 	(rm -f test/*.o;)
-	(rm -f gtest.a gtest_main.a;)
+	(rm -f $(TESTS) gtest.a gtest_main.a;)
 
 
 
@@ -80,7 +80,7 @@ gtest_main.a: gtest-all.o gtest_main.o
 
 ########################################################
 #
-#				Custom Test Files/Objs
+#				Custom Util Test Files
 #
 ########################################################
 
@@ -129,12 +129,9 @@ test_transaction:
 test_block:
 	make $(TEST_BLOCK)
 
-test_merkle:
-	make $(TEST_MERKLE)
-
 ####################################################
 #
-#	Sample Unittests
+#	Unittests
 #
 ###################################################
 
@@ -142,18 +139,18 @@ test_merkle:
 USER_DIR = ./test/
 
 #All test produced for this Makefile
-TESTS = samplex_unittest
+TESTS = sample_unittest
 
 #GTEST build targets
 gtests: $(TESTS)
 
 #Building personal tests. Test should link with either gtest.a or gtest_main.a
-samplex.o: $(USER_DIR)/samplex.cc $(USER_DIR)/samplex.h $(GTEST_HEADERS)
-	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -c $(USER_DIR)/samplex.cc
+sample.o: $(USER_DIR)/sample.cc $(USER_DIR)/sample.h $(GTEST_HEADERS)
+	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -c $(USER_DIR)/sample.cc
 
-samplex_unittest.o: $(USER_DIR)/samplex_unittest.cc \
-					$(USER_DIR)/samplex.h $(GTEST_HEADERS)
-	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -c $(USER_DIR)/samplex_unittest.cc
+sample_unittest.o: $(USER_DIR)/sample_unittest.cc \
+					$(USER_DIR)/sample.h $(GTEST_HEADERS)
+	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -c $(USER_DIR)/sample_unittest.cc
 
-samplex_unittest: samplex.o samplex_unittest.o gtest_main.a
+sample_unittest: sample.o sample_unittest.o gtest_main.a
 	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -lpthread $^ -o $@
