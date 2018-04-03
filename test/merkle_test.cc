@@ -1,18 +1,14 @@
-#include "merkle_test.h"
+#include "gtest/gtest.h"
 
-#include "transaction.h"
-#include "merkle.h"
+namespace {
 
-#include "test_merkle_utils.h"
+TEST(MerkleVerificationTest,Valid) {
+    
+}
 
-#include <iostream>
-
-using namespace std;
-
-int main() {
-
-    cout << "****** Merkle Class Test *******" << endl;
-    //MerkleNode* root = CreateFakeMerkleTree();
-    //cout << root->validate() << endl;
+TEST(MerkleVerificationTest,Invalid) {
+    
+}
 
 }
+
