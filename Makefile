@@ -39,7 +39,8 @@ clean:
 	(rm -f bin/*.o;)
 	(rm -f src/*.o;)
 	(rm -f test/*.o;)
-	(rm -f $(TESTS) gtest.a gtest_main.a;)
+	(rm -f test/gtest.a test/gtest_main.a;)
+	(rm -f bin/$(TESTS);)
 
 
 
@@ -50,7 +51,7 @@ clean:
 ####################################################
 
 #Path to root of google test
-GTEST_DIR = ./test/googletest/googletest/
+GTEST_DIR = ./test/googletest/googletest
 
 #Flags passed to preprocessor
 GTEST_CPPFLAGS += -isystem $(GTEST_DIR)/include
@@ -65,17 +66,21 @@ GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
 
 gtest-all.o: $(GTEST_SRCS_)
 	$(CXX) $(GTEST_CPPFLAGS) -I$(GTEST_DIR) $(GTEST_CXXFLAGS) -c\
-		$(GTEST_DIR)/src/gtest-all.cc
+		$(GTEST_DIR)/src/gtest-all.cc\
+		-o $(USER_DIR)/gtest-all.o
 
 gtest_main.o: $(GTEST_SRCS_)
 	$(CXX) $(GTEST_CPPFLAGS) -I$(GTEST_DIR) $(GTEST_CXXFLAGS) -c\
-		$(GTEST_DIR)/src/gtest_main.cc
+		$(GTEST_DIR)/src/gtest_main.cc\
+		-o $(USER_DIR)/gtest_main.o
 
 gtest.a: gtest-all.o
-	$(AR) $(ARFLAGS) $@ $^
+	$(AR) $(ARFLAGS) $(USER_DIR)/$@ $(USER_DIR)/$^
 
+GTEST_MAIN_OBJS = ./test/gtest-all.o\
+				  ./test/gtest_main.o
 gtest_main.a: gtest-all.o gtest_main.o
-	$(AR) $(ARFLAGS) $@ $^
+	$(AR) $(ARFLAGS) $(USER_DIR)/$@ $(GTEST_MAIN_OBJS)
 
 
 ########################################################
@@ -120,7 +125,7 @@ $(TEST_MERKLE): $(Test_Merkle_OBJ)
 	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Test_Merkle_OBJ)
 
 #General Test Target
-tests: test_transaction test_block 
+temp_tests: test_transaction test_block 
 
 #Specific Test Targets
 test_transaction:
@@ -136,21 +141,27 @@ test_block:
 ###################################################
 
 #Where all test files are located
-USER_DIR = ./test/
+USER_DIR = ./test
+
+#Google Test Main driver
+GTEST_MAIN = $(USER_DIR)/gtest_main.a
 
 #All test produced for this Makefile
-TESTS = sample_unittest
+TESTS = sample_test.o
 
 #GTEST build targets
-gtests: $(TESTS)
+tests: $(TESTS)
 
 #Building personal tests. Test should link with either gtest.a or gtest_main.a
 sample.o: $(USER_DIR)/sample.cc $(USER_DIR)/sample.h $(GTEST_HEADERS)
-	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -c $(USER_DIR)/sample.cc
+	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -c $(USER_DIR)/sample.cc\
+		-o $(USER_DIR)/sample.o
 
 sample_unittest.o: $(USER_DIR)/sample_unittest.cc \
 					$(USER_DIR)/sample.h $(GTEST_HEADERS)
-	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -c $(USER_DIR)/sample_unittest.cc
+	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -c $(USER_DIR)/sample_unittest.cc\
+		-o $(USER_DIR)/sample_unittest.o
 
-sample_unittest: sample.o sample_unittest.o gtest_main.a
-	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -lpthread $^ -o $@
+SAMPLE_TEST_OBJ= $(USER_DIR)/sample.o $(USER_DIR)/sample_unittest.o $(GTEST_MAIN)
+sample_test.o: sample.o sample_unittest.o gtest_main.a 
+	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -lpthread $(SAMPLE_TEST_OBJ) -o ./bin/$@
