@@ -1,6 +1,7 @@
 #include "../lib/socket.h"
 #include "../lib/network.h"
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -89,7 +90,10 @@ void Network::startServer() {
   int sd, max_sd, valread, activity, i;
 
   char buffer[1025];  //data buffer of 1K
-  char *message = "Established Network Connection \r\n";
+
+  string strMessage = "Established Network Connection \r\n";
+
+  const char *message = strMessage.c_str();
 
   struct sockaddr_in address;
 
