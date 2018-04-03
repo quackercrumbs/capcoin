@@ -20,6 +20,7 @@ public:
     bool operator == (const Transaction& beta) const;
 private:
     std::string CalcHash() const;
+    bool ValidTxIns(UnspentTxOutPool& source) const;
     bool OneToOne(UnspentTxOutPool& source) const;
     std::string id_;
     std::vector<TxIn> txIns_;
