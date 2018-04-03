@@ -1,10 +1,6 @@
 #include "../lib/userInterface.h"
 #include <iostream>
 
-void UserInterface::test(){
-  std::cout << "ui works" << std::endl;
-}
-
 void UserInterface::welcome(){
   std::cout << "***************************************************************************" << std::endl;
   std::cout << "***************************************************************************" << std::endl;
@@ -59,7 +55,7 @@ void UserInterface::run(){
     else{
       std::cout << "input not valid" << std::endl;
     }
-    
+
 
   }
 }
