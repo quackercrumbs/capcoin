@@ -5,6 +5,7 @@ This folder will contain test drivers for all classes, methods, etc. Currently a
 ### To compile:
 From the root directory
 ```
+make all #compiles all src files, required for tests to build
 make tests #compiles all tests
 ```
 
@@ -40,3 +41,12 @@ Review googletest documentation to get an introduction on how to create unittest
 View the sample files in the test directory to get an idea of how to create tests. That sample was copied from the googletest sample.
 
 To view more google test samples go to the googletest/googletest/samples directory.
+
+
+## Problems
+
+The following test have not been implemented:
+
+ - transaction_unittest
+ - block_unittest
+ - merkle_unittest
