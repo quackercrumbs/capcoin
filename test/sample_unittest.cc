@@ -3,10 +3,20 @@
 
 namespace {
 
-TEST(testerTest, AddOne) {
-    EXPECT_EQ(1, tester(0));
-    EXPECT_EQ(2, tester(1));
-    EXPECT_GT(4, tester(2));
+//First Argument is the test label
+//Second Argument is the type of case you are testing out
+
+    
+//Test factorial of positive numbers    
+TEST(FactorialTest, Positive ) {
+    EXPECT_EQ(1, Factorial(1));
+    EXPECT_EQ(2, Factorial(2));
+    EXPECT_EQ(6, Factorial(3));
 } 
+
+//Test factorial of 0
+TEST(FactorialTest, Zero) {
+    EXPECT_EQ(1, Factorial(0));
+}
 
 }
