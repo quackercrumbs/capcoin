@@ -24,15 +24,22 @@ bool Transaction:: operator == (const Transaction& beta) const{
 }
 
 bool Transaction:: Validate(UnspentTxOutPool& source) const{
-  if(id_ != CalcHash())
+  if(id_ != CalcHash() || !OneToOne(source) || !ValidTxIns(source))
     return false;
-  if(!OneToOne(source))
-    return false;
-  //for(TxIn x: txIns_)
-  //  if(x
   return true;
 }
 
+bool Transaction:: ValidTxIns(UnspentTxOutPool& source) const{
+  for (TxIn x: txIns_){
+    UnspentTxOut* temp = source.FindFromIn(x);
+    if (temp == nullptr) return false;
+    //validate temp.GetAddress()
+    //for this we need secp256k1
+  }
+        
+}
+        
+        
 bool Transaction:: OneToOne(UnspentTxOutPool& source) const{
   double inAmt = 0, outAmt = 0;
   for (TxIn x: txIns_){
