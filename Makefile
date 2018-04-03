@@ -101,39 +101,6 @@ TestPack_Merkle = test/utils/test_merkle_utils.o\
 				  $(Merkle_OBJ)\
 				  $(TestPack_Block)
 
-#Objects for all test drivers
-Test_Transaction_OBJ = test/transaction_test.o\
-					   $(TestPack_Transaction)
-
-Test_Block_OBJ = test/block_test.o\
-				 $(TestPack_Block)
-
-Test_Merkle_OBJ = test/merkle_test.o\
-				  $(TestPack_Merkle)\
-
-#Test Drivers
-TEST_TRANSACTION=test_transaction.o
-$(TEST_TRANSACTION): $(Test_Transaction_OBJ)
-	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Test_Transaction_OBJ)
-
-TEST_BLOCK=test_block.o
-$(TEST_BLOCK): $(Test_Block_OBJ)
-	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Test_Block_OBJ)
-
-TEST_MERKLE=test_merkle.o
-$(TEST_MERKLE): $(Test_Merkle_OBJ)
-	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Test_Merkle_OBJ)
-
-#General Test Target
-temp_tests: test_transaction test_block 
-
-#Specific Test Targets
-test_transaction:
-	make $(TEST_TRANSACTION)
-
-test_block:
-	make $(TEST_BLOCK)
-
 ####################################################
 #
 #	Unittests
