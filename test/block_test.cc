@@ -2,6 +2,8 @@
 *	Still work in progress
 *	Test all Block class functionality
 */
+#include "block_test.h"
+
 #include <iostream>
 #include <string>
 #include "block.h"

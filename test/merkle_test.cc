@@ -1,3 +1,5 @@
+#include "merkle_test.h"
+
 #include "transaction.h"
 #include "merkle.h"
 
