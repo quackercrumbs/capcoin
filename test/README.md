@@ -30,3 +30,13 @@ If there are more functions you wish to be used for testing put them into the ut
 
 Once you have your unit test file completed, go to the make file and add a target rule to build the unit test. When compiling link your unit test file to gtest_main.a. This file is where your unittest will be executed. See the makefile for an example of how you should build your unittest.
 
+Review googletest documentation to get an introduction on how to create unittest.
+
+[Google Test Introduction](https://github.com/google/googletest/blob/master/googletest/docs/Primer.md)
+
+
+
+## Samples
+View the sample files in the test directory to get an idea of how to create tests. That sample was copied from the googletest sample.
+
+To view more google test samples go to the googletest/googletest/samples directory.
