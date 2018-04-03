@@ -9,6 +9,8 @@ public:
 
   void welcome();
 
+  void run();
+
   void displayMenu();
 
 

@@ -29,7 +29,9 @@ int main(int argc, char *argv[]) {
       network.startClient();
     }
 
-    ui.displayMenu();
+
+    ui.run();
+  
 
     return 0;
 }
