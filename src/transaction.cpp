@@ -35,8 +35,9 @@ bool Transaction:: ValidTxIns(UnspentTxOutPool& source) const{
     if (temp == nullptr) return false;
     //validate temp.GetAddress()
     //for this we need secp256k1
+    //if (!validated) return false;
   }
-        
+  return true;
 }
         
         
