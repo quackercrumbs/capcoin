@@ -77,10 +77,10 @@ gtest_main.o: $(GTEST_SRCS_)
 gtest.a: gtest-all.o
 	$(AR) $(ARFLAGS) $(USER_DIR)/$@ $(USER_DIR)/$^
 
-GTEST_MAIN_OBJS = ./test/gtest-all.o\
+GTEST_MAIN_OBJ = ./test/gtest-all.o\
 				  ./test/gtest_main.o
 gtest_main.a: gtest-all.o gtest_main.o
-	$(AR) $(ARFLAGS) $(USER_DIR)/$@ $(GTEST_MAIN_OBJS)
+	$(AR) $(ARFLAGS) $(USER_DIR)/$@ $(GTEST_MAIN_OBJ)
 
 
 ########################################################
@@ -114,21 +114,66 @@ USER_DIR = ./test
 GTEST_MAIN = $(USER_DIR)/gtest_main.a
 
 #All test produced for this Makefile
-TESTS = sample_test.o
+TESTS = sample_test.o transaction_test.o block_test.o merkle_test.o
 
 #GTEST build targets
 tests: $(TESTS)
 
-#Building personal tests. Test should link with either gtest.a or gtest_main.a
+#
+#	Sample Unit Test
+#
+
+#Sample is a utilty function of sample unit test
 sample.o: $(USER_DIR)/sample.cc $(USER_DIR)/sample.h $(GTEST_HEADERS)
 	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -c $(USER_DIR)/sample.cc\
 		-o $(USER_DIR)/sample.o
 
+#This compiles sample_unittest
 sample_unittest.o: $(USER_DIR)/sample_unittest.cc \
 					$(USER_DIR)/sample.h $(GTEST_HEADERS)
 	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -c $(USER_DIR)/sample_unittest.cc\
 		-o $(USER_DIR)/sample_unittest.o
 
+#This compiles the executable to run sample unittest
+#It links to the google test main, where the main function exists
 SAMPLE_TEST_OBJ= $(USER_DIR)/sample.o $(USER_DIR)/sample_unittest.o $(GTEST_MAIN)
 sample_test.o: sample.o sample_unittest.o gtest_main.a 
 	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -lpthread $(SAMPLE_TEST_OBJ) -o ./bin/$@
+
+
+#
+#	Transaction Unit Test
+#
+transaction_unittest.o: $(USER_DIR)/transaction_unittest.cc \
+					$(GTEST_HEADERS)
+	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -c $(USER_DIR)/transaction_unittest.cc\
+		-o $(USER_DIR)/transaction_unittest.o
+TRANSACTION_TEST_OBJ = $(GTEST_MAIN) $(TestPack_Transaction)\
+					   $(USER_DIR)/transaction_unittest.o
+transaction_test.o: transaction_unittest.o gtest_main.a 
+	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -lpthread $(TRANSACTION_TEST_OBJ) -o ./bin/$@
+
+#
+#	Block Unit Test
+#
+block_unittest.o: $(USER_DIR)/block_unittest.cc \
+					$(GTEST_HEADERS)
+	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -c $(USER_DIR)/block_unittest.cc\
+		-o $(USER_DIR)/block_unittest.o
+BLOCK_TEST_OBJ = $(GTEST_MAIN) $(TestPack_Block)\
+					   $(USER_DIR)/block_unittest.o
+block_test.o: block_unittest.o gtest_main.a 
+	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -lpthread $(BLOCK_TEST_OBJ) -o ./bin/$@
+
+#
+#	Merkle Unit Test
+#
+merkle_unittest.o: $(USER_DIR)/merkle_unittest.cc \
+					$(GTEST_HEADERS)
+	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -c $(USER_DIR)/merkle_unittest.cc\
+		-o $(USER_DIR)/merkle_unittest.o
+MERKLE_TEST_OBJ = $(GTEST_MAIN) $(TestPack_Block)\
+					   $(USER_DIR)/merkle_unittest.o
+merkle_test.o: merkle_unittest.o gtest_main.a 
+	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -lpthread $(MERKLE_TEST_OBJ) -o ./bin/$@
+
