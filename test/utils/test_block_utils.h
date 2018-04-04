@@ -1,10 +1,10 @@
 #ifndef TEST_BLOCK_UTILS_H
 #define TEST_BLOCK_UTILS_H
 
-#include "../lib/transaction.h"
-#include "../lib/txin.h"
-#include "../lib/txout.h"
-#include "../lib/block.h"
+#include "transaction.h"
+#include "txin.h"
+#include "txout.h"
+#include "block.h"
 
 #include <time.h>
 #include <string>

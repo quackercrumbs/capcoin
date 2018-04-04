@@ -1,3 +1,5 @@
 /bin/*.o
 /src/*.o
 /test/*.o
+/test/*.a
+/test/utils/*.o
