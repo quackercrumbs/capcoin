@@ -1,9 +1,9 @@
 #ifndef TEST_TRANSACTION_UTILS_H
 #define TEST_TRANSACTION_UTILS_H
 
-#include "../lib/transaction.h"
-#include "../lib/txin.h"
-#include "../lib/txout.h"
+#include "transaction.h"
+#include "txin.h"
+#include "txout.h"
 
 #include <string>
 #include <vector>
