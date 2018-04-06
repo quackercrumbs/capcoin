@@ -1,7 +1,7 @@
 #include "blockchain.h"
 
 Blockchain::Blockchain(){
-    //initialize the chain with the genesis block. 
+    //initialize the chain with the genesis block.
     //Change addresses and hashes in future
     TxIn GenIn("", "", 0);
     TxOut GenOut("32ba5334aafcd8e7266e47076996b55", 50);
@@ -10,7 +10,7 @@ Blockchain::Blockchain(){
     Transaction GenTxn(TxIns, TxOuts);
     std::vector<Transaction> GenTxns{GenTxn};
 
-    Block Genesis(0, 1521001712, 0, 0, CalculateHash(0,"1521001712", 0, GenTxns, 0, 0), "", GenTxns);
+    Block Genesis(0, 1521001712, 0, 0, "", GenTxns);
 
     //Push genesis block onto blockchain
     blocks_.push_back(Genesis);
@@ -30,18 +30,16 @@ Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
     std::string prevHash = blocks_[blocks_.size()-1].GetHash();
     while (true) {
         hash_ = CalculateHash(index, prevHash, timestamp, data, difficulty, nonce);
-        if (HashMatchesDifficulty(hash_, difficulty)) {
-            break;
-        }
+        if (HashMatchesDifficulty(hash_, difficulty)){break;}
         nonce++;
     }
-    Block newBlock(index, timestamp, difficulty, nonce, hash_, prevHash, data);
+    Block newBlock(index, timestamp, difficulty, nonce, prevHash, data);
 
     if(IsValidNewBlock(newBlock)) {
         blocks_.push_back(newBlock);
     }
     //TODO : Broadcast new block
-    
+
     return newBlock;
 
 }
@@ -51,7 +49,7 @@ bool Blockchain::HashMatchesDifficulty(std::string hash, size_t difficulty){
     //this can be placed in the following for loop to reduce time complexity
     if (hash.find_first_not_of("abcdef0123456789") != std::string::npos)
         return false;
-    
+
     //create empty string
     std::string binString = "";
     int charToBin;
@@ -72,7 +70,7 @@ bool Blockchain::HashMatchesDifficulty(std::string hash, size_t difficulty){
     //if the character has index < x, return false
     return firstNot0 < difficulty? false : true;
 }
-    
+
 size_t Blockchain::GetDifficulty(){
     //to avoid error, if less than 2 blocks, return a difficulty of 1
     if (blocks_.size() < 2)
@@ -87,7 +85,7 @@ size_t Blockchain::GetDifficulty(){
     else
          return blocks_[blocks_.size()-1].GetDifficulty();
 }
-    
+
 bool Blockchain::IsValidNewBlock(const Block& newBlock){
     //check if index is valid
     if (newBlock.GetIndex() != blocks_[blocks_.size()-1].GetIndex() + 1)
@@ -116,29 +114,4 @@ bool Blockchain::IsValidHash(const Block& newBlock){
         return false;
     //otherwise, return true
     return true;
-}
-
-std::string Blockchain::CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, const std::vector<Transaction>& data, size_t difficulty, size_t nonce){
-    std::string dataHash = "";
-    std::stringstream accumu;
-    //Feed transaction hash into sstream
-    for (Transaction i : data)
-        accumu << i.hash();
-    
-    //store hash for transactions temporarily in dataHash
-    accumu >> dataHash;
-    dataHash = picosha2::hash256_hex_string(dataHash);
-    
-    //Clear string stream
-    accumu.clear();
-    accumu.str(std::string());
-    
-    //Feed block header and transaction hash to sstream
-    accumu << index << prevHash << timestamp << dataHash << difficulty << nonce;
-    dataHash = "";
-    accumu >> dataHash;
-
-    //Calculate hash of block
-    dataHash = picosha2::hash256_hex_string(dataHash);
-    return dataHash;
 }

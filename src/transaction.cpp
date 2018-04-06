@@ -16,3 +16,11 @@ Transaction::Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs):
 std::string Transaction::hash(){
     return id_;
 }
+
+std::vector<TxIn> Transaction::GetTxIns(){
+    return txIns_;
+}
+
+std::vector<TxOut> Transaction::GetTxOuts(){
+    return txOuts_;
+}
