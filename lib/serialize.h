@@ -3,6 +3,7 @@
 
 #include "transaction.h"
 #include "block.h"
+#include "blockchain.h"
 
 class Serialize{
 public:

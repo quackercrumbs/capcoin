@@ -28,6 +28,7 @@ Serialize::Serialize(Block& toBeSent){
     Serialize txSerial(tx);
     accumulator << "," << txSerial.toString();
   }
+  accumulator << "}";
   accumulator >> output;
 }
 
