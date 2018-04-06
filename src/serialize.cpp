@@ -1,36 +1,16 @@
-/*Serialize::Serialize(Transaction& toBeSent){
-  Univalue holdsJSON(Univalue::VOBJ);
-  holdsJSON.pushKV("ID", toBeSent.hash());
-  holdsJSON.pushKV("INS", toBeSent.GetTxIns());
-  holdsJSON.pushKV("OUTS", toBeSent.GetTxOuts());
-}
-
-Serialize::Serialize(Block& toBeSent){
-  Univalue holdsJSON(Univalue::VOBJ);
-  holdsJSON.pushKV("INDEX", toBeSent.GetIndex());
-  holdsJSON.pushKV("TIME", toBeSent.GetTimestamp());
-  holdsJSON.pushKV("DIFFICULTY", toBeSent.GetDifficulty());
-  holdsJSON.pushKV("NONCE", toBeSent.GetNonce());
-  holdsJSON.pushKV("HASH", toBeSent.GetHash());
-  holdsJSON.pushKV("PREVIOUSBLOCKHASH", toBeSent.GetPreviousHash());
-  holdsJSON.pushKV("DATA", toBeSent.GetData());
-}
-
-std::string toString(){
-  return output;
-}*/
+#include "serialize.h"
 
 Serialize::Serialize(Transaction& toBeSent){
   std::stringstream accumulator;
   accumulator << "\"TRANSACTION\":{\"ID\":\"" << toBeSent.hash() << "\"";
   for(TxIn in: toBeSent.GetTxIns()){
-    accumulator << ",\"IN\":{\"ID\":\"" << in.GetID() << "\","
+    accumulator << ",\"IN\":{\"ID\":\"" << in.GetId() << "\","
       << "\"SIG\":\"" << in.GetSignature() << "\","
       << "\"INDEX\":\"" << in.GetIndex() << "\"}";
   }
-  for(TxIn out: toBeSent.GetTxOuts()){
+  for(TxOut out: toBeSent.GetTxOuts()){
     accumulator << ",\"OUT\":{\"AMOUNT\":\"" << out.GetAmount() << "\","
-      << "\"ADDRESS\":\"" << out.GetAddress() << "\"},";
+      << "\"ADDRESS\":\"" << out.GetAddress() << "\"}";
   }
   accumulator << "}";
   accumulator >> output;
@@ -38,7 +18,7 @@ Serialize::Serialize(Transaction& toBeSent){
 
 Serialize::Serialize(Block& toBeSent){
   std::stringstream accumulator;
-  accumulator << "\"BLOCK\":{\"INDEX\":\"" << toBeSent.GetIndex() << "\",";
+  accumulator << "\"BLOCK\":{\"INDEX\":\"" << toBeSent.GetIndex() << "\","
     << "\"TIMESTAMP\":\"" << toBeSent.GetTimestamp() << "\","
     << "\"DIFFICULTY\":\"" << toBeSent.GetDifficulty() << "\","
     << "\"NONCE\":\"" << toBeSent.GetNonce() << "\","
@@ -51,6 +31,6 @@ Serialize::Serialize(Block& toBeSent){
   accumulator >> output;
 }
 
-std::string toString(){
+std::string Serialize::toString(){
   return output;
 }

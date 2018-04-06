@@ -8,3 +8,11 @@ std::string TxOut:: GetVal(){
     ss << address_ << amount_;
     return ss.str();
 }
+
+std::string TxOut:: GetAddress(){
+    return address_;
+}
+
+double TxOut:: GetAmount(){
+    return amount_;
+}

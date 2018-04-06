@@ -3,7 +3,6 @@
 
 #include "transaction.h"
 #include "block.h"
-#include "univalue.h"
 
 class Serialize{
 public:

@@ -16,9 +16,7 @@ public:
     std::string hash();
 private:
     std::string id_;
-    //TxIn* txIns_;
     const std::vector<TxIn> txIns_;
-    //TxOut* txOuts_;
     const std::vector<TxOut> txOuts_;
 };
 
