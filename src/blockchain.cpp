@@ -27,7 +27,7 @@ Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
     size_t difficulty = GetDifficulty();
     size_t nonce = 0;
     std::string hash_;
-    std::string prevHash = blocks_[blocks_.size()-1].GetPreviousHash();
+    std::string prevHash = blocks_[blocks_.size()-1].GetHash();
     while (true) {
         hash_ = CalculateHash(index, prevHash, timestamp, data, difficulty, nonce);
         if (HashMatchesDifficulty(hash_, difficulty)){break;}
