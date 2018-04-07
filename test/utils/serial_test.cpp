@@ -7,6 +7,16 @@
 #include <iostream>
 
 int main(){
+  Serialize txToJSON;
+  UnspentTxOut unspent("z", "y", 2, 50);
+
+  txToJSON(unspent);
+  std::cout << txToJSON.toString() << std::endl;
+  UnspentTxOut deuxspent = JSONtoUTxO(txToJSON.toString());
+  txToJSON(deuxspent);
+  std::cout << txToJSON.toString() << std::endl;
+
+
   TxIn in1("a", "asdasdasd", 1);
   TxOut out1("b", 50);
 
@@ -20,7 +30,6 @@ int main(){
   std::vector<TxOut> outs{out1, out2, out3};
   Transaction first(ins, outs);
 
-  Serialize txToJSON;
   txToJSON(first);
   std::cout << txToJSON.toString() << std::endl;
 

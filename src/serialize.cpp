@@ -47,6 +47,15 @@ void Serialize::operator()(TxOut& toBeSent){
   accumulator >> output;
 }
 
+void Serialize::operator()(UnspentTxOut& toBeSent){
+  std::stringstream accumulator;
+  accumulator << "\"UNSPENTTXOUT\":{\"ID\":\"" << toBeSent.GetId() << "\","
+    << "\"ADDRESS\":\"" << toBeSent.GetAddress() << "\","
+    << "\"INDEX\":\"" << toBeSent.GetIndex() << "\","
+    << "\"AMOUNT\":\"" << toBeSent.GetAmount() << "\"}";
+  accumulator >> output;
+}
+
 std::string Serialize::toString(){
   return output;
 }
@@ -112,7 +121,6 @@ Transaction JSONtoTx(std::string txnString){
     id = txnString.substr(start, end-start);
     start = end + 2;
     end = start + 2;
-    //while (txnString[end] != '\"'){end++;}
     prefix = txnString.substr(start+1, end-start);
     while(prefix == "IN"){
         while(txnString[end] != '}'){end++;}
@@ -139,7 +147,6 @@ Transaction JSONtoTx(std::string txnString){
     return output;
 }
 
-//"IN":{"ID":"a","SIG":"asdasdasd","INDEX":"1"}
 TxIn JSONtoTxIn(std::string instring){
     std::string id;
     std::string sig;
@@ -156,7 +163,6 @@ TxIn JSONtoTxIn(std::string instring){
     return output;
 }
 
-//"OUT":{"AMOUNT":"50","ADDRESS":"b"}
 TxOut JSONtoTxOut(std::string outstring){
     std::string address;
     double amount;
@@ -168,5 +174,25 @@ TxOut JSONtoTxOut(std::string outstring){
     while (outstring[end] != '\"'){end++;}
     address = outstring.substr(start, end-start);
     TxOut output(address, amount);
+    return output;
+}
+
+UnspentTxOut JSONtoUTxO(std::string outstring){
+    std::string txOutId, address;
+    size_t txOutIndex, start = 22, end = 22;
+    double amount;
+    while (outstring[end] != '\"'){end++;}
+    txOutId = outstring.substr(start, end-start);
+    start = end + 13;
+    end = start;
+    while (outstring[end] != '\"'){end++;}
+    address = outstring.substr(start, end-start);
+    start = end + 11;
+    end = start;
+    while (outstring[end] != '\"'){end++;}
+    txOutIndex = strtol((outstring.substr(start, end-start).c_str()), NULL, 10);
+    start = end + 12;
+    amount = strtod((outstring.c_str() + start), NULL);
+    UnspentTxOut output(txOutId, address, txOutIndex, amount);
     return output;
 }
