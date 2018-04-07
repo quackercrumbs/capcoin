@@ -50,15 +50,7 @@ void Serialize::operator()(TxOut& toBeSent){
 std::string Serialize::toString(){
   return output;
 }
-/*
-"BLOCK":{"INDEX":"0","TIMESTAMP":"1521001712","DIFFICULTY":"0","NONCE":"0","HASH
-":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","PREVHASH":
-"","TRANSACTION":{"ID":"e6fae651be1699fc625c55f6ca75b53a9fe80f65c28f2b802139470a
-ad94cc23","IN":{"ID":"a","SIG":"asdasdasd","INDEX":"1"},"IN":{"ID":"c","SIG":"as
-dfasdfasdf","INDEX":"2"},"IN":{"ID":"e","SIG":"asdfadf","INDEX":"3"},"OUT":{"AMO
-UNT":"50","ADDRESS":"b"},"OUT":{"AMOUNT":"100","ADDRESS":"d"},"OUT":{"AMOUNT":"1
-50","ADDRESS":"f"}}}
-*/
+
 Block JSONtoBlock(std::string blockString){
     size_t index, difficulty, nonce, start = 19, end = 19;
     time_t timestamp;
@@ -101,8 +93,8 @@ Block JSONtoBlock(std::string blockString){
         }
         Transaction tx = JSONtoTx(blockString.substr(start, end));
         data.push_back(tx);
-        start = end + 2;
-        end = start + 2;
+        start = end + 1;
+        end = start + 11;
         if (end > blockString.length())
             break;
         prefix = blockString.substr(start+1, end-start);

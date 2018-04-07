@@ -34,7 +34,7 @@ int main(){
   txToJSON(second);
   std::cout << txToJSON.toString() << std::endl;
 
-  std::vector<Transaction> GenTxns{first};
+  std::vector<Transaction> GenTxns{first, second};
   Block Genesis(0, 1521001712, 0, 0, "", GenTxns);
 
   txToJSON(Genesis);
