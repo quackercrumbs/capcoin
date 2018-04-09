@@ -25,3 +25,7 @@ bool test_bad_txin_serial();
 bool test_good_txout_serial();
 
 bool test_bad_txout_serial();
+
+bool test_good_block_serial();
+
+bool test_bad_block_serial();
