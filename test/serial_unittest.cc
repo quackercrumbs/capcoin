@@ -10,6 +10,11 @@ TEST(SerialTest,UnspentTxOut) {
     EXPECT_FALSE(test_bad_unspent_serial());
 }
 
+TEST(SerialTest,Transaction) {
+    EXPECT_TRUE(test_good_transaction_serial());
+    EXPECT_FALSE(test_bad_transaction_serial());
+}
+
 TEST(BlockVerificationTest,Invalid) {
     
 }
