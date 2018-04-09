@@ -15,3 +15,13 @@ bool test_good_unspent_serial();
 bool test_bad_unspent_serial();
 
 bool test_good_transaction_serial();
+
+bool test_bad_transaction_serial();
+
+bool test_good_txin_serial();
+
+bool test_bad_txin_serial();
+
+bool test_good_txout_serial();
+
+bool test_bad_txout_serial();

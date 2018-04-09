@@ -8,7 +8,7 @@
 #include <iostream>
 
 #include "compare_utils.h"
-
+#include "test_transaction_utils.h"
 
 bool test_good_unspent_serial() {
     Serialize s;
@@ -58,4 +58,11 @@ bool test_good_transaction_serial() {
 
     bool pass = compareTransaction(og,new_og);
     return pass;
+}
+
+bool test_bad_transaction_serial() {
+    Transaction t1 = CreateFakeTransaction(2,4);
+    Transaction t2 = CreateFakeTransaction(1,2);
+    bool all_pass = compareTransaction(t1,t2);
+    return all_pass;
 }
