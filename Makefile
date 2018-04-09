@@ -1,12 +1,13 @@
 C++FLAG = -g -std=c++11
 
-Transaction_OBJ = src/transaction.o src/txin.o src/txout.o
+Serial_OBJ = src/serialize.o
+Transaction_OBJ = src/transaction.o src/txin.o src/txout.o src/utxo.o
 Block_OBJ = src/block.o src/blockchain.o
 Merkle_OBJ = src/merkle.o
 Network_OBJ = src/network.o src/socket.o
 
 #Compiles the main capcoin program and its prerequisutes
-Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Network_OBJ)
+Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Network_OBJ) $(Serial_OBJ)
 
 #Where to store all drivers
 EXEC_DIR = ./bin/
@@ -17,6 +18,9 @@ INCLUDES = -I ./lib/ -I ./test/utils -I ./test/googletest/googletest/
 
 #Compiles all cpp files listed in the given OBJ variable
 .cpp.o:
+	g++ $(C++FLAG) -c $< -o $@ $(INCLUDES)
+
+%.o: %.cpp
 	g++ $(C++FLAG) -c $< -o $@ $(INCLUDES)
 
 
@@ -41,7 +45,7 @@ clean:
 	(rm -f test/*.o;)
 	(rm -f test/gtest.a test/gtest_main.a;)
 	(rm -f bin/$(TESTS);)
-
+	(rm -f test/utils/*.o;)
 
 
 ####################################################
@@ -90,8 +94,9 @@ gtest_main.a: gtest-all.o gtest_main.o
 ########################################################
 
 #Create objects pack together test utils and src objects
-TestPack_Transaction = test/utils/test_transaction_utils.o\
-					   $(Transaction_OBJ)
+TestPack_Transaction = $(TEST_UTILS)/test_transaction_utils.o\
+					   $(Transaction_OBJ)\
+					   $(TEST_UTILS)/compare_utils.o
 
 TestPack_Block = test/utils/test_block_utils.o\
 				 $(Block_OBJ)\
@@ -100,6 +105,10 @@ TestPack_Block = test/utils/test_block_utils.o\
 TestPack_Merkle = test/utils/test_merkle_utils.o\
 				  $(Merkle_OBJ)\
 				  $(TestPack_Block)
+
+TestPack_Serial = $(TestPack_Block)\
+				  $(Serial_OBJ)\
+				  test/utils/test_serial_utils.o
 
 ####################################################
 #
@@ -117,7 +126,7 @@ TEST_UTILS = $(USER_DIR)/utils
 GTEST_MAIN = $(USER_DIR)/gtest_main.a
 
 #All test produced for this Makefile
-TESTS = sample_test.o transaction_test.o block_test.o merkle_test.o
+TESTS = sample_test.o transaction_test.o block_test.o merkle_test.o serial_test.o
 
 #GTEST build targets
 tests: $(TESTS)
@@ -154,7 +163,7 @@ transaction_unittest.o: $(GTEST_HEADERS) $(USER_DIR)/transaction_unittest.cc
 
 TRANSACTION_TEST_OBJ = $(GTEST_MAIN) $(TestPack_Transaction)\
 					   $(USER_DIR)/transaction_unittest.o
-transaction_test.o: transaction_unittest.o gtest_main.a 
+transaction_test.o: transaction_unittest.o gtest_main.a $(TestPack_Transaction)
 	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -lpthread $(TRANSACTION_TEST_OBJ) -o ./bin/$@
 
 #
@@ -167,7 +176,7 @@ block_unittest.o: $(GTEST_HEADERS) $(USER_DIR)/block_unittest.cc
 
 BLOCK_TEST_OBJ = $(GTEST_MAIN) $(TestPack_Block)\
 					   $(USER_DIR)/block_unittest.o
-block_test.o: block_unittest.o gtest_main.a 
+block_test.o: block_unittest.o gtest_main.a $(TestPack_Block)
 	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -lpthread $(BLOCK_TEST_OBJ) -o ./bin/$@
 
 #
@@ -180,5 +189,18 @@ merkle_unittest.o: $(GTEST_HEADERS) $(USER_DIR)/merkle_unittest.cc
 
 MERKLE_TEST_OBJ = $(GTEST_MAIN) $(TestPack_Block)\
 					   $(USER_DIR)/merkle_unittest.o
-merkle_test.o: merkle_unittest.o gtest_main.a 
+merkle_test.o: merkle_unittest.o gtest_main.a $(TestPack_Block)
 	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -lpthread $(MERKLE_TEST_OBJ) -o ./bin/$@
+
+#
+#	Serial Unit Test
+#
+serial_unittest.o: $(GTEST_HEADERS) $(USER_DIR)/serial_unittest.cc
+	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) $(INCLUDES) \
+		-c $(USER_DIR)/serial_unittest.cc\
+		-o $(USER_DIR)/serial_unittest.o
+
+SERIAL_TEST_OBJ = $(GTEST_MAIN) $(TestPack_Serial)\
+					   $(USER_DIR)/serial_unittest.o
+serial_test.o: serial_unittest.o gtest_main.a $(TestPack_Serial) 
+	$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -lpthread $(SERIAL_TEST_OBJ) -o ./bin/$@
