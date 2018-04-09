@@ -58,6 +58,7 @@ void Network::startClient(){
       cout << "\nSelect error\n";
     }
 
+    // receive message
     if(FD_ISSET(sock, &readfds))
     {
       valread = read(sock, buffer, 1024);
@@ -72,10 +73,24 @@ void Network::startClient(){
       strcpy(buffer, "");
       fflush(stdout);
     }
+
+    //send message
     if(FD_ISSET(0, &readfds))
     {
+
+
+      //test, put something in buffer
+      /*
+      for(int i = 0; i < 30; i++){
+        buffer[0]= 'A';
+      }
+      cout << string(buffer) << endl;
+      */
+      // end test
+
       valread = read(0, buffer, 1024);
       buffer[valread] = '\0';
+
       if(send(sock, buffer, strlen(buffer), 0) != strlen(buffer))
       {
         cout << "\nSend error\n";
