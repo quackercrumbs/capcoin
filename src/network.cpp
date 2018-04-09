@@ -40,7 +40,7 @@ void Network::startClient(){
     cout << "\nConnection Failed \n";
     return;
   }
-  /*
+
   while(1)
   {
     FD_ZERO(&readfds);
@@ -81,7 +81,7 @@ void Network::startClient(){
         cout << "\nSend error\n";
       }
     }
-  }*/
+  }
 }
 
 void Network::startServer() {

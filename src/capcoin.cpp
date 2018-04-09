@@ -26,12 +26,12 @@ int main(int argc, char *argv[]) {
       network.startServer();
     }
     else{
-      network.startClient();
+      // network.startClient();
     }
 
 
     ui.run();
-  
+
 
     return 0;
 }
