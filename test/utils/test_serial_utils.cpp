@@ -66,3 +66,44 @@ bool test_bad_transaction_serial() {
     bool all_pass = compareTransaction(t1,t2);
     return all_pass;
 }
+
+bool test_good_txin_serial() {
+    Serialize s;
+
+    TxIn og("a","adfsdfsd",2);
+    s(og);
+    std::string serial_data = s.toString();
+    TxIn new_og = JSONtoTxIn(serial_data);
+
+    bool pass = compareTxIn(og,new_og);
+    return pass;
+}
+
+bool test_bad_txin_serial() {
+    Serialize s;
+
+    TxIn t1("a", "adfsdafdsaf", 3);
+    TxIn t2("b", "fdsfsa", 5);
+    bool pass = compareTxIn(t1,t2);
+    return pass;
+}
+
+bool test_good_txout_serial() {
+    Serialize s;
+
+    TxOut og("g",123);
+    s(og);
+    std::string serial_data = s.toString();
+    TxOut new_og = JSONtoTxOut(serial_data);
+    bool pass = compareTxOut(og,new_og);
+    return pass;
+}
+
+bool test_bad_txout_serial() {
+    Serialize s;
+
+    TxOut t1("g", 123);
+    TxOut t2("gg", 421);
+    bool pass = compareTxOut(t1,t2);
+    return pass;
+}
