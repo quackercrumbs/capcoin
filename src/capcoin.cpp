@@ -12,11 +12,9 @@ int main(int argc, char *argv[]) {
 
     Blockchain bc;
     Block genBlock = bc.GetLastBlock();
-    // cout << "HashMatchesDifficulty: " << bc.HashMatchesDifficulty("0012321321312321",2) << endl;
-
 
     UserInterface ui;
-    ui.welcome();
+
 
     //create network, connect as server or client
     Network network;
@@ -24,10 +22,14 @@ int main(int argc, char *argv[]) {
       network.startServer();
     }
     else{
-      // network.startClient();
+      //network.startClient();
     }
 
+    ui.welcome();
     //ui.run();
+
+    network.startClient();
+
 
     while(1){
       std::cout << std::endl;
@@ -47,12 +49,13 @@ int main(int argc, char *argv[]) {
       }
       else if(selection == "T" || selection == "t" ){
         std::cout << "run transactions" << std::endl;
+        network.broadcastMessage("test");
       }
       else if(selection == "H" || selection == "h" ){
         std::cout << "run help" << std::endl;
       }
       else if(selection == "C" || selection == "c" ){
-        network.startClient();
+        network.listen();
       }
       else{
         std::cout << "input not valid" << std::endl;

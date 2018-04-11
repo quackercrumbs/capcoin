@@ -5,6 +5,14 @@
 
 using namespace std;
 
+void Network::broadcastMessage(string msg){
+
+}
+
+void Network::listen(){
+  
+}
+
 void Network::startClient(){
   TCPClientSocket client(1025);
 
@@ -41,8 +49,17 @@ void Network::startClient(){
     return;
   }
 
-  while(1)
-  {
+
+
+   // string msg = "extra message\n";
+   // send(sock, msg.c_str(), msg.size(), 0);
+
+
+
+
+  // original while loop for sending and receiving chat messages
+
+  while(1){
     FD_ZERO(&readfds);
 
     FD_SET(STDIN_FILENO, &readfds);
@@ -53,17 +70,14 @@ void Network::startClient(){
 
     activity = select(max_sd + 1, &readfds, nullptr, nullptr, nullptr);
 
-    if((activity < 0) && (errno != EINTR))
-    {
+    if((activity < 0) && (errno != EINTR)){
       cout << "\nSelect error\n";
     }
 
     // receive message
-    if(FD_ISSET(sock, &readfds))
-    {
+    if(FD_ISSET(sock, &readfds)){
       valread = read(sock, buffer, 1024);
-      if(valread == 0)
-      {
+      if(valread == 0){
         close(sock);
         cout << "\nConnection closed by host\n";
         //exit(0);
@@ -75,26 +89,13 @@ void Network::startClient(){
     }
 
     //send message
-    if(FD_ISSET(0, &readfds))
-    {
-
-
-      //test, put something in buffer
-      /*
-      for(int i = 0; i < 30; i++){
-        buffer[0]= 'A';
-      }
-      cout << string(buffer) << endl;
-      */
-      // end test
-
+    if(FD_ISSET(0, &readfds)){
       valread = read(0, buffer, 1024);
       buffer[valread] = '\0';
 
-      if(send(sock, buffer, strlen(buffer), 0) != strlen(buffer))
-      {
-        cout << "\nSend error\n";
-      }
+      string msg = "extra message\n";
+      send(sock, msg.c_str(), msg.size(), 0);
+
     }
   }
 }

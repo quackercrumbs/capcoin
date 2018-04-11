@@ -1,5 +1,11 @@
 #include "../lib/userInterface.h"
 #include <iostream>
+// #include "../lib/network.h"
+
+
+// UserInterface::UserInterface(Network){
+//   network = Network;
+// }
 
 void UserInterface::welcome(){
   std::cout << "***************************************************************************" << std::endl;
