@@ -5,8 +5,12 @@
 
 #include <string.h>
 #include <iostream>
+#include <thread>
 
 using namespace std;
+
+
+
 
 int main(int argc, char *argv[]) {
 
@@ -15,20 +19,21 @@ int main(int argc, char *argv[]) {
 
     UserInterface ui;
 
-
     //create network, connect as server or client
     Network network;
-    if( (argc > 1) && (strncmp (argv[1], "server", 6) == 0) ){
-      network.startServer();
-    }
-    else{
-      //network.startClient();
-    }
+    ((argc > 1) && (strncmp (argv[1], "server", 6) == 0)) ? network.startServer() : network.startClient();
 
     ui.welcome();
-    //ui.run();
 
-    network.startClient();
+    // network.listen();
+
+    // std::thread t(&Network::listen, network());
+
+    // std::thread spawn() {
+    //   return std::thread(&Network::listen, this);
+    // }
+
+    std::thread listenThread = network.listenThread();
 
 
     while(1){
@@ -56,7 +61,7 @@ int main(int argc, char *argv[]) {
         std::cout << "run help" << std::endl;
       }
       else if(selection == "C" || selection == "c" ){
-        network.listen();
+        //network.listen();
       }
       else{
         std::cout << "input not valid" << std::endl;

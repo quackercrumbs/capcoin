@@ -3,14 +3,25 @@
 
 #include "socket.h"
 #include <string>
+#include <thread>
 
 class Network{
 public:
 
-  void broadcastMessage(std::string msg);
-  void listen();
+
   void startClient();
   void startServer();
+
+  void listen();
+  std::thread listenThread(){
+    return std::thread([=] { listen(); });
+  }
+
+  void broadcastMessage(std::string msg);
+
+
+
+
 
 private:
   TCPClientSocket client{1025};
