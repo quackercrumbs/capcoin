@@ -6,25 +6,52 @@
 using namespace std;
 
 void Network::broadcastMessage(string msg){
+  //string msg = "extra message\n";
+  send(sock, msg.c_str(), msg.size(), 0);
 
 }
 
 void Network::listen(){
-  
+  while(1){
+    FD_ZERO(&readfds);
+
+    FD_SET(STDIN_FILENO, &readfds);
+    FD_SET(sock, &readfds);
+
+    // could probably remove this and just use sock
+    max_sd = (sock > 0) ? sock : 0;
+
+    activity = select(max_sd + 1, &readfds, nullptr, nullptr, nullptr);
+
+    if((activity < 0) && (errno != EINTR)){
+      cout << "\nSelect error\n";
+    }
+
+    // receive message
+    if(FD_ISSET(sock, &readfds)){
+      valread = read(sock, buffer, 1024);
+      if(valread == 0){
+        close(sock);
+        cout << "\nConnection closed by host\n";
+        //exit(0);
+      }
+      buffer[valread] = '\0';
+      cout << string(buffer) << endl;
+      strcpy(buffer, "");
+      fflush(stdout);
+    }
+  }
 }
 
 void Network::startClient(){
-  TCPClientSocket client(1025);
 
-  int sock = 0, valread, activity, max_sd;
-  struct sockaddr_in serv_addr;
+  // TCPClientSocket client(1025);
+  // int sock = 0, valread, activity, max_sd;
+  // struct sockaddr_in serv_addr;
+  // string ip_addr =  "167.99.12.102";
+  // char buffer[1025];
+  // fd_set readfds;
 
-  // droplet ip
-  string ip_addr =  "167.99.12.102";
-
-  char buffer[1025];
-
-  fd_set readfds;
 
   if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
   {
@@ -59,45 +86,45 @@ void Network::startClient(){
 
   // original while loop for sending and receiving chat messages
 
-  while(1){
-    FD_ZERO(&readfds);
-
-    FD_SET(STDIN_FILENO, &readfds);
-    FD_SET(sock, &readfds);
-
-    // could probably remove this and just use sock
-    max_sd = (sock > 0) ? sock : 0;
-
-    activity = select(max_sd + 1, &readfds, nullptr, nullptr, nullptr);
-
-    if((activity < 0) && (errno != EINTR)){
-      cout << "\nSelect error\n";
-    }
-
-    // receive message
-    if(FD_ISSET(sock, &readfds)){
-      valread = read(sock, buffer, 1024);
-      if(valread == 0){
-        close(sock);
-        cout << "\nConnection closed by host\n";
-        //exit(0);
-      }
-      buffer[valread] = '\0';
-      cout << string(buffer) << endl;
-      strcpy(buffer, "");
-      fflush(stdout);
-    }
-
-    //send message
-    if(FD_ISSET(0, &readfds)){
-      valread = read(0, buffer, 1024);
-      buffer[valread] = '\0';
-
-      string msg = "extra message\n";
-      send(sock, msg.c_str(), msg.size(), 0);
-
-    }
-  }
+  // while(1){
+  //   FD_ZERO(&readfds);
+  //
+  //   FD_SET(STDIN_FILENO, &readfds);
+  //   FD_SET(sock, &readfds);
+  //
+  //   // could probably remove this and just use sock
+  //   max_sd = (sock > 0) ? sock : 0;
+  //
+  //   activity = select(max_sd + 1, &readfds, nullptr, nullptr, nullptr);
+  //
+  //   if((activity < 0) && (errno != EINTR)){
+  //     cout << "\nSelect error\n";
+  //   }
+  //
+  //   // receive message
+  //   if(FD_ISSET(sock, &readfds)){
+  //     valread = read(sock, buffer, 1024);
+  //     if(valread == 0){
+  //       close(sock);
+  //       cout << "\nConnection closed by host\n";
+  //       //exit(0);
+  //     }
+  //     buffer[valread] = '\0';
+  //     cout << string(buffer) << endl;
+  //     strcpy(buffer, "");
+  //     fflush(stdout);
+  //   }
+  //
+  //   send message
+  //   if(FD_ISSET(0, &readfds)){
+  //     valread = read(0, buffer, 1024);
+  //     buffer[valread] = '\0';
+  //
+  //     string msg = "extra message\n";
+  //     send(sock, msg.c_str(), msg.size(), 0);
+  //
+  //   }
+  // }
 }
 
 void Network::startServer() {

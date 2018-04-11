@@ -43,13 +43,14 @@ int main(int argc, char *argv[]) {
       }
       else if(selection == "S" || selection == "s" ){
         std::cout << "run send" << std::endl;
+        network.broadcastMessage("test");
       }
       else if(selection == "R" || selection == "r" ){
         std::cout << "run receive" << std::endl;
       }
       else if(selection == "T" || selection == "t" ){
         std::cout << "run transactions" << std::endl;
-        network.broadcastMessage("test");
+
       }
       else if(selection == "H" || selection == "h" ){
         std::cout << "run help" << std::endl;
