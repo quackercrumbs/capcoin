@@ -10,8 +10,6 @@
 using namespace std;
 
 
-
-
 int main(int argc, char *argv[]) {
 
     Blockchain bc;
@@ -25,17 +23,10 @@ int main(int argc, char *argv[]) {
 
     ui.welcome();
 
-    // network.listen();
-
-    // std::thread t(&Network::listen, network());
-
-    // std::thread spawn() {
-    //   return std::thread(&Network::listen, this);
-    // }
-
+    //start listening for incoming messages, on another thread
     std::thread listenThread = network.listenThread();
 
-
+    // main while loop for UI
     while(1){
       std::cout << std::endl;
       std::cout << "O - Overview     S - Send     R - Receive     T - Transactions     H - Help     C - Chat (for testing)" << std::endl;
@@ -44,11 +35,13 @@ int main(int argc, char *argv[]) {
       std::cin >> selection;
 
       if(selection == "O" || selection == "o" ){
-        std::cout << "run overview" << std::endl;
+        std::cout << "last received is: " << network.getLastReceived() << std::endl;
       }
       else if(selection == "S" || selection == "s" ){
-        std::cout << "run send" << std::endl;
-        network.broadcastMessage("test");
+        std::cout << "please enter amount to send" << std::endl;
+        string amt;
+        cin >> amt;
+        network.broadcastMessage(amt);
       }
       else if(selection == "R" || selection == "r" ){
         std::cout << "run receive" << std::endl;
@@ -67,9 +60,6 @@ int main(int argc, char *argv[]) {
         std::cout << "input not valid" << std::endl;
       }
     }
-
-
-
 
     return 0;
 }

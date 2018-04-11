@@ -12,6 +12,10 @@ void Network::broadcastMessage(string msg){
 
 }
 
+std::string Network::getLastReceived(){
+  return lastReceived;
+}
+
 void Network::listen(){
   while(1){
     FD_ZERO(&readfds);
@@ -37,7 +41,8 @@ void Network::listen(){
         //exit(0);
       }
       buffer[valread] = '\0';
-      cout << string(buffer) << endl;
+      // cout << string(buffer) << endl;
+      lastReceived = string(buffer);
       strcpy(buffer, "");
       fflush(stdout);
     }

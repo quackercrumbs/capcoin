@@ -19,6 +19,8 @@ public:
 
   void broadcastMessage(std::string msg);
 
+  std::string getLastReceived();
+
 
 
 
@@ -30,7 +32,7 @@ private:
   std::string ip_addr =  "167.99.12.102";
   char buffer[1025];
   fd_set readfds;
-
+  std::string lastReceived = "";
 
 };
 
