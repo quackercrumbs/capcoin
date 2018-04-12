@@ -1,11 +1,14 @@
-#include <iostream>
-#include <string>
 #include "transaction.h"
 #include "txin.h"
 #include "txout.h"
 #include "utxout.h"
 #include "serialize.h"
+
+#include <string>
 #include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
 
 #include "compare_utils.h"
 #include "test_transaction_utils.h"
@@ -13,6 +16,7 @@
 bool test_good_unspent_serial() {
     Serialize s;
     
+    srand(time(NULL));
     UnspentTxOut og("z","y",2,50);
     
     //Serialize string data
@@ -30,6 +34,7 @@ bool test_good_unspent_serial() {
 bool test_bad_unspent_serial() {
     Serialize s;
 
+    srand(time(NULL));
     UnspentTxOut og("z","y",2,50);
     UnspentTxOut fake("z","y",3,50);
     bool pass = compareUTxOut(og,fake);
@@ -38,7 +43,8 @@ bool test_bad_unspent_serial() {
 
 bool test_good_transaction_serial() {
     Serialize s;
-
+    
+    srand(time(NULL));
     TxIn in1("a", "asdasdasd", 1);
     TxOut out1("b", 50);
 
@@ -61,10 +67,37 @@ bool test_good_transaction_serial() {
 }
 
 bool test_bad_transaction_serial() {
+    srand(time(NULL));
     Transaction t1 = CreateFakeTransaction(2,4);
     Transaction t2 = CreateFakeTransaction(1,2);
     bool all_pass = compareTransaction(t1,t2);
     return all_pass;
+}
+
+
+bool test_good_block_serial() {
+    //Block Genesis(0, 1521001712, 0, 0, "", GenTxns);
+    srand(time(NULL));
+    Serialize s;
+    std::vector<Transaction> tlist = CreateFakeTransactionList(5);
+    Block og(0, 1521001712, 0, 0, "", tlist);
+    s(og);
+    std::string serial_data = s.toString();
+    Block new_og = JSONtoBlock(serial_data);
+    bool pass = compareBlock(og,new_og); 
+    return pass;
+}
+
+bool test_bad_block_serial() {
+
+    srand(time(NULL));
+    std::vector<Transaction> tlist1 = CreateFakeTransactionList(5);
+    Block block1(0, 1521001712, 0, 0, "", tlist1);
+    std::vector<Transaction> tlist2 = CreateFakeTransactionList(5);
+    Block block2(0, 1521001712, 0, 0, "", tlist2);
+    bool pass = compareBlock(block1,block2);
+
+    return pass;
 }
 
 bool test_good_txin_serial() {
@@ -74,7 +107,6 @@ bool test_good_txin_serial() {
     s(og);
     std::string serial_data = s.toString();
     TxIn new_og = JSONtoTxIn(serial_data);
-
     bool pass = compareTxIn(og,new_og);
     return pass;
 }
@@ -107,3 +139,4 @@ bool test_bad_txout_serial() {
     bool pass = compareTxOut(t1,t2);
     return pass;
 }
+
