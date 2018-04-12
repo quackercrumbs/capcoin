@@ -96,7 +96,6 @@ gtest_main.a: gtest-all.o gtest_main.o
 #Create objects pack together test utils and src objects
 TestPack_Transaction = $(TEST_UTILS)/test_transaction_utils.o\
 					   $(Transaction_OBJ)\
-					   $(TEST_UTILS)/compare_utils.o
 
 TestPack_Block = test/utils/test_block_utils.o\
 				 $(Block_OBJ)\
@@ -108,8 +107,8 @@ TestPack_Merkle = test/utils/test_merkle_utils.o\
 
 TestPack_Serial = $(TestPack_Block)\
 				  $(Serial_OBJ)\
-				  test/utils/test_serial_utils.o
-
+				  test/utils/test_serial_utils.o\
+				  $(TEST_UTILS)/compare_utils.o
 ####################################################
 #
 #	Unittests
