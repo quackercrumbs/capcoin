@@ -24,7 +24,6 @@ TxOut CreateFakeTxOut() {
 }
 
 Transaction CreateFakeTransaction(size_t in, size_t out) {
-    srand(time(NULL)); //Set seed for random number
     //Create fake txIns
     vector<TxIn> txIns;
     for(size_t i = 0; i < in; i++) {
