@@ -6,7 +6,6 @@
 using namespace std;
 
 Block CreateFakeBlock() {
-	Transaction t = CreateFakeTransaction(5,3);
 	vector<Transaction> transaction_list = CreateFakeTransactionList(6);
 	size_t block_index = 0;
 	time_t timestamp;
