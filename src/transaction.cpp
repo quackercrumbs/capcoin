@@ -7,6 +7,7 @@ Transaction::Transaction(std::vector<TxIn>& ins, std::vector<TxOut>& outs): txIn
 std::string Transaction:: hash(){
     return id_;
 }
+
 Transaction::Transaction(const Transaction& beta){
   for(TxIn x: beta.txIns_){
     TxIn temp = x;
@@ -63,4 +64,11 @@ std::string Transaction:: CalcHash() const{
     accuOutTx = accuOutTx + i.GetVal();
   //add the two strings and hash them for the id
   return picosha2::hash256_hex_string(accuOutTx);
+
+std::vector<TxIn> Transaction::GetTxIns(){
+    return txIns_;
+}
+
+std::vector<TxOut> Transaction::GetTxOuts(){
+    return txOuts_;
 }
