@@ -1,5 +1,5 @@
 #include "compare_utils.h"
-
+#include <iostream>
 
 bool compareUTxOut(UnspentTxOut left, UnspentTxOut right) {
     bool all_pass = true;
@@ -53,5 +53,24 @@ bool compareTxOut(TxOut left, TxOut right) {
     all_pass = all_pass && (left.GetVal() == right.GetVal());
     all_pass = all_pass && (left.GetAddress() == right.GetAddress());
     all_pass = all_pass && (left.GetAmount() == right.GetAmount());
+    return all_pass;
+}
+
+bool compareBlock(Block left, Block right) {
+    bool all_pass = true;
+    all_pass = all_pass && (left.GetIndex() == right.GetIndex());
+    all_pass = all_pass && (left.GetTimestamp() == right.GetTimestamp());
+    all_pass = all_pass && (left.GetDifficulty() == right.GetDifficulty());
+    all_pass = all_pass && (left.GetNonce() == right.GetNonce());
+    all_pass = all_pass && (left.GetHash() == right.GetHash());
+    all_pass = all_pass && (left.GetPreviousHash() == right.GetPreviousHash());
+    std::vector<Transaction> l_tlist = left.GetData();
+    std::vector<Transaction> r_tlist = right.GetData();
+    if(l_tlist.size() != r_tlist.size())
+        return false;
+    for(size_t i = 0; i < l_tlist.size(); i++) {
+        if(!compareTransaction(l_tlist[i], r_tlist[i]))
+            return false;
+    }
     return all_pass;
 }
