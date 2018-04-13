@@ -22,7 +22,7 @@ INCLUDES = -I ./lib/
 
 CAPCOIN=capcoin.o #Executable name
 $(CAPCOIN): $(Capcoin_OBJ) #Rule to compile capcoin
-	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Capcoin_OBJ)
+	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Capcoin_OBJ) -lpthread
 
 
 all: capcoin
