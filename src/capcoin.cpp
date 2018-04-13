@@ -1,4 +1,4 @@
-#include "userInterface.h"
+#include "fullNode.h"
 #include "network.h"
 #include "block.h"
 #include "blockchain.h"
@@ -40,11 +40,11 @@ int main(int argc, char *argv[]) {
 
 
     // then, create full node, using these 4 parts
-    UserInterface ui (&bc, &nw);
-    ui.welcome();
+    FullNode node (&bc, &nw);
+    node.welcome();
 
     // start the node
-    ui.run();
+    node.run();
 
 
     return 0;

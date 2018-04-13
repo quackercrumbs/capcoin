@@ -1,14 +1,14 @@
-#include "../lib/userInterface.h"
+#include "../lib/fullNode.h"
 #include <iostream>
 
 
 
-UserInterface::UserInterface(Blockchain * bc, Network * nw){
+FullNode::FullNode(Blockchain * bc, Network * nw){
   blockchain = bc;
   network = nw;
 }
 
-void UserInterface::welcome(){
+void FullNode::welcome(){
   std::cout << "***************************************************************************" << std::endl;
   std::cout << "***************************************************************************" << std::endl;
   std::cout << "***************************************************************************" << std::endl;
@@ -29,11 +29,11 @@ void UserInterface::welcome(){
 
 }
 
-void UserInterface::displayMenu(){
+void FullNode::displayMenu(){
   std::cout << "O - Overview     S - Send     R - Receive     T - Transactions     H - Help" << std::endl;
 }
 
-void UserInterface::run(){
+void FullNode::run(){
   while(1){
     std::cout << std::endl;
     displayMenu();

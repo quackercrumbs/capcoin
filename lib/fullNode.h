@@ -1,13 +1,13 @@
-#ifndef USERINTERFACE_H
-#define USERINTERFACE_H
+#ifndef FULLNODE_H
+#define FULLNODE_H
 #include "blockchain.h"
 #include "network.h"
 
 
-class UserInterface{
+class FullNode{
 public:
 
-  UserInterface(Blockchain * bc, Network * nw);
+  FullNode(Blockchain * bc, Network * nw);
 
   void welcome();
 
