@@ -6,9 +6,8 @@
 #include <thread>
 
 class Network{
+
 public:
-
-
   void startClient();
   void startServer();
 
@@ -21,10 +20,6 @@ public:
 
   std::string getLastReceived();
 
-
-
-
-
 private:
   TCPClientSocket client{1025};
   int sock = 0, valread, activity, max_sd;
@@ -35,7 +30,5 @@ private:
   std::string lastReceived = "";
 
 };
-
-
 
 #endif

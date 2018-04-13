@@ -7,9 +7,7 @@
 using namespace std;
 
 void Network::broadcastMessage(string msg){
-  //string msg = "extra message\n";
   send(sock, msg.c_str(), msg.size(), 0);
-
 }
 
 std::string Network::getLastReceived(){
@@ -51,16 +49,7 @@ void Network::listen(){
 
 void Network::startClient(){
 
-  // TCPClientSocket client(1025);
-  // int sock = 0, valread, activity, max_sd;
-  // struct sockaddr_in serv_addr;
-  // string ip_addr =  "167.99.12.102";
-  // char buffer[1025];
-  // fd_set readfds;
-
-
-  if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-  {
+  if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0){
     cout << "\n Socket creation error \n";
     return;
   }
@@ -70,67 +59,15 @@ void Network::startClient(){
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_port = htons(client.getLocalPort());
 
-  if(inet_pton(AF_INET, ip_addr.c_str(), &serv_addr.sin_addr) <= 0)
-  {
+  if(inet_pton(AF_INET, ip_addr.c_str(), &serv_addr.sin_addr) <= 0){
     cout << "\nInvalid address\n";
     return;
   }
 
-  if(connect(sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
-  {
+  if(connect(sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0){
     cout << "\nConnection Failed \n";
     return;
   }
-
-
-
-   // string msg = "extra message\n";
-   // send(sock, msg.c_str(), msg.size(), 0);
-
-
-
-
-  // original while loop for sending and receiving chat messages
-
-  // while(1){
-  //   FD_ZERO(&readfds);
-  //
-  //   FD_SET(STDIN_FILENO, &readfds);
-  //   FD_SET(sock, &readfds);
-  //
-  //   // could probably remove this and just use sock
-  //   max_sd = (sock > 0) ? sock : 0;
-  //
-  //   activity = select(max_sd + 1, &readfds, nullptr, nullptr, nullptr);
-  //
-  //   if((activity < 0) && (errno != EINTR)){
-  //     cout << "\nSelect error\n";
-  //   }
-  //
-  //   // receive message
-  //   if(FD_ISSET(sock, &readfds)){
-  //     valread = read(sock, buffer, 1024);
-  //     if(valread == 0){
-  //       close(sock);
-  //       cout << "\nConnection closed by host\n";
-  //       //exit(0);
-  //     }
-  //     buffer[valread] = '\0';
-  //     cout << string(buffer) << endl;
-  //     strcpy(buffer, "");
-  //     fflush(stdout);
-  //   }
-  //
-  //   send message
-  //   if(FD_ISSET(0, &readfds)){
-  //     valread = read(0, buffer, 1024);
-  //     buffer[valread] = '\0';
-  //
-  //     string msg = "extra message\n";
-  //     send(sock, msg.c_str(), msg.size(), 0);
-  //
-  //   }
-  // }
 }
 
 void Network::startServer() {

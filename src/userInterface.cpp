@@ -29,7 +29,7 @@ void UserInterface::welcome(){
 }
 
 void UserInterface::displayMenu(){
-  std::cout << "O - Overview     S - Send     R - Receive     T - Transactions     H - Help     C - Chat (for testing)" << std::endl;
+  std::cout << "O - Overview     S - Send     R - Receive     T - Transactions     H - Help" << std::endl;
 }
 
 void UserInterface::run(){
@@ -54,9 +54,6 @@ void UserInterface::run(){
     }
     else if(selection == "H" || selection == "h" ){
       std::cout << "run help" << std::endl;
-    }
-    else if(selection == "C" || selection == "c" ){
-      std::cout << "run chat" << std::endl;
     }
     else{
       std::cout << "input not valid" << std::endl;

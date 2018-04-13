@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     // main while loop for UI
     while(1){
       std::cout << std::endl;
-      std::cout << "O - Overview     S - Send     R - Receive     T - Transactions     H - Help     C - Chat (for testing)" << std::endl;
+      std::cout << "O - Overview     S - Send     R - Receive     T - Transactions     H - Help" << std::endl;
       std::cout << "please make a selection" << std::endl;
       std::string selection;
       std::cin >> selection;
@@ -52,9 +52,6 @@ int main(int argc, char *argv[]) {
       }
       else if(selection == "H" || selection == "h" ){
         std::cout << "run help" << std::endl;
-      }
-      else if(selection == "C" || selection == "c" ){
-        //network.listen();
       }
       else{
         std::cout << "input not valid" << std::endl;
