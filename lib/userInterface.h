@@ -1,12 +1,13 @@
 #ifndef USERINTERFACE_H
 #define USERINTERFACE_H
+#include "blockchain.h"
 #include "network.h"
 
 
 class UserInterface{
 public:
 
-  UserInterface(Network * nw);
+  UserInterface(Blockchain * bc, Network * nw);
 
   void welcome();
 
@@ -16,7 +17,7 @@ public:
 
 private:
 
-
+  Blockchain * blockchain = new Blockchain();
   Network * network = new Network();
 
 

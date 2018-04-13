@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 
 
     // then, create full node, using these 4 parts
-    UserInterface ui (&nw);
+    UserInterface ui (&bc, &nw);
     ui.welcome();
 
     // start the node

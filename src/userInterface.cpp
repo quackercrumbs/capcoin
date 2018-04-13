@@ -1,9 +1,10 @@
 #include "../lib/userInterface.h"
 #include <iostream>
-#include "../lib/network.h"
 
 
-UserInterface::UserInterface(Network * nw){
+
+UserInterface::UserInterface(Blockchain * bc, Network * nw){
+  blockchain = bc;
   network = nw;
 }
 
