@@ -6,7 +6,7 @@
 class UserInterface{
 public:
 
-  // UserInterface(Network);
+  UserInterface(Network * nw);
 
   void welcome();
 
@@ -16,7 +16,8 @@ public:
 
 private:
 
-  Network network;
+
+  Network * network = new Network();
 
 
 };

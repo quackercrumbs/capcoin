@@ -1,11 +1,11 @@
 #include "../lib/userInterface.h"
 #include <iostream>
-// #include "../lib/network.h"
+#include "../lib/network.h"
 
 
-// UserInterface::UserInterface(Network){
-//   network = Network;
-// }
+UserInterface::UserInterface(Network * nw){
+  network = nw;
+}
 
 void UserInterface::welcome(){
   std::cout << "***************************************************************************" << std::endl;
@@ -41,16 +41,20 @@ void UserInterface::run(){
     std::cin >> selection;
 
     if(selection == "O" || selection == "o" ){
-      std::cout << "run overview" << std::endl;
+      std::cout << "last received is: " << network->getLastReceived() << std::endl;
     }
     else if(selection == "S" || selection == "s" ){
-      std::cout << "run send" << std::endl;
+      std::cout << "please enter amount to send" << std::endl;
+      std::string amt;
+      std::cin >> amt;
+      network->broadcastMessage(amt);
     }
     else if(selection == "R" || selection == "r" ){
       std::cout << "run receive" << std::endl;
     }
     else if(selection == "T" || selection == "t" ){
       std::cout << "run transactions" << std::endl;
+
     }
     else if(selection == "H" || selection == "h" ){
       std::cout << "run help" << std::endl;
