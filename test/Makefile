@@ -19,6 +19,12 @@ GTEST_DIR = googletest/googletest
 # Where to find user code.
 USER_DIR = .
 
+# Project src directory
+CAP_SRC = ../src
+
+# Test util directory
+TEST_UTILS = ./utils
+
 # Flags passed to the preprocessor.
 # Set Google Test's header directory as a system directory, such that
 # the compiler doesn't generate warnings in Google Test headers.
@@ -29,7 +35,7 @@ CXXFLAGS += -g -Wall -Wextra -pthread
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = sample_unittest
+TESTS = sample_unittest transaction_unittest
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -71,13 +77,6 @@ gtest_main.a : gtest-all.o gtest_main.o
 # gtest_main.a, depending on whether it defines its own main()
 # function.
 
-#####################################################################
-#
-#
-#							CAPCOIN UNITTESTS
-#
-#
-####################################################################
 sample.o : $(USER_DIR)/utils/sample.cc $(USER_DIR)/utils/sample.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/utils/sample.cc
 
@@ -88,3 +87,23 @@ sample_unittest.o : $(USER_DIR)/sample_unittest.cc \
 
 sample_unittest : sample.o sample_unittest.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $(USER_DIR)/bin/$@
+
+
+
+#####################################################################
+#
+#
+#							CAPCOIN UNITTESTS
+#
+#
+####################################################################
+TRANSACTION_OBJS = $(CAP_SRC)/transaction.o\
+				   $(CAP_SRC)/txin.o $(CAP_SRC)/txout.o $(CAP_SRC)/utxout.o\
+				   $(TEST_UTILS)/test_transaction_utils.o\
+
+transaction_unittest.o : $(USER_DIR)/transaction_unittest.cc\
+						$(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/transaction_unittest.cc
+
+transaction_unittest: transaction_unittest.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $(TRANSACTION_OBJS) $^ -o $(USER_DIR)/bin/$@
