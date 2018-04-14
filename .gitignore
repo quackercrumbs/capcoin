@@ -3,4 +3,5 @@
 /test/*.o
 /test/*.a
 /test/utils/*.o
+/test/bin/
 /test/googletest/
