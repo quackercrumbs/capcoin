@@ -40,4 +40,3 @@ clean:
 	(rm -f src/*.o;)
 	(rm -f test/*.o;)
 	(rm -f test/gtest.a test/gtest_main.a;)
-	(rm -f bin/$(TESTS);)
