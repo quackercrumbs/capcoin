@@ -1,6 +1,6 @@
 C++FLAG = -g -std=c++11
 
-Transaction_OBJ = src/transaction.o src/txin.o src/txout.o
+Transaction_OBJ = src/transaction.o src/txin.o src/txout.o src/utxout.o
 Block_OBJ = src/block.o src/blockchain.o
 Merkle_OBJ = src/merkle.o
 Network_OBJ = src/network.o src/socket.o
