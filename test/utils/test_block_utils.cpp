@@ -1,4 +1,4 @@
-#include "../lib/transaction.h"
+#include "transaction.h"
 
 #include "test_block_utils.h"
 #include "test_transaction_utils.h"
