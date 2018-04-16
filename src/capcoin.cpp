@@ -1,35 +1,51 @@
+#include "fullNode.h"
 #include "network.h"
 #include "block.h"
 #include "blockchain.h"
 
 #include <string.h>
 #include <iostream>
+#include <thread>
+#include <pthread.h>
 
 using namespace std;
 
+
 int main(int argc, char *argv[]) {
 
+    // first, create all 4 parts of the node, Blockchain, Network, Miner and Wallet
+
+    // create Blockchain
     Blockchain bc;
     Block genBlock = bc.GetLastBlock();
-    cout << "HashMatchesDifficulty: " << bc.HashMatchesDifficulty("0012321321312321",2) << endl;
-
-    // when new node starts up, this runs to connect to network, download or update blockchain
-    //initialize(argv[1]);
 
 
-    //create network
-    Network network;
+
+    //create Network
+    Network nw;
+    //connect as server or client
+    ((argc > 1) && (strncmp (argv[1], "server", 6) == 0)) ? nw.startServer() : nw.startClient();
+    //start listening for incoming messages, on another thread
+    std::thread listenThread = nw.listenThread();
 
 
-    if( (argc > 1) && (strncmp (argv[1], "server", 6) == 0) ){
-      network.startServer();
-    }
-    else{
-      network.startClient();
-    }
+
+    // create Miner
+
+
+
+
+    // create Wallet
+
+
+
+    // then, create full node, using these 4 parts
+    FullNode node (&bc, &nw);
+    node.welcome();
+
+    // start the node
+    node.run();
+
+
     return 0;
 }
-
-// void initialize(char* arg){
-//
-// }
