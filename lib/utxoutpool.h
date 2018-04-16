@@ -1,17 +1,18 @@
 #ifndef UTXOPOOL_H
 #define UTXOPOOL_H
 
-#include <unordered_map>
-#include "transaction.h"
-
+#include "utxout.h"
+#include "txin.h"
+#include <vector>
 //Container for all unspent transactions (coins)
-class UnspentTxOutPool {
+class UnspentTxOutPool{
 public:
 	//All unspent TxOuts are loaded through this constructor
 	UnspentTxOutPool();
-
+	bool AddTxn(UnspentTxOut& input);
+	UnspentTxOut* FindFromIn(const TxIn& input);
 private:
-	std::unordered_map<std::string, Transaction> unspent_txOuts_;
+	std::vector<UnspentTxOut> uTxOuts_;
 };
 
 #endif

@@ -1,17 +1,18 @@
 #ifndef TRANSACTIONPOOL_H
 #define TRANSACTIONPOOL_H
 
-#include <queue>
 #include "transaction.h"
 
 class TransactionPool {
 public:
 	//Initialize the transaction pool (loads data from pool)
 	TransactionPool();
-
+	//finds transaction in pool
+	bool HasTxn(Transaction& beta);
+	//Grabs unique transactions from other pool
+	bool AddTxn(Transaction& beta, UnspentTxOutPool& source);
 private:
-
-	std::queue<Transaction> pool_;
+	std::vector<Transaction> pool_;
 };
 
 

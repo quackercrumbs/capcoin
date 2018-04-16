@@ -103,7 +103,8 @@ sample_unittest : sample.o sample_unittest.o gtest_main.a
 
 # Transaction Unit Test
 TRANSACTION_OBJS = $(CAP_SRC)/transaction.o\
-				   $(CAP_SRC)/txin.o $(CAP_SRC)/txout.o $(CAP_SRC)/utxout.o
+				   $(CAP_SRC)/txin.o $(CAP_SRC)/txout.o\
+				   $(CAP_SRC)/utxout.o $(CAP_SRC)/utxoutpool.o
 				   
 test_transaction_utils.o : $(TEST_UTILS)/test_transaction_utils.cpp\
 							$(TEST_UTILS)/test_transaction_utils.h

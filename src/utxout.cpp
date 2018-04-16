@@ -1,6 +1,6 @@
 #include "utxout.h"
 
-UnspentTxOut::UnspentTxOut(std::string txOutId, std::string address, size_t txOutIndex, size_t amount):
+UnspentTxOut::UnspentTxOut(std::string txOutId, std::string address, size_t txOutIndex, double amount):
                 txOutId_{txOutId}, address_{address}, txOutIndex_{txOutIndex}, amount_{amount}{}
 
 std::string UnspentTxOut::GetId(){
@@ -15,6 +15,6 @@ size_t UnspentTxOut::GetIndex(){
     return txOutIndex_;
 }
 
-size_t UnspentTxOut::GetAmount(){
+double UnspentTxOut::GetAmount(){
     return amount_;
 }
