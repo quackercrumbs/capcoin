@@ -8,3 +8,13 @@ std::string TxIn:: GetVal(){
     ss << id_ << index_;
     return ss.str();
 }
+
+std::string TxIn:: GetId(){
+    return id_;
+}
+std::string TxIn:: GetSignature(){
+    return sig_;
+}
+size_t TxIn:: GetIndex(){
+    return index_;
+}
