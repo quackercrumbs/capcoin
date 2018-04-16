@@ -1,4 +1,6 @@
 #include "blockchain.h"
+#include "../lib/socket.h"
+#include "../lib/network.h"
 
 Blockchain::Blockchain(){
     //initialize the chain with the genesis block.
@@ -21,13 +23,30 @@ Block Blockchain::GetLastBlock(){
     return blocks_[blocks_.size()-1];
 }
 
-Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
+Block Blockchain::GenerateNextBlock(){//std::vector <Transaction>& data){
+
+    TxIn in1("a", "asdasdasd", 1);
+    TxOut out1("b", 50);
+
+    TxIn in2("c", "asdfasdfasdf", 2);
+    TxOut out2("d", 100);
+
+    TxIn in3("e", "asdfadf", 3);
+    TxOut out3("f", 150);
+
+    std::vector<TxIn> ins{in1, in2, in3};
+    std::vector<TxOut> outs{out1, out2, out3};
+    Transaction first(ins, outs);
+
+    std::vector<Transaction> GenTxns{first};
+
     size_t index = blocks_[blocks_.size()-1].GetIndex() + 1;
     time_t timestamp = time(0);
     size_t difficulty = GetDifficulty();
     size_t nonce = 0;
     std::string hash_;
     std::string prevHash = blocks_[blocks_.size()-1].GetHash();
+    auto data = GenTxns;
     while (true) {
         hash_ = CalculateHash(index, prevHash, timestamp, data, difficulty, nonce);
         if (HashMatchesDifficulty(hash_, difficulty)){break;}
@@ -43,6 +62,8 @@ Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
     return newBlock;
 
 }
+
+
 
 bool Blockchain::HashMatchesDifficulty(std::string hash, size_t difficulty){
     //check to see if there are any non-hex characters.

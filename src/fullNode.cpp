@@ -48,7 +48,16 @@ void FullNode::run(){
       std::cout << "please enter amount to send" << std::endl;
       std::string amt;
       std::cin >> amt;
-      network->broadcastMessage(amt);
+
+      Block b = blockchain->GenerateNextBlock();
+
+      // network->broadcastMessage(amt);
+
+      network->broadcastBlock( b );
+
+
+
+
     }
     else if(selection == "R" || selection == "r" ){
       std::cout << "run receive" << std::endl;
