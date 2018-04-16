@@ -11,6 +11,7 @@
 #include <time.h>
 
 #include "compare_utils.h"
+#include "test_serialize_utils.h"
 #include "test_transaction_utils.h"
 
 bool test_good_unspent_serial() {
