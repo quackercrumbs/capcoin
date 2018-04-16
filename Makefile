@@ -1,15 +1,15 @@
 C++FLAG = -g -std=c++11
 
-COMPARE_OBJ = src/compare_utils.o
-Serial_OBJ = src/serialize.o
+Compare_OBJ = src/compare_utils.o
+Serialize_OBJ = src/serialize.o
 Transaction_OBJ = src/transaction.o src/txin.o src/txout.o src/utxout.o
 Block_OBJ = src/block.o src/blockchain.o
 Merkle_OBJ = src/merkle.o
 Network_OBJ = src/network.o src/socket.o
 
 # Compiles the main capcoin program and its prerequisutes
-Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Network_OBJ) $(Serial_OBJ)\
-			  $(COMPARE_OBJ)
+Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Network_OBJ) $(Serialize_OBJ)\
+			  $(Compare_OBJ)
 
 # Where to store all drivers
 EXEC_DIR = ./bin/
