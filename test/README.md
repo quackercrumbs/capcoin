@@ -1,26 +1,28 @@
 
 # Testing
-This folder will contain test drivers for all classes, methods, etc. Currently all testing will have to be executed manually.
+This folder will contain test drivers for all classes, methods, etc. This project requires the googletest library inorder to run the tests.
+ 
+## Setup
+This compiles all of capcoins sources and clones the googletest library.
+```
+./setup.sh
+```
 
-### To compile:
-From the root directory
+### To compile and run:
 ```
-make all #compiles all src files, required for tests to build
-make tests #compiles all tests
+make all            # compiles all unittest
+make <unit test>    # compiles specific unit test
 ```
 
-### To run:
-From root directory
 ```
-./bin/sample_test.o
+./bin/<unit test>   # runs a specific unit tests
 ```
 
 ### To clean:
-From root directory
 ```
 make clean 
 ```
-**Warning**: this will remove all executables and binaries in the project.
+**Warning**: this will remove all compiled code for google tests.
 
 ## Creating New Tests
 To create a new unit test you must have a unit test file:
