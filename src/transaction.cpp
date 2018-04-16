@@ -64,6 +64,7 @@ std::string Transaction:: CalcHash() const{
     accuOutTx = accuOutTx + i.GetVal();
   //add the two strings and hash them for the id
   return picosha2::hash256_hex_string(accuOutTx);
+}
 
 std::vector<TxIn> Transaction::GetTxIns(){
     return txIns_;
