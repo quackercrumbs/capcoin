@@ -4,9 +4,10 @@ Transaction_OBJ = src/transaction.o src/txin.o src/txout.o src/utxout.o
 Block_OBJ = src/block.o src/blockchain.o
 Merkle_OBJ = src/merkle.o
 Network_OBJ = src/network.o src/socket.o
+FullNode_OBJ = src/fullNode.o
 
 #Compiles the main capcoin program and its prerequisutes
-Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Network_OBJ)
+Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Network_OBJ) $(FullNode_OBJ)
 
 #Where to store all drivers
 EXEC_DIR = ./bin/
@@ -23,7 +24,7 @@ INCLUDES = -I ./lib/ -I ./test/utils -I ./test/googletest/googletest/
 #Capcoin Main Driver
 CAPCOIN=capcoin.o #Executable name
 $(CAPCOIN): $(Capcoin_OBJ) #Rule to compile capcoin
-	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Capcoin_OBJ)
+	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Capcoin_OBJ) -lpthread
 
 #General Rules to compile drivers
 all: capcoin

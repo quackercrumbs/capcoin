@@ -1,6 +1,7 @@
 
 # Capcoin
 
+
 Current implementations of cryptocurrencies have various challenges to overcome, mainly characterized by their poor environmental sustainability and lack of consumer friendliness.
 
 The main source of negative environmental impact any blockchain based network faces stems from the Proof-of-Work consensus algorithm used to secure the blockchain ledger. We propose the use a hybrid validation method predicated upon both Proof-of-Stake and Proof-of-Work. By sidestepping the computationally heavy resources required by an ordinary Proof-of-Work algorithm, in favor for a hybrid option, we aim to build a more sustainable and efficient cryptocurrency.
