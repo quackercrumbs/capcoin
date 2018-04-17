@@ -11,12 +11,10 @@
 
 
 //Creates a fake TxIn with random dummy data
-//@param seed: the seed to produce random data
-TxIn CreateFakeTxIn(size_t seed);
+TxIn CreateFakeTxIn();
 
 //Create a fake TxOut with random dummy data
-//@param seed: the seed to produce random data
-TxOut CreateFakeTxOut(size_t seed);
+TxOut CreateFakeTxOut();
 
 //Create a fake transaction with a single fake random TxIn and single fake random TxOut
 //@param in: the number of fake txins

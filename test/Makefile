@@ -19,6 +19,9 @@ GTEST_DIR = googletest/googletest
 # Where to find user code.
 USER_DIR = .
 
+# Tells compiler where to find header files
+INCLUDES = -I ../lib/ -I $(TEST_UTILS)
+
 # Project src directory
 CAP_SRC = ../src
 
@@ -35,7 +38,7 @@ CXXFLAGS += -g -Wall -Wextra -pthread
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = sample_unittest transaction_unittest
+TESTS = sample_unittest transaction_unittest serialize_unittest
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -97,13 +100,37 @@ sample_unittest : sample.o sample_unittest.o gtest_main.a
 #
 #
 ####################################################################
-TRANSACTION_OBJS = $(CAP_SRC)/transaction.o\
-				   $(CAP_SRC)/txin.o $(CAP_SRC)/txout.o $(CAP_SRC)/utxout.o\
-				   $(TEST_UTILS)/test_transaction_utils.o\
 
+# Transaction Unit Test
+TRANSACTION_OBJS = $(CAP_SRC)/transaction.o\
+				   $(CAP_SRC)/txin.o $(CAP_SRC)/txout.o\
+				   $(CAP_SRC)/utxout.o $(CAP_SRC)/utxoutpool.o
+				   
+test_transaction_utils.o : $(TEST_UTILS)/test_transaction_utils.cpp\
+							$(TEST_UTILS)/test_transaction_utils.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -c $(TEST_UTILS)/test_transaction_utils.cpp
+   	
 transaction_unittest.o : $(USER_DIR)/transaction_unittest.cc\
 						$(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/transaction_unittest.cc
 
-transaction_unittest: transaction_unittest.o gtest_main.a
+transaction_unittest: test_transaction_utils.o transaction_unittest.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $(TRANSACTION_OBJS) $^ -o $(USER_DIR)/bin/$@
+
+# Serialize Unit Test
+SERIALIZE_OBJS = $(TRANSACTION_OBJS)\
+				 $(CAP_SRC)/block.o\
+				 $(CAP_SRC)/serialize.o\
+				 $(CAP_SRC)/compare_utils.o
+
+test_serialize_utils.o : $(TEST_UTILS)/test_serialize_utils.cpp\
+							$(TEST_UTILS)/test_serialize_utils.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -c $(TEST_UTILS)/test_serialize_utils.cpp
+	
+serialize_unittest.o : $(USER_DIR)/serialize_unittest.cc\
+					$(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -c $(USER_DIR)/serialize_unittest.cc
+
+serialize_unittest : test_serialize_utils.o test_transaction_utils.o serialize_unittest.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $(SERIALIZE_OBJS) $^ -o $(USER_DIR)/bin/$@
+
