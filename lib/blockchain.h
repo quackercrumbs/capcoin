@@ -33,6 +33,7 @@ public:
 
 	//Returns the latest block on the chain
 	Block GetLastBlock();
+	std::vector<Block> GetChain();
 
 private:
 	std::vector<Block> blocks_;
