@@ -20,6 +20,9 @@ Blockchain::Blockchain(){
 Block Blockchain::GetLastBlock(){
     return blocks_[blocks_.size()-1];
 }
+std::vector<Block> Blockchain::GetChain(){
+    return blocks_;
+}
 
 Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
     size_t index = blocks_[blocks_.size()-1].GetIndex() + 1;
