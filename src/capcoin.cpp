@@ -13,30 +13,40 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 
+
+  if((argc > 1) && (strncmp (argv[1], "server", 6) == 0)){
+    //server
+
+
+    // create Blockchain
+    Blockchain bc;
+    Block genBlock = bc.GetLastBlock();
+
+    //create Network
+    Network nw;
+    nw.startServer();
+
+
+  }else{
+    //client
+
     // first, create all 4 parts of the node, Blockchain, Network, Miner and Wallet
 
     // create Blockchain
     Blockchain bc;
     Block genBlock = bc.GetLastBlock();
-    
-
 
     //create Network
     Network nw;
     //connect as server or client
-    ((argc > 1) && (strncmp (argv[1], "server", 6) == 0)) ? nw.startServer() : nw.startClient();
+    nw.startClient();
     //start listening for incoming messages, on another thread
     std::thread listenThread = nw.listenThread();
 
 
-
     // create Miner
 
-
-
-
     // create Wallet
-
 
 
     // then, create full node, using these 4 parts
@@ -45,6 +55,9 @@ int main(int argc, char *argv[]) {
 
     // start the node
     node.run();
+  }
+
+
 
 
     return 0;
