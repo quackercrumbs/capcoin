@@ -2,6 +2,8 @@
 #define NETWORK_H
 
 #include "socket.h"
+#include "block.h"
+#include "serialize.h"
 #include <string>
 #include <thread>
 
@@ -17,6 +19,8 @@ public:
   }
 
   void broadcastMessage(std::string msg);
+
+  void broadcastBlock(Block& block);
 
   std::string getLastReceived();
 

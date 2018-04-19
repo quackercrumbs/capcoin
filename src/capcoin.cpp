@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     // create Blockchain
     Blockchain bc;
     Block genBlock = bc.GetLastBlock();
-
+    
 
 
     //create Network

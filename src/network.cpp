@@ -10,6 +10,18 @@ void Network::broadcastMessage(string msg){
   send(sock, msg.c_str(), msg.size(), 0);
 }
 
+
+void Network::broadcastBlock(Block& block){
+
+  Serialize serializer(block);
+  
+  string str = serializer.toString();
+
+  send(sock, str.c_str(), str.size(), 0);
+
+}
+
+
 std::string Network::getLastReceived(){
   return lastReceived;
 }

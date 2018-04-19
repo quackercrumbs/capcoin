@@ -26,7 +26,7 @@ public:
 	bool HashMatchesDifficulty(std::string hash, size_t difficulty);
 
 	//Generates a new block
-	Block GenerateNextBlock(std::vector<Transaction>& data);
+	Block GenerateNextBlock();//std::vector<Transaction>& data);
 
 	//Pushes the new block onto the blockchain
 	bool Push(Block& newBlock);
