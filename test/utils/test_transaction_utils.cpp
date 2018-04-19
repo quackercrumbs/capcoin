@@ -1,6 +1,5 @@
 #include "test_transaction_utils.h"
 
-#include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -8,7 +7,8 @@
 
 using namespace std;
 
-TxIn CreateFakeTxIn() {
+TxIn CreateFakeTxIn(size_t seed) {
+    srand(seed);
 	string id = random_string(8);
     string sig = random_string(8);
     size_t index = rand() % 1000;
@@ -16,7 +16,8 @@ TxIn CreateFakeTxIn() {
     return fakeTxIn;
 }
 
-TxOut CreateFakeTxOut() {
+TxOut CreateFakeTxOut(size_t seed) {
+    srand(seed);
     string addr = random_string(8);
 	double amt = rand() % 1000;
 	TxOut fakeTxOut{addr,amt};
@@ -24,17 +25,14 @@ TxOut CreateFakeTxOut() {
 }
 
 Transaction CreateFakeTransaction(size_t in, size_t out) {
-    //Create fake txIns
-    vector<TxIn> txIns;
-    for(size_t i = 0; i < in; i++) {
-	    txIns.push_back(CreateFakeTxIn());
-    }
-    //Create fake txOuts
+	//Create fake txIns
+	vector<TxIn> txIns;
+
+	txIns.push_back(CreateFakeTxIn(time(0)));
+	//Create fake txOuts
 	vector<TxOut> txOuts;
-    for (size_t i = 0; i < out; i++) {
-        txOuts.push_back(CreateFakeTxOut());
-    }
-    //Create fake transaction with fake ins and outs
+	txOuts.push_back(CreateFakeTxOut(time(0)));
+	//Create fake transaction with fake ins and outs
 	Transaction fakeTransaction{txIns,txOuts};
 	return fakeTransaction;
 }
