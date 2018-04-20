@@ -10,6 +10,7 @@ FullNode::FullNode(Blockchain * bc, Network * nw){
 
 bool FullNode::updateChain(){
 
+  
   network->broadcastMessage("REQUEST");
 
   return false;
