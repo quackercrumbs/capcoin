@@ -30,7 +30,9 @@ void FullNode::welcome(){
 }
 
 void FullNode::displayMenu(){
-  std::cout << "O - Overview     S - Send     R - Receive     T - Transactions     H - Help" << std::endl;
+  std::cout << "O - Overview     S - Send     R - Receive     ";
+  std::cout << "T - Transactions     H - Help     ";
+  std::cout << "BC - Blockchain     LB - Last Block" << std::endl;
 }
 
 void FullNode::run(){
@@ -69,10 +71,33 @@ void FullNode::run(){
     else if(selection == "H" || selection == "h" ){
       std::cout << "run help" << std::endl;
     }
+    else if(selection == "BC" || selection == "bc") {
+      displayBlockchain();
+    }
+    else if(selection == "LB" || selection == "lb") {
+      displayLastBlock();
+    }
     else{
       std::cout << "input not valid" << std::endl;
     }
 
 
   }
+}
+
+void FullNode::displayLastBlock() {
+    std::cout << "         ______________" << std::endl;
+    std::cout << "========| Latest Block |========" << std::endl;
+    std::cout << "         --------------" << std::endl;
+    
+    Block latest = blockchain->GetLastBlock();
+    std::cout << latest << std::endl;
+}
+
+void FullNode::displayBlockchain() {
+    std::cout << "         _________________" << std::endl;
+    std::cout << "========| Full Blockchain |========" << std::endl;
+    std::cout << "         -----------------" << std::endl;
+    std::cout << *blockchain << std::endl; 
+
 }
