@@ -15,6 +15,8 @@ public:
 
   void displayMenu();
 
+  bool updateChain();
+
 private:
 
   Blockchain * blockchain = new Blockchain();

@@ -8,6 +8,20 @@ FullNode::FullNode(Blockchain * bc, Network * nw){
   network = nw;
 }
 
+bool FullNode::updateChain(){
+
+  network->broadcastMessage("REQUEST");
+
+  return false;
+  /*
+    //listen for responses, perhaps for a reply that states the size of the current chain
+    //for(i = 0; i < current chain size; i++)
+      //wait for a message, attempt to parse it into the chain.
+      //if constant failures, that means that at some stage, a block was lost, break and try again
+
+  }*/
+}
+
 void FullNode::welcome(){
   std::cout << "***************************************************************************" << std::endl;
   std::cout << "***************************************************************************" << std::endl;
@@ -49,11 +63,10 @@ void FullNode::run(){
       std::string amt;
       std::cin >> amt;
 
-      Block b = blockchain->GenerateNextBlock();
 
       // network->broadcastMessage(amt);
 
-      network->broadcastBlock( b );
+
 
 
 

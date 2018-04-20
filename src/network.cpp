@@ -14,7 +14,7 @@ void Network::broadcastMessage(string msg){
 void Network::broadcastBlock(Block& block){
 
   Serialize serializer(block);
-  
+
   string str = serializer.toString();
 
   send(sock, str.c_str(), str.size(), 0);
@@ -51,7 +51,8 @@ void Network::listen(){
         //exit(0);
       }
       buffer[valread] = '\0';
-      // cout << string(buffer) << endl;
+      // this line below prints out any message
+      //cout << string(buffer) << endl;
       lastReceived = string(buffer);
       strcpy(buffer, "");
       fflush(stdout);
