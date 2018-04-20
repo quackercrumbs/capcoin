@@ -322,6 +322,7 @@ void TCPServerSocket::closeConnection(int sd)
   close( sd );
 }
 
+// sends to all but the sd
 void TCPServerSocket::broadcastAll(int sd, const string &msg)
 {
 
@@ -340,5 +341,26 @@ void TCPServerSocket::broadcastAll(int sd, const string &msg)
       cout << "\n*send error*\n" << endl;
     }
 
+  }
+}
+
+// sends to only the sd
+void TCPServerSocket::broadcastToSD(int sd, const string &msg)
+{
+
+  for(auto s: client_sockets)
+  {
+    if(s == nullptr)
+      continue;
+
+    if(s->getSockDesc() != sd)
+      continue;
+
+    cout << "Sending to " << s->getSockDesc() << endl;
+
+    if(send(s->getSockDesc(), msg.c_str(), msg.length(), 0) != msg.length())
+    {
+      cout << "\n*send error*\n" << endl;
+    }
   }
 }

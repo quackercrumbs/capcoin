@@ -208,9 +208,10 @@ void Network::startServer() {
                 buffer[valread] = '\0';
                 serv_socket.broadcastAll(sd, string(buffer));
 
-                // if incoming message is REQUEST send out hardcoded blockchain
+                // if incoming message is REQUEST send out message
                 if(string(buffer) == "REQUEST"){
-                  serv_socket.broadcastAll(sd, "send blockchain");
+                  // serv_socket.broadcastAll(sd, "send blockchain");
+                  serv_socket.broadcastToSD(sd, "send blockchain");
                 }
 
                 // print out all incoming messages, for testing
