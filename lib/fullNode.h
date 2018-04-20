@@ -15,6 +15,10 @@ public:
 
   void displayMenu();
 
+  void displayLastBlock();
+
+  void displayBlockchain();
+
 private:
 
   Blockchain * blockchain = new Blockchain();
