@@ -54,3 +54,15 @@ std::string Block::GetPreviousHash() const {
 std::vector<Transaction> Block::GetData() const {
     return data_;
 }
+
+std::ostream& operator<<(std::ostream& os, const Block& b) {
+    os << "----------- BLOCK --------------" << std::endl;
+    os << "Index: " << b.index_ << std::endl;
+    os << "Timestamp: " << b.timestamp_ << std::endl;
+    os << "Difficulty: " << b.difficulty_ << std::endl;
+    os << "Nonce: " << b.nonce_ << std::endl;
+    os << "Previous Hash: " << b.prevHash_ << std::endl;
+    os << "Hash: " << b.hash_ << std::endl;
+    os << "---------------------------------" << std::endl;
+    return os;
+}
