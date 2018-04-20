@@ -207,6 +207,7 @@ void Network::startServer() {
                 //set the string terminating NULL byte on the end of the data read
                 buffer[valread] = '\0';
                 serv_socket.broadcastAll(sd, string(buffer));
+                cout << string(buffer) << endl;
                 strcpy(buffer, "");
             }
           }
