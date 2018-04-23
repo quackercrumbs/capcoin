@@ -83,25 +83,7 @@ void Network::startClient(){
   }
 }
 
-void Network::startServer() {
-  TCPServerSocket serv_socket(1025, 5);
-
-  int sd, max_sd, valread, activity, i;
-
-  char buffer[1025];  //data buffer of 1K
-
-  string strMessage = "Established Network Connection \r\n";
-
-  const char *message = strMessage.c_str();
-
-  struct sockaddr_in address;
-
-  fd_set readfds;
-
-  int master_socket = serv_socket.getSockDesc();
-  int * client_socket = serv_socket.getClients();
-
-  TCPSocket* sock;
+void Network::runServer() {
 
   TCPSocket* s;
 
@@ -116,9 +98,9 @@ void Network::startServer() {
       max_sd = master_socket;
 
 
-      for(i=0; i < serv_socket.client_sockets.size(); i++)
+      for(i=0; i < server.client_sockets.size(); i++)
       {
-        s = serv_socket.client_sockets[i];
+        s = server.client_sockets[i];
 
         //if valid socket descriptor then continue
         if(s == nullptr)
@@ -146,27 +128,26 @@ void Network::startServer() {
       {
 
           try {
-            sock = serv_socket.accept();
+            client_socket = server.accept();
           }
           catch(SocketException &e){
             cout << e.what() << endl;
             continue;
           }
 
-          sd = sock->getSockDesc();
+          sd = client_socket->getSockDesc();
 
-          for (i = 0; i < serv_socket.client_sockets.size(); i++)
+          for (i = 0; i < server.client_sockets.size(); i++)
           {
               //if position is empty
-              if( serv_socket.client_sockets[i] == nullptr )
+              if( server.client_sockets[i] == nullptr )
               {
-                  serv_socket.client_sockets[i] = sock;
-                  cout << "Adding to list of sockets as " << i << endl;
+                  server.client_sockets[i] = client_socket;
                   break;
               }
           }
-          if(i == serv_socket.client_sockets.size())
-            serv_socket.client_sockets.push_back(sock);
+          if(i == server.client_sockets.size())
+            server.client_sockets.push_back(client_socket);
           cout << "Adding to list of sockets as " << i << endl;
           cout << "Socket descriptor is " << sd << endl;
 
@@ -181,9 +162,9 @@ void Network::startServer() {
       }
 
 
-      for(i = 0; i<serv_socket.client_sockets.size(); i++)
+      for(i = 0; i<server.client_sockets.size(); i++)
       {
-        s = serv_socket.client_sockets[i];
+        s = server.client_sockets[i];
         if(s == nullptr){
           continue;
         }
@@ -197,7 +178,7 @@ void Network::startServer() {
             if ((valread = read( sd , buffer, 1024)) == 0)
             {
                 // maybe add index to reduce time complexity
-                serv_socket.closeConnection(sd);
+                server.closeConnection(sd);
                 cout << "Connection " << sd << " closed" << endl;
             }
 
@@ -206,17 +187,17 @@ void Network::startServer() {
             {
                 //set the string terminating NULL byte on the end of the data read
                 buffer[valread] = '\0';
-               
+
                 // if incoming message is REQUEST send out message
                 if(string(buffer) == "REQUEST"){
-                  // serv_socket.broadcastAll(sd, "send blockchain");
-                  serv_socket.broadcastToOne(sd, "send blockchain");
-                }
-		else{
-		  serv_socket.broadcastAll(sd, string(buffer));
-		}
+                  server.broadcastToOne(sd, "send blockchain");
 
-		// print out all incoming messages
+                }
+            		else{
+            		  server.broadcastAll(sd, string(buffer));
+            		}
+
+            		// print out all incoming messages
                 cout << string(buffer) << endl;
 
                 strcpy(buffer, "");

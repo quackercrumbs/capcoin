@@ -44,7 +44,13 @@ int main(int argc, char *argv[]) {
     bc.GenerateNextBlock(GenTxns);
     //create Network
     Network nw;
-    nw.startServer();
+    nw.runServer();
+
+    //  network listen on seperate thread
+
+
+    //FullNode node (&bc, &nw);
+    // node.run();
 
 
   }else{
