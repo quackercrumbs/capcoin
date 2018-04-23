@@ -192,8 +192,7 @@ void Network::runServer(Blockchain * bc) {
 
                 // if incoming message is REQUEST send out message
                 if(string(buffer) == "REQUEST"){
-                  server.broadcastToOne(sd, "send blockchain");
-
+                  
 
                   Block block = bc->GetLastBlock();
 
