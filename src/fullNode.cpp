@@ -10,7 +10,7 @@ FullNode::FullNode(Blockchain * bc, Network * nw){
 
 bool FullNode::updateChain(){
 
-  
+
   network->broadcastMessage("REQUEST");
 
   return false;
@@ -64,11 +64,8 @@ void FullNode::run(){
       std::string amt;
       std::cin >> amt;
 
-
-      // network->broadcastMessage(amt);
-
-
-
+      //sending fake transaction
+      network->broadcastMessage(amt);
 
 
 
