@@ -20,6 +20,8 @@ public:
     std::string GetPreviousHash() const;
     std::vector<Transaction> GetData() const;
     friend std::string CalculateHash(size_t index, std::string prevHash, std::time_t timestamp, const std::vector<Transaction>& data, size_t difficulty, size_t nonce);
+
+    friend std::ostream& operator<<(std::ostream& os, const Block& b);
 private:
     const size_t index_;
     const time_t timestamp_;

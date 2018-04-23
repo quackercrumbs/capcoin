@@ -13,9 +13,15 @@ public:
 
   void run();
 
+  bool updateChain();
+
   void displayMenu();
 
-  bool updateChain();
+  void displayLastBlock();
+
+  void displayBlockchain();
+
+
 
 private:
 

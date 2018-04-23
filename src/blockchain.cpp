@@ -122,3 +122,10 @@ bool Blockchain::IsValidHash(const Block& newBlock){
     //otherwise, return true
     return true;
 }
+
+std::ostream& operator<<(std::ostream& os, const Blockchain& bc) {
+    for(auto i = bc.blocks_.rbegin(); i != bc.blocks_.rend(); ++i) {
+        os << *i << std::endl;
+    }
+    return os;
+}

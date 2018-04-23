@@ -33,7 +33,12 @@ public:
 
 	//Returns the latest block on the chain
 	Block GetLastBlock();
-	std::vector<Block> GetChain();
+	
+    //Return a copy of the block chain as a vector
+    std::vector<Block> GetChain();
+
+    
+    friend std::ostream& operator<<(std::ostream& os, const Blockchain& b);
 
 private:
 	std::vector<Block> blocks_;
