@@ -3,15 +3,17 @@
 
 #include "socket.h"
 #include "block.h"
+#include "blockchain.h"
 #include "serialize.h"
 #include <string>
 #include <thread>
+
 
 class Network{
 
 public:
   void startClient();
-  void runServer();
+  void runServer(Blockchain * bc);
 
   void listen();
   std::thread listenThread(){

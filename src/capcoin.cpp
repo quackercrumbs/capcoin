@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 
     // create Blockchain
     Blockchain bc;
-    Block genBlock = bc.GetLastBlock();
+    // Block genBlock = bc.GetLastBlock();
 
 
 
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     bc.GenerateNextBlock(GenTxns);
     //create Network
     Network nw;
-    nw.runServer();
+    nw.runServer(&bc);
 
     //  network listen on seperate thread
 

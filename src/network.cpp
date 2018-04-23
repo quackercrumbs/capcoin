@@ -83,7 +83,9 @@ void Network::startClient(){
   }
 }
 
-void Network::runServer() {
+void Network::runServer(Blockchain * bc) {
+
+
 
   TCPSocket* s;
 
@@ -191,6 +193,15 @@ void Network::runServer() {
                 // if incoming message is REQUEST send out message
                 if(string(buffer) == "REQUEST"){
                   server.broadcastToOne(sd, "send blockchain");
+
+
+                  Block block = bc->GetLastBlock();
+
+                  Serialize serializer(block);
+
+                  string blockStr = serializer.toString();
+
+                  server.broadcastToOne(sd, blockStr);
 
                 }
             		else{
