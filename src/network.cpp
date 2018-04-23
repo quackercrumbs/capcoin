@@ -13,8 +13,10 @@ void Network::broadcastMessage(string msg){
 
 void Network::broadcastBlock(Block& block){
 
-  Serialize serializer(block);
-  
+  Serialize serializer;
+
+  serializer(block);
+
   string str = serializer.toString();
 
   send(sock, str.c_str(), str.size(), 0);
