@@ -201,20 +201,22 @@ void Network::startServer() {
                 cout << "Connection " << sd << " closed" << endl;
             }
 
-            //Echo back the message that came in
+            //Handle Incoming Messages
             else
             {
                 //set the string terminating NULL byte on the end of the data read
                 buffer[valread] = '\0';
-                serv_socket.broadcastAll(sd, string(buffer));
-
+               
                 // if incoming message is REQUEST send out message
                 if(string(buffer) == "REQUEST"){
                   // serv_socket.broadcastAll(sd, "send blockchain");
                   serv_socket.broadcastToOne(sd, "send blockchain");
                 }
+		else{
+		  serv_socket.broadcastAll(sd, string(buffer));
+		}
 
-                // print out all incoming messages, for testing
+		// print out all incoming messages
                 cout << string(buffer) << endl;
 
                 strcpy(buffer, "");
