@@ -345,7 +345,7 @@ void TCPServerSocket::broadcastAll(int sd, const string &msg)
 }
 
 // sends to only the sd
-void TCPServerSocket::broadcastToSD(int sd, const string &msg)
+void TCPServerSocket::broadcastToOne(int sd, const string &msg)
 {
 
   for(auto s: client_sockets)

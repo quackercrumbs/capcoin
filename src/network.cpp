@@ -211,7 +211,7 @@ void Network::startServer() {
                 // if incoming message is REQUEST send out message
                 if(string(buffer) == "REQUEST"){
                   // serv_socket.broadcastAll(sd, "send blockchain");
-                  serv_socket.broadcastToSD(sd, "send blockchain");
+                  serv_socket.broadcastToOne(sd, "send blockchain");
                 }
 
                 // print out all incoming messages, for testing
