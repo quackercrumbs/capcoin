@@ -10,6 +10,8 @@ class Block {
 public:
     Block   (size_t index, time_t timestamp, size_t difficulty, size_t nonce,
             std::string prevHash, std::vector<Transaction> &data);
+    Block   (size_t index, time_t timestamp, size_t difficulty, size_t nonce,
+            std::string hash, std::string prevHash, std::vector<Transaction> &data);
 
     size_t GetIndex() const;
     time_t GetTimestamp() const;
