@@ -31,6 +31,7 @@ void Network::sendChain(int to, Blockchain* bc)
     string blockStr = serializer.toString();
     server.broadcastToOne(to, blockStr);
   }
+  server.broadcastToOne(to, "END");
 }
 
 
@@ -39,6 +40,8 @@ std::string Network::getLastReceived(){
 }
 
 void Network::listen(){
+  vector<Block> blocks;
+
   while(1){
     FD_ZERO(&readfds);
 
@@ -71,7 +74,22 @@ void Network::listen(){
       {
         //
         Block block = JSONtoBlock(s);
-        blockchain->Push(block);
+
+        // If blockchain is empty or just a genesis block then we will get every block before updating the chain
+        if(blockchain == nullptr || blockchain->GetChain().size() == 1){
+          blocks.push_back(block);
+        }
+        // Else it's just a new block
+        else{
+          blockchain->Push(block);
+        }
+
+      }
+
+      if(s.substr(0, 3) == "END")
+      {
+        Blockchain bc(blocks);
+        blockchain = &bc;
       }
       lastReceived = s;
       strcpy(buffer, "");

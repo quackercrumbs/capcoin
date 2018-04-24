@@ -18,6 +18,9 @@ Blockchain::Blockchain(){
     blocks_.push_back(Genesis);
 }
 
+Blockchain::Blockchain(const std::vector<Block>& blocks)
+  : blocks_{blocks} {}
+
 
 Block Blockchain::GetLastBlock(){
     return blocks_[blocks_.size()-1];
