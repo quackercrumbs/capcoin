@@ -12,7 +12,7 @@
 class Network{
 
 public:
-  void startClient();
+  void startClient(Blockchain * bc);
   void runServer(Blockchain * bc);
 
   void listen();
@@ -43,6 +43,7 @@ private:
   fd_set readfds;
   std::string lastReceived = "";
 
+  Blockchain * blockchain = nullptr;
 };
 
 #endif

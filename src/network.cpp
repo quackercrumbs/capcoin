@@ -65,14 +65,20 @@ void Network::listen(){
       buffer[valread] = '\0';
       // this line below prints out any message
       //cout << string(buffer) << endl;
-      lastReceived = string(buffer);
+
+      string s = string(buffer);
+      if(s.substr(1, 5) == "BLOCK")
+      {
+        //
+      }
+      lastReceived = s;
       strcpy(buffer, "");
       fflush(stdout);
     }
   }
 }
 
-void Network::startClient(){
+void Network::startClient(Blockchain * bc){
 
   if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0){
     cout << "\n Socket creation error \n";
@@ -93,11 +99,11 @@ void Network::startClient(){
     cout << "\nConnection Failed \n";
     return;
   }
+
+  blockchain = bc;
 }
 
 void Network::runServer(Blockchain * bc) {
-
-
 
   TCPSocket* s;
 

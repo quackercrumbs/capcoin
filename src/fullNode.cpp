@@ -69,7 +69,21 @@ void FullNode::run(){
       //sending fake transaction
       network->broadcastMessage(amt);
 
+      TxIn dummyIn("", "", 0);
+      TxOut dummyOut("32ba5334aafcd8e7266e47076996b55", atoi(amt.c_str()));
+      std::vector<TxIn> TxIns{dummyIn};
+      std::vector<TxOut> TxOuts{dummyOut};
+      Transaction NewTxn(TxIns, TxOuts);
 
+      std::vector<Transaction> data{NewTxn};
+
+      Block block = blockchain->GenerateNextBlock(data);
+
+      Serialize serializer(block);
+
+      std::string blockStr = serializer.toString();
+
+      network->broadcastMessage(blockStr);
 
     }
     else if(selection == "R" || selection == "r" ){
@@ -100,7 +114,7 @@ void FullNode::displayLastBlock() {
     std::cout << "         ______________" << std::endl;
     std::cout << "========| Latest Block |========" << std::endl;
     std::cout << "         --------------" << std::endl;
-    
+
     Block latest = blockchain->GetLastBlock();
     std::cout << latest << std::endl;
 }
@@ -109,6 +123,6 @@ void FullNode::displayBlockchain() {
     std::cout << "         _________________" << std::endl;
     std::cout << "========| Full Blockchain |========" << std::endl;
     std::cout << "         -----------------" << std::endl;
-    std::cout << *blockchain << std::endl; 
+    std::cout << *blockchain << std::endl;
 
 }
