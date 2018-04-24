@@ -26,6 +26,14 @@ std::vector<Block> Blockchain::GetChain(){
     return blocks_;
 }
 
+bool Blockchain::Push(Block& b){
+  //Needs to verify block eventually
+
+  blocks_.push_back(b);
+
+  return true;
+}
+
 Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
     size_t index = blocks_[blocks_.size()-1].GetIndex() + 1;
     time_t timestamp = time(0);

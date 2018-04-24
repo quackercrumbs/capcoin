@@ -1,6 +1,23 @@
 #include "serialize.h"
 #include <iostream>
 
+Serialize::Serialize(){
+
+}
+
+Serialize::Serialize(Transaction& toBeSent){
+  this->operator()(toBeSent);
+}
+
+Serialize::Serialize(Block& toBeSent){
+  this->operator()(toBeSent);
+}
+
+Serialize::Serialize(UnspentTxOut& toBeSent){
+  this->operator()(toBeSent);
+}
+
+
 void Serialize::operator()(Transaction& toBeSent){
   std::stringstream accumulator;
   Serialize smallSerial;

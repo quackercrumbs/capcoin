@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
     //create Network
     Network nw;
     //connect as server or client
-    nw.startClient();
+    nw.startClient(&bc);
     //start listening for incoming messages, on another thread
     std::thread listenThread = nw.listenThread();
 

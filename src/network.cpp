@@ -70,6 +70,8 @@ void Network::listen(){
       if(s.substr(1, 5) == "BLOCK")
       {
         //
+        Block block = JSONtoBlock(s);
+        blockchain->Push(block);
       }
       lastReceived = s;
       strcpy(buffer, "");
