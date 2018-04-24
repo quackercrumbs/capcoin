@@ -30,6 +30,7 @@ void Network::sendChain(int to, Blockchain* bc)
     Serialize serializer(block);
     string blockStr = serializer.toString();
     server.broadcastToOne(to, blockStr);
+    usleep(5000);
   }
   server.broadcastToOne(to, "END");
 }
@@ -70,6 +71,7 @@ void Network::listen(){
       //cout << string(buffer) << endl;
 
       string s = string(buffer);
+
       if(s.substr(1, 5) == "BLOCK")
       {
         //
@@ -245,9 +247,8 @@ void Network::runServer(Blockchain * bc) {
                   sendChain(sd, bc);
                   cout << "No blocks: " << bc->GetChain().size() << "\n";
 
-                  cout << "Blocks:\n";
-                  for(auto block: bc->GetChain())
-                    cout << block << endl;
+                  cout << "Blockchain:\n";
+                  cout << *bc << endl;
 
                 }
                 //if the incoming message is a new block
@@ -261,9 +262,8 @@ void Network::runServer(Blockchain * bc) {
 
                   cout << "No blocks: " << bc->GetChain().size() << "\n";
 
-                  cout << "Blocks:\n";
-                  for(auto block: bc->GetChain())
-                    cout << block << endl;
+                  cout << "Blockchain:\n";
+                  cout << *bc << endl;
 
                 }
             		else{
