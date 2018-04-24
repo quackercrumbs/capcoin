@@ -358,6 +358,8 @@ void TCPServerSocket::broadcastToOne(int sd, const string &msg)
 
     cout << "Sending to " << s->getSockDesc() << endl;
 
+    cout << "<" << msg << ">" << endl;
+
     if(send(s->getSockDesc(), msg.c_str(), msg.length(), 0) != msg.length())
     {
       cout << "\n*send error*\n" << endl;
