@@ -24,6 +24,8 @@ public:
 
   void broadcastBlock(Block& block);
 
+  void sendChain(int to, Blockchain* bc);
+
   std::string getLastReceived();
 
 private:

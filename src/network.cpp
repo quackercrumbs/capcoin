@@ -1,6 +1,7 @@
 #include "../lib/socket.h"
 #include "../lib/network.h"
 #include <iostream>
+#include <vector>
 #include <string>
 #include <thread>
 
@@ -19,6 +20,17 @@ void Network::broadcastBlock(Block& block){
 
   send(sock, str.c_str(), str.size(), 0);
 
+}
+
+void Network::sendChain(int to, Blockchain* bc)
+{
+  vector<Block> chain = bc->GetChain();
+  for(auto block: chain)
+  {
+    Serialize serializer(block);
+    string blockStr = serializer.toString();
+    server.broadcastToOne(to, blockStr);
+  }
 }
 
 
@@ -192,15 +204,17 @@ void Network::runServer(Blockchain * bc) {
 
                 // if incoming message is REQUEST send out message
                 if(string(buffer) == "REQUEST"){
-                  
 
-                  Block block = bc->GetLastBlock();
 
-                  Serialize serializer(block);
+                  // Block block = bc->GetLastBlock();
+                  //
+                  // Serialize serializer(block);
+                  //
+                  // string blockStr = serializer.toString();
+                  //
+                  // server.broadcastToOne(sd, blockStr);
 
-                  string blockStr = serializer.toString();
-
-                  server.broadcastToOne(sd, blockStr);
+                  sendChain(sd, bc);
 
                 }
             		else{
