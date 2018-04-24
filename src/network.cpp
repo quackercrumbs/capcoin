@@ -243,6 +243,7 @@ void Network::runServer(Blockchain * bc) {
                   // server.broadcastToOne(sd, blockStr);
 
                   sendChain(sd, bc);
+                  cout << "No blocks: " << bc->GetChain().size() << "\n";
 
                 }
                 //if the incoming message is a new block
@@ -253,6 +254,8 @@ void Network::runServer(Blockchain * bc) {
 
                   // Push
                   bc->Push(block);
+
+                  cout << "No blocks: " << bc->GetChain().size() << "\n";
 
                 }
             		else{
