@@ -228,8 +228,10 @@ void Network::runServer(Blockchain * bc) {
                 //set the string terminating NULL byte on the end of the data read
                 buffer[valread] = '\0';
 
-                // if incoming message is REQUEST send out message
-                if(string(buffer) == "REQUEST"){
+                string s = string(buffer);
+
+                // if incoming message is REQUEST send out the chain
+                if(s == "REQUEST"){
 
 
                   // Block block = bc->GetLastBlock();
@@ -241,6 +243,16 @@ void Network::runServer(Blockchain * bc) {
                   // server.broadcastToOne(sd, blockStr);
 
                   sendChain(sd, bc);
+
+                }
+                //if the incoming message is a new block
+                else if(s.substr(1, 5) == "BLOCK"){
+
+                  // Parse block
+                  Block block = JSONtoBlock(s);
+
+                  // Push
+                  bc->Push(block);
 
                 }
             		else{
