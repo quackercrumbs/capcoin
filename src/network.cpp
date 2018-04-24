@@ -245,6 +245,10 @@ void Network::runServer(Blockchain * bc) {
                   sendChain(sd, bc);
                   cout << "No blocks: " << bc->GetChain().size() << "\n";
 
+                  cout << "Blocks:\n";
+                  for(auto block: bc->GetChain())
+                    cout << block << endl;
+
                 }
                 //if the incoming message is a new block
                 else if(s.substr(1, 5) == "BLOCK"){
