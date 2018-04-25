@@ -77,6 +77,13 @@ void Network::listen(){
         //
         Block block = JSONtoBlock(s);
 
+        string idx = string {to_string(block.GetIndex())};
+
+        cout << block << endl;
+
+        broadcastMessage("GOT " + s);
+        broadcastMessage("\nB: " + to_string(blocks.size()));
+
         // If blockchain is empty or just a genesis block then we will get every block before updating the chain
         if(blockchain == nullptr || blockchain->GetChain().size() == 1){
           blocks.push_back(block);
@@ -90,6 +97,12 @@ void Network::listen(){
 
       if(s.substr(0, 3) == "END")
       {
+        broadcastMessage("EOC\n");
+
+        for(auto block: blocks){
+          Serialize s(block);
+          broadcastMessage("GOT " + s.toString() + "\n");
+        }
         Blockchain bc(blocks);
         blockchain = &bc;
       }
@@ -122,7 +135,7 @@ void Network::startClient(Blockchain * bc){
     return;
   }
 
-  blockchain = bc;
+  // blockchain = bc;
 }
 
 void Network::runServer(Blockchain * bc) {
