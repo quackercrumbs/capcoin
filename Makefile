@@ -1,4 +1,4 @@
-C++FLAG = -g -std=c++11
+C++FLAG = -g -std=c++14
 
 Transaction_OBJ = src/transaction.o src/txin.o src/txout.o src/utxout.o
 Block_OBJ = src/block.o src/blockchain.o
@@ -11,21 +11,26 @@ Serialize_OBJ = src/serialize.o
 Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Serialize_OBJ) $(Network_OBJ) $(FullNode_OBJ)
 
 #Where to store all drivers
-EXEC_DIR = ./bin/
+EXEC_DIR = ./bin
 
 #Tells compiler where to find headers
 #Useful for importing header files (instead of listing full relative path)
-INCLUDES = -I ./lib/ -I ./test/utils -I ./test/googletest/googletest/
+INCLUDES = -I ./lib/ -I ./test/utils -I ./modules/Breep/include
+
+#Libaries paths' flag
+LIBSDIR = -L ./modules/Breep/bin
+
+LINKS = -pthread -lboost_system
 
 #Compiles all cpp files listed in the given OBJ variable
 .cpp.o:
-	g++ $(C++FLAG) -c $< -o $@ $(INCLUDES)
+	g++ $(C++FLAG) -c $< -o $@ $(INCLUDES) $(LIBSDIR) $(LINKS)
 
 
 #Capcoin Main Driver
 CAPCOIN=capcoin.o #Executable name
 $(CAPCOIN): $(Capcoin_OBJ) #Rule to compile capcoin
-	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Capcoin_OBJ) -lpthread
+	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Capcoin_OBJ) $(LINKS) 
 
 #General Rules to compile drivers
 all: capcoin
