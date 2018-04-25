@@ -30,7 +30,7 @@ void FullNode::welcome(){
 }
 
 void FullNode::displayMenu(){
-  std::cout << "O - Overview     S - Send     R - Receive     ";
+  std::cout << "O - Overview     S - Send     ";
   std::cout << "T - Transactions     H - Help     ";
   std::cout << "BC - Blockchain     LB - Last Block" << std::endl;
 }
@@ -45,8 +45,7 @@ void FullNode::run(){
 
     if(selection == "O" || selection == "o" ){
 
-      // this screen will display the current balance, and any recent transactions
-
+      // this screen will display the current balance, and any recent transactions by this node
       std::cout << "***************************************************************************" << std::endl;
       std::cout << "*                                                                         *" << std::endl;
       std::cout << "*    Balance:                                                             *" << std::endl;
@@ -60,6 +59,7 @@ void FullNode::run(){
     }
     else if(selection == "S" || selection == "s" ){
 
+      // prompt user for information to send a transaction
       bool correct = false;
 
       while(!correct){
@@ -109,23 +109,18 @@ void FullNode::run(){
         }
       }
 
-
-
+      // for testing only
       Block b = blockchain->GenerateNextBlock();
-
+      network->broadcastBlock( b );
       // network->broadcastMessage(amt);
 
-      network->broadcastBlock( b );
-
-    }
-    else if(selection == "R" || selection == "r" ){
-      std::cout << "run receive" << std::endl;
     }
     else if(selection == "T" || selection == "t" ){
+      // This could be used to display the current transaction pool
       std::cout << "run transactions" << std::endl;
-
     }
     else if(selection == "H" || selection == "h" ){
+      // general help menu.  Might not be necessary
       std::cout << "run help" << std::endl;
     }
     else if(selection == "BC" || selection == "bc") {
@@ -137,8 +132,6 @@ void FullNode::run(){
     else{
       std::cout << "input not valid" << std::endl;
     }
-
-
   }
 }
 
