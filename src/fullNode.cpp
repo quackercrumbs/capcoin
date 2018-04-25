@@ -81,8 +81,18 @@ void FullNode::run(){
         std::cout << "*" << std::endl;
         std::cout << "***************************************************************************" << std::endl;
 
-        std::string amt;
+        float amt;
+
         std::cin >> amt;
+
+        while( std::cin.fail() ){
+              std::cin.clear();
+              std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //skip bad input
+              std::cout << "***************************************************************************" << std::endl;
+              std::cout << "*    Input not valid. Please enter a number." << std::endl;
+              std::cout << "***************************************************************************" << std::endl;
+              std::cin >> amt;
+          }
 
         std::cout << "***************************************************************************" << std::endl;
         std::cout << "*" << std::endl;
