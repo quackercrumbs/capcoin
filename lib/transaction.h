@@ -7,7 +7,9 @@
 #include "picosha2.h"
 #include "txin.h"
 #include "txout.h"
-#include "utxoutpool.h"
+#include "utxout.h"
+
+class UnspentTxOutPool;
 
 class Transaction{
 public:
@@ -27,4 +29,5 @@ private:
     std::vector<TxOut> txOuts_;
 };
 
+#include "utxoutpool.h"
 #endif
