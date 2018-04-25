@@ -1,3 +1,4 @@
+#Install and build Breep if it is not found in modules
 if [ ! -d "modules/Breep" ]; then
     echo "Enter any key to install Breep...."
     read user_input
@@ -13,7 +14,7 @@ if [ -d  "/usr/local/include/boost" ]; then
 fi
 
 #Install and build boost if it is not found in user/local/include (headers not found)
-if [ ! -d "modules/boost" ] || [ ! -d "/usr/local/include/boost" ]; then
+if [ ! -d "/usr/local/include/boost" ]; then
     echo "Enter any key to install boost ...."
     read user_input
     git clone --recursive git@github.com:boostorg/boost.git modules/boost
@@ -24,4 +25,3 @@ if [ ! -d "modules/boost" ] || [ ! -d "/usr/local/include/boost" ]; then
     sudo ./b2 install                       
     cd ../../ #return to project root dir
 fi
-i
