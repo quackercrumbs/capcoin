@@ -5,3 +5,5 @@
 /test/utils/*.o
 /test/bin/
 /test/googletest/
+/modules/Breep/
+/modules/boost/
