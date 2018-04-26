@@ -27,18 +27,12 @@ void Network::sendChain(int to, Blockchain* bc)
   vector<Block> chain = bc->GetChain();
   for(auto block: chain)
   {
+    if(block.GetIndex() == 0)
+      continue;
     Serialize serializer(block);
     string blockStr = serializer.toString();
     server.broadcastToOne(to, blockStr);
     usleep(5000);
-    if( recv(to, buffer, sizeof(buffer), 0) == 0)
-    {
-      cout << "received nothing" << endl;
-    }
-    else {
-      cout << string(buffer) << endl;
-    }
-
   }
   server.broadcastToOne(to, "END");
 }
@@ -89,17 +83,18 @@ void Network::listen(){
 
         cout << block << endl;
 
-        broadcastMessage("GOT " + s);
-        broadcastMessage("\nB: " + to_string(blocks.size()));
+        cout << "B: " << idx << endl;
 
-        // If blockchain is empty or just a genesis block then we will get every block before updating the chain
-        if(blockchain == nullptr || blockchain->GetChain().size() == 1){
-          blocks.push_back(block);
-        }
-        // Else it's just a new block
-        else{
-          blockchain->Push(block);
-        }
+        // // If blockchain is empty or just a genesis block then we will get every block before updating the chain
+        // if(blockchain == nullptr || blockchain->GetChain().size() == 1){
+        //   blocks.push_back(block);
+        // }
+        // // Else it's just a new block
+        // else{
+        //   blockchain->Push(block);
+        // }
+
+        blockchain->Push(block);
 
       }
 
@@ -107,12 +102,8 @@ void Network::listen(){
       {
         broadcastMessage("EOC\n");
 
-        for(auto block: blocks){
-          Serialize s(block);
-          broadcastMessage("GOT " + s.toString() + "\n");
-        }
-        Blockchain bc(blocks);
-        blockchain = &bc;
+        cout << s.toString() << endl;
+
       }
       lastReceived = s;
       strcpy(buffer, "");
@@ -143,7 +134,7 @@ void Network::startClient(Blockchain * bc){
     return;
   }
 
-  // blockchain = bc;
+  blockchain = bc;
 }
 
 void Network::runServer(Blockchain * bc) {
