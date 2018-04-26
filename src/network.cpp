@@ -22,9 +22,9 @@ void Network::broadcastBlock(Block& block){
 
 }
 
-void Network::sendChain(int to, Blockchain* bc)
+void Network::sendChain(int to)
 {
-  vector<Block> chain = bc->GetChain();
+  vector<Block> chain = blockchain->GetChain();
   for(auto block: chain)
   {
     if(block.GetIndex() == 0)
@@ -141,6 +141,8 @@ void Network::runServer(Blockchain * bc) {
 
   TCPSocket* s;
 
+  blockchain = bc;
+
   while(1)
   {
 
@@ -256,11 +258,11 @@ void Network::runServer(Blockchain * bc) {
                   //
                   // server.broadcastToOne(sd, blockStr);
 
-                  sendChain(sd, bc);
-                  cout << "No blocks: " << bc->GetChain().size() << "\n";
+                  sendChain(sd);
+                  cout << "No blocks: " << blockchain->GetChain().size() << "\n";
 
-                  cout << "Blockchain:\n";
-                  cout << *bc << endl;
+                  cout << "Blockchain Sent:\n";
+                  cout << *blockchain << endl;
 
                 }
                 //if the incoming message is a new block
@@ -270,9 +272,9 @@ void Network::runServer(Blockchain * bc) {
                   Block block = JSONtoBlock(s);
 
                   // Push
-                  bc->Push(block);
+                  blockchain->Push(block);
 
-                  cout << "No blocks: " << bc->GetChain().size() << "\n";
+                  cout << "No blocks: " << blockchain->GetChain().size() << "\n";
 
                 }
             		else{
