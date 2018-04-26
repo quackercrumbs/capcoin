@@ -102,7 +102,7 @@ void Network::listen(){
       {
         broadcastMessage("EOC\n");
 
-        cout << s.toString() << endl;
+        cout << s << endl;
 
       }
       lastReceived = s;
@@ -273,9 +273,6 @@ void Network::runServer(Blockchain * bc) {
                   bc->Push(block);
 
                   cout << "No blocks: " << bc->GetChain().size() << "\n";
-
-                  cout << "Blockchain:\n";
-                  cout << *bc << endl;
 
                 }
             		else{
