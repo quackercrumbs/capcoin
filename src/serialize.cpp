@@ -78,7 +78,7 @@ std::string Serialize::toString(){
 }
 
 Block JSONtoBlock(std::string blockString){
-    size_t index, difficulty, nonce, start = 19, end = 19;
+    size_t index, difficulty, nonce, start = 18, end = 18;
     time_t timestamp;
     std::string prevHash, hash;
     std::vector<Transaction> data;
