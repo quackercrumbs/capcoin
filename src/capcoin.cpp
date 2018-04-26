@@ -63,8 +63,6 @@ int main(int argc, char *argv[]) {
     Blockchain bc;
     Block genBlock = bc.GetLastBlock();
 
-    cout << "No blocks: " << bc.GetChain().size() << endl;
-
     //create Network
     Network nw;
     //connect as server or client
