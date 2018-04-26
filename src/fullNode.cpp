@@ -131,32 +131,22 @@ void FullNode::run(){
           std::cout << "*    Transaction Sent!" << std::endl;
           std::cout << "***************************************************************************" << std::endl;
 
-          //sending fake transaction
-          network->broadcastMessage(amt);
+          //Creating a fake transaction and send as a block
 
+          network->broadcastMessage(std::to_string(amt));
+          
           TxIn dummyIn("", "", 0);
-          TxOut dummyOut("32ba5334aafcd8e7266e47076996b55", atoi(amt.c_str()));
+          TxOut dummyOut("32ba5334aafcd8e7266e47076996b55", amt);
           std::vector<TxIn> TxIns{dummyIn};
           std::vector<TxOut> TxOuts{dummyOut};
           Transaction NewTxn(TxIns, TxOuts);
-
           std::vector<Transaction> data{NewTxn};
-
+          
           Block block = blockchain->GenerateNextBlock(data);
 
-          Serialize serializer(block);
-
-          std::string blockStr = serializer.toString();
-
-          network->broadcastMessage(blockStr);
-          
+          network->broadcastBlock(block);
         }
       }
-
-      // for testing only
-      Block b = blockchain->GenerateNextBlock();
-      network->broadcastBlock( b );
-      // network->broadcastMessage(amt);
 
     }
     else if(selection == "T" || selection == "t" ){
