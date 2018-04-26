@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 
 
     bc.GenerateNextBlock(GenTxns);
-    bc.GenerateNextBlock(GenTxns);
+
     //create Network
     Network nw;
     nw.runServer(&bc);

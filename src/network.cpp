@@ -31,6 +31,14 @@ void Network::sendChain(int to, Blockchain* bc)
     string blockStr = serializer.toString();
     server.broadcastToOne(to, blockStr);
     usleep(5000);
+    if( recv(to, buffer, sizeof(buffer)) == 0)
+    {
+      cout << "received nothing" << endl;
+    }
+    else {
+      cout << string(buffer) << endl;
+    }
+
   }
   server.broadcastToOne(to, "END");
 }
