@@ -32,8 +32,15 @@ void Network::sendChain(int to)
     Serialize serializer(block);
     string blockStr = serializer.toString();
     server.broadcastToOne(to, blockStr);
-    usleep(5000);
+    usleep(50000);
+    /*
+    if( recv(to, buffer, sizeof(buffer), 0) )
+       cout << "Msg Recieved" << endl << string(buffer) << endl;
+    else
+       cout << "Nothing recieved" << endl;
+    */
   }
+  
   server.broadcastToOne(to, "END");
 }
 
