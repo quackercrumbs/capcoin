@@ -52,7 +52,7 @@ void Network::sendChain(int to)
       cout << "Index:" << endl;
       cout << s.substr(3) << endl;
 
-      int idx = strtol(s.c_str(), NULL, 10);
+      int idx = strtol(s.substr(3).c_str(), NULL, 10);
 
       if (idx == block.GetIndex())
       {
