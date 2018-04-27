@@ -33,14 +33,19 @@ void Network::sendChain(int to)
     string blockStr = serializer.toString();
     server.broadcastToOne(to, blockStr);
     usleep(50000);
-    /*
+
+    // activity = select(to + 1, &readfds, nullptr, nullptr, nullptr);
+    //
+    // if((activity < 0) && (errno != EINTR)){
+    //   cout << "\nSelect error\n";
+    // }
+
     if( recv(to, buffer, sizeof(buffer), 0) )
        cout << "Msg Recieved" << endl << string(buffer) << endl;
     else
        cout << "Nothing recieved" << endl;
-    */
   }
-  
+
   server.broadcastToOne(to, "END");
 }
 
@@ -98,6 +103,7 @@ void Network::listen(){
         // }
 
         blockchain->Push(block);
+        broadcastMessage("GOT" + idx);
 
       }
 
