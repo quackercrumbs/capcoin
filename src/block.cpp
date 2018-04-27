@@ -21,6 +21,12 @@ std::string CalculateHash(size_t index, std::string prevHash, std::time_t timest
     return dataHash;
 }
 
+Block::Block(size_t index, time_t timestamp, size_t difficulty, size_t nonce, std::string hash,
+	std::string prevHash, std::vector<Transaction>& data):
+	index_{index}, timestamp_{timestamp}, difficulty_{difficulty}, nonce_{nonce},
+	prevHash_{prevHash}, data_{std::move(data)},
+    hash_{hash}{}
+
 Block::Block(size_t index, time_t timestamp, size_t difficulty, size_t nonce,
 	std::string prevHash, std::vector<Transaction>& data):
 	index_{index}, timestamp_{timestamp}, difficulty_{difficulty}, nonce_{nonce},
