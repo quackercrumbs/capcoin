@@ -2,12 +2,12 @@
 #define FULLNODE_H
 #include "blockchain.h"
 #include "network.h"
-
+#include "wallet.h"
 
 class FullNode{
 public:
 
-  FullNode(Blockchain * bc, Network * nw);
+  FullNode(Blockchain * bc, Network * nw, Wallet * w);
 
   void welcome();
 
@@ -27,7 +27,7 @@ private:
 
   Blockchain * blockchain = new Blockchain();
   Network * network = new Network();
-
+  Wallet * wallet = new Wallet();
 
 };
 
