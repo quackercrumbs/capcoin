@@ -22,6 +22,12 @@ void Network::broadcastBlock(Block& block){
 
 }
 
+void Network::broadcastTransaction(Transaction& t) {
+    Serialize serializer(t);
+    string str = serializer.toString();
+    send(sock, str.c_str(), str.size(), 0);
+}
+
 void Network::sendChain(int to)
 {
   vector<Block> chain = blockchain->GetChain();
@@ -316,9 +322,12 @@ void Network::runServer(Blockchain * bc) {
                   cout << "No blocks: " << blockchain->GetChain().size() << "\n";
 
                 }
-            		else{
+                else if(s.substr(1,11) == "TRANSACTION") {
+                    server.broadcastAll(sd, string(buffer));
+                }
+            	else{
             		  server.broadcastAll(sd, string(buffer));
-            		}
+            	}
 
             		// print out all incoming messages
                 cout << string(buffer) << endl;

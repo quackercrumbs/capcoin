@@ -132,19 +132,18 @@ void FullNode::run(){
           std::cout << "***************************************************************************" << std::endl;
 
           //Creating a fake transaction and send as a block
-
-          network->broadcastMessage(std::to_string(amt));
-          
+           
           TxIn dummyIn("", "", 0);
           TxOut dummyOut("32ba5334aafcd8e7266e47076996b55", amt);
           std::vector<TxIn> TxIns{dummyIn};
           std::vector<TxOut> TxOuts{dummyOut};
-          Transaction NewTxn(TxIns, TxOuts);
-          std::vector<Transaction> data{NewTxn};
           
+          Transaction NewTxn(TxIns, TxOuts);
+          /*
+          std::vector<Transaction> data{NewTxn};
           Block block = blockchain->GenerateNextBlock(data);
-
-          network->broadcastBlock(block);
+          */
+          network->broadcastTransaction(NewTxn);
         }
       }
 

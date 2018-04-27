@@ -23,7 +23,7 @@ public:
 // These functions are used by the client to broadcast to all nodes.
   void broadcastMessage(std::string msg);
   void broadcastBlock(Block& block);
-
+  void broadcastTransaction(Transaction& t);
 // These functions are for the server to send to one node.
   void sendChain(int to);
   bool sendBlock(int to, Block& block);
