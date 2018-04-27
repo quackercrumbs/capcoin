@@ -25,55 +25,61 @@ void Network::broadcastBlock(Block& block){
 void Network::sendChain(int to)
 {
   vector<Block> chain = blockchain->GetChain();
-  int bytes_read;
-  for(auto block: chain)
+
+  int i = 1;
+
+  for(; i< chain.size(); i++)
   {
-    if(block.GetIndex() == 0)
+
+    Block block = chain[i];
+
+    if(!sendBlock(to, block)){
+      cout << "Block unacknowledged" << endl;
+      i--;
       continue;
-    Serialize serializer(block);
-    string blockStr = serializer.toString();
-    server.broadcastToOne(to, blockStr);
-    usleep(50000);
-
-    // activity = select(to + 1, &readfds, nullptr, nullptr, nullptr);
-    //
-    // if((activity < 0) && (errno != EINTR)){
-    //   cout << "\nSelect error\n";
-    // }
-    bytes_read = recv(to, buffer, sizeof(buffer), 0);
-    buffer[bytes_read] = '\0';
-
-    if( bytes_read > 0 ){
-      // if block.GetIndex() == index
-      // then keep going
-      // otherwise
-      // send again
-      string s = string(buffer);
-      cout << "Index:" << endl;
-      cout << s.substr(3) << endl;
-
-      int idx = strtol(s.substr(3).c_str(), NULL, 10);
-
-      if (idx == block.GetIndex())
-      {
-        cout << "GOOD, CONTINUE" << endl;
-        continue;
-      }
-      else {
-        cout << "BAD, RESEND" << endl;
-      }
     }
-    else{
-      cout << "NO ACK" << endl;
+    else {
+      cout << "Block ACKNOWLEDGED" << endl;
     }
 
-    // if( bytes_read > 0 )
-    //    cout << "Msg Recieved" << endl << string(buffer) << endl;
-    // else
-    //    cout << "Nothing recieved" << endl;
   }
 
   server.broadcastToOne(to, "END");
+}
+
+bool Network::sendBlock(int to, Block& block)
+{
+
+  Serialize serializer(block);
+  string blockStr = serializer.toString();
+  server.broadcastToOne(to, blockStr);
+  usleep(50000);
+
+  // ??? is there a better way?
+  // activity = select(to + 1, &readfds, nullptr, nullptr, nullptr);
+  //
+  // if((activity < 0) && (errno != EINTR)){
+  //   cout << "\nSelect error\n";
+  // }
+
+  // Try to read the acknowledgement
+  int bytes_read = recv(to, buffer, sizeof(buffer), 0);
+  buffer[bytes_read] = '\0';
+
+  if( bytes_read > 0 ){
+    // if block.GetIndex() == index
+    // then keep going
+    // otherwise
+    // send again
+    string s = string(buffer);
+    int idx = strtol(s.substr(3).c_str(), NULL, 10);
+
+    if (idx == block.GetIndex())
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 
