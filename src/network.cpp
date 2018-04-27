@@ -25,6 +25,7 @@ void Network::broadcastBlock(Block& block){
 void Network::sendChain(int to)
 {
   vector<Block> chain = blockchain->GetChain();
+  int bytes_read;
   for(auto block: chain)
   {
     if(block.GetIndex() == 0)
@@ -39,8 +40,10 @@ void Network::sendChain(int to)
     // if((activity < 0) && (errno != EINTR)){
     //   cout << "\nSelect error\n";
     // }
+    bytes_read = recv(to, buffer, sizeof(buffer), 0);
+    buffer[bytes_read] = '\0';
 
-    if( recv(to, buffer, sizeof(buffer), 0) )
+    if( bytes_read > 0 )
        cout << "Msg Recieved" << endl << string(buffer) << endl;
     else
        cout << "Nothing recieved" << endl;
