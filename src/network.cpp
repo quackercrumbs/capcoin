@@ -257,7 +257,7 @@ void Network::runServer(Blockchain * bc) {
 
                 // if incoming message is REQUEST send out the chain
                 if(s == "REQUEST"){
-
+                  strcpy(buffer, "");
 
                   // Block block = bc->GetLastBlock();
                   //
