@@ -12,6 +12,17 @@ cmake
 make
 gcc
 g++
+boost
+Breep
+```
+
+## Quick Start
+```
+./setup.sh      # Assumes you have cmake, make, gcc, and g++ install
+                # This will install and build boost for your system
+                #   it will also install and build Breep in the modules folder of this project
+make all        # Compile project
+./bin/capcoin.o # Run capcoin full node
 ```
 
 ## Outcomes
@@ -34,11 +45,3 @@ There are two major components to this project, a linux-based full network node 
  - Send unverified transactions to CapCoin Blockchain network
  - Enforces transactions anonymity  
  - UI to view current state of blockchain
-
-## To Run
-```
-make all //compiles all source code
-./bin/capcoin.o //run driver for capcoin
-./bin/capcoin.o server //run driver for capcoin as server
-```
-
