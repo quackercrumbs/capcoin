@@ -6,6 +6,25 @@ Current implementations of cryptocurrencies have various challenges to overcome,
 
 The main source of negative environmental impact any blockchain based network faces stems from the Proof-of-Work consensus algorithm used to secure the blockchain ledger. We propose the use a hybrid validation method predicated upon both Proof-of-Stake and Proof-of-Work. By sidestepping the computationally heavy resources required by an ordinary Proof-of-Work algorithm, in favor for a hybrid option, we aim to build a more sustainable and efficient cryptocurrency.
 
+## Dependencies
+```
+cmake
+make
+gcc
+g++
+boost
+Breep
+```
+
+## Quick Start
+```
+./setup.sh      # Assumes you have cmake, make, gcc, and g++ install
+                # This will install and build boost for your system
+                #   it will also install and build Breep in the modules folder of this project
+make all        # Compile project
+./bin/capcoin.o # Run capcoin full node
+```
+
 ## Outcomes
 There are two major components to this project, a linux-based full network node application and web-based thin client also known as a wallet. The expectations for each components is listed below.
 
@@ -26,10 +45,3 @@ There are two major components to this project, a linux-based full network node 
  - Send unverified transactions to CapCoin Blockchain network
  - Enforces transactions anonymity  
  - UI to view current state of blockchain
-
-## To Run
-```
-make all //compiles all source code
-./bin/capcoin.o //run driver for capcoin
-./bin/capcoin.o server //run driver for capcoin as server
-```
