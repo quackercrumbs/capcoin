@@ -17,15 +17,7 @@ public:
             std::vector<TxIn> in;
             std::vector<TxOut> out;
             in.push_back({"ADDRESSTEST0", "SIGNATURETEST0", 0});
-            in.push_back({"ADDRESSTEST1", "SIGNATURETEST1", 1});
-            in.push_back({"ADDRESSTEST2", "SIGNATURETEST2", 2});
-            in.push_back({"ADDRESSTEST3", "SIGNATURETEST3", 3});
-            in.push_back({"ADDRESSTEST4", "SIGNATURETEST4", 4});
-            out.push_back({"ADDRESSTEST0", 20});
-            out.push_back({"ADDRESSTEST1", 30});
-            out.push_back({"ADDRESSTEST2", 40});
-            out.push_back({"ADDRESSTEST3", 50});
-            out.push_back({"ADDRESSTEST4", 60});
+            out.push_back({address, amount});
             auto a = new Transaction(in, out);
             return a;
     }
