@@ -7,11 +7,11 @@ class TxIn{
 public:
     TxIn(std::string id, std::string sig, size_t index);
 
-    std::string GetVal();
-    std::string GetId();
-    std::string GetSignature();
-    size_t GetIndex();
-    
+    std::string GetVal()const;
+    std::string GetId()const;
+    std::string GetSignature()const;
+    size_t GetIndex()const;
+
 private:
     const std::string id_;
     const std::string sig_;
