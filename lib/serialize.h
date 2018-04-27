@@ -9,6 +9,11 @@
 
 class Serialize{
 public:
+  Serialize();
+  Serialize(Transaction& toBeSent);
+  Serialize(Block& toBeSent);
+  Serialize(UnspentTxOut& toBeSent);
+
   void operator()(Transaction& toBeSent);
   void operator()(Block& toBeSent);
   void operator()(UnspentTxOut& toBeSent);

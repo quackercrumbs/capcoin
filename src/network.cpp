@@ -1,6 +1,7 @@
 #include "../lib/socket.h"
 #include "../lib/network.h"
 #include <iostream>
+#include <vector>
 #include <string>
 #include <thread>
 
@@ -13,14 +14,69 @@ void Network::broadcastMessage(string msg){
 
 void Network::broadcastBlock(Block& block){
 
-  Serialize serializer;
-
-  serializer(block);
+  Serialize serializer(block);
 
   string str = serializer.toString();
 
   send(sock, str.c_str(), str.size(), 0);
 
+}
+
+void Network::sendChain(int to)
+{
+  vector<Block> chain = blockchain->GetChain();
+
+  int i = 1;
+
+  for(; i< chain.size(); i++)
+  {
+
+    Block block = chain[i];
+
+    if(!sendBlock(to, block)){
+      cout << "Block unacknowledged" << endl;
+      i--;
+      continue;
+    }
+    else {
+      cout << "Block ACKNOWLEDGED" << endl;
+    }
+
+  }
+
+  server.broadcastToOne(to, "END");
+}
+
+bool Network::sendBlock(int to, Block& block)
+{
+
+  Serialize serializer(block);
+  string blockStr = serializer.toString();
+  server.broadcastToOne(to, blockStr);
+  usleep(50000);
+
+  // ??? is there a better way?
+  // activity = select(to + 1, &readfds, nullptr, nullptr, nullptr);
+  //
+  // if((activity < 0) && (errno != EINTR)){
+  //   cout << "\nSelect error\n";
+  // }
+
+  // Try to read the acknowledgement
+  int bytes_read = recv(to, buffer, sizeof(buffer), 0);
+  buffer[bytes_read] = '\0';
+
+  if( bytes_read > 0 ){
+    
+    string s = string(buffer);
+    int idx = strtol(s.substr(3).c_str(), NULL, 10);
+
+    if (idx == block.GetIndex())
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 
@@ -29,6 +85,8 @@ std::string Network::getLastReceived(){
 }
 
 void Network::listen(){
+  vector<Block> blocks;
+
   while(1){
     FD_ZERO(&readfds);
 
@@ -53,15 +111,47 @@ void Network::listen(){
         //exit(0);
       }
       buffer[valread] = '\0';
-      // cout << string(buffer) << endl;
-      lastReceived = string(buffer);
+      // this line below prints out any message
+      //cout << string(buffer) << endl;
+
+      string s = string(buffer);
+
+      if(s.substr(1, 5) == "BLOCK")
+      {
+        //
+        Block block = JSONtoBlock(s);
+
+        string idx = string {to_string(block.GetIndex())};
+
+        // // If blockchain is empty or just a genesis block then we will get every block before updating the chain
+        // if(blockchain == nullptr || blockchain->GetChain().size() == 1){
+        //   blocks.push_back(block);
+        // }
+        // // Else it's just a new block
+        // else{
+        //   blockchain->Push(block);
+        // }
+
+        blockchain->Push(block);
+        broadcastMessage("GOT" + idx);
+
+      }
+
+      if(s.substr(0, 3) == "END")
+      {
+        broadcastMessage("EOC\n");
+
+        //cout << s << endl;
+
+      }
+      lastReceived = s;
       strcpy(buffer, "");
       fflush(stdout);
     }
   }
 }
 
-void Network::startClient(){
+void Network::startClient(Blockchain * bc){
 
   if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0){
     cout << "\n Socket creation error \n";
@@ -82,29 +172,15 @@ void Network::startClient(){
     cout << "\nConnection Failed \n";
     return;
   }
+
+  blockchain = bc;
 }
 
-void Network::startServer() {
-  TCPServerSocket serv_socket(1025, 5);
-
-  int sd, max_sd, valread, activity, i;
-
-  char buffer[1025];  //data buffer of 1K
-
-  string strMessage = "Established Network Connection \r\n";
-
-  const char *message = strMessage.c_str();
-
-  struct sockaddr_in address;
-
-  fd_set readfds;
-
-  int master_socket = serv_socket.getSockDesc();
-  int * client_socket = serv_socket.getClients();
-
-  TCPSocket* sock;
+void Network::runServer(Blockchain * bc) {
 
   TCPSocket* s;
+
+  blockchain = bc;
 
   while(1)
   {
@@ -117,9 +193,9 @@ void Network::startServer() {
       max_sd = master_socket;
 
 
-      for(i=0; i < serv_socket.client_sockets.size(); i++)
+      for(i=0; i < server.client_sockets.size(); i++)
       {
-        s = serv_socket.client_sockets[i];
+        s = server.client_sockets[i];
 
         //if valid socket descriptor then continue
         if(s == nullptr)
@@ -147,27 +223,26 @@ void Network::startServer() {
       {
 
           try {
-            sock = serv_socket.accept();
+            client_socket = server.accept();
           }
           catch(SocketException &e){
             cout << e.what() << endl;
             continue;
           }
 
-          sd = sock->getSockDesc();
+          sd = client_socket->getSockDesc();
 
-          for (i = 0; i < serv_socket.client_sockets.size(); i++)
+          for (i = 0; i < server.client_sockets.size(); i++)
           {
               //if position is empty
-              if( serv_socket.client_sockets[i] == nullptr )
+              if( server.client_sockets[i] == nullptr )
               {
-                  serv_socket.client_sockets[i] = sock;
-                  cout << "Adding to list of sockets as " << i << endl;
+                  server.client_sockets[i] = client_socket;
                   break;
               }
           }
-          if(i == serv_socket.client_sockets.size())
-            serv_socket.client_sockets.push_back(sock);
+          if(i == server.client_sockets.size())
+            server.client_sockets.push_back(client_socket);
           cout << "Adding to list of sockets as " << i << endl;
           cout << "Socket descriptor is " << sd << endl;
 
@@ -182,9 +257,9 @@ void Network::startServer() {
       }
 
 
-      for(i = 0; i<serv_socket.client_sockets.size(); i++)
+      for(i = 0; i<server.client_sockets.size(); i++)
       {
-        s = serv_socket.client_sockets[i];
+        s = server.client_sockets[i];
         if(s == nullptr){
           continue;
         }
@@ -198,16 +273,56 @@ void Network::startServer() {
             if ((valread = read( sd , buffer, 1024)) == 0)
             {
                 // maybe add index to reduce time complexity
-                serv_socket.closeConnection(sd);
+                server.closeConnection(sd);
                 cout << "Connection " << sd << " closed" << endl;
             }
 
-            //Echo back the message that came in
+            //Handle Incoming Messages
             else
             {
                 //set the string terminating NULL byte on the end of the data read
                 buffer[valread] = '\0';
-                serv_socket.broadcastAll(sd, string(buffer));
+
+                string s = string(buffer);
+
+                // if incoming message is REQUEST send out the chain
+                if(s == "REQUEST"){
+                  strcpy(buffer, "");
+
+                  // Block block = bc->GetLastBlock();
+                  //
+                  // Serialize serializer(block);
+                  //
+                  // string blockStr = serializer.toString();
+                  //
+                  // server.broadcastToOne(sd, blockStr);
+
+                  sendChain(sd);
+                  cout << "No blocks: " << blockchain->GetChain().size() << "\n";
+
+                  cout << "Blockchain Sent:\n";
+                  cout << *blockchain << endl;
+
+                }
+                //if the incoming message is a new block
+                else if(s.substr(1, 5) == "BLOCK"){
+
+                  // Parse block
+                  Block block = JSONtoBlock(s);
+
+                  // Push
+                  blockchain->Push(block);
+
+                  cout << "No blocks: " << blockchain->GetChain().size() << "\n";
+
+                }
+            		else{
+            		  server.broadcastAll(sd, string(buffer));
+            		}
+
+            		// print out all incoming messages
+                cout << string(buffer) << endl;
+
                 strcpy(buffer, "");
             }
           }
