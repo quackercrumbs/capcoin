@@ -43,10 +43,34 @@ void Network::sendChain(int to)
     bytes_read = recv(to, buffer, sizeof(buffer), 0);
     buffer[bytes_read] = '\0';
 
-    if( bytes_read > 0 )
-       cout << "Msg Recieved" << endl << string(buffer) << endl;
-    else
-       cout << "Nothing recieved" << endl;
+    if( bytes_read > 0 ){
+      // if block.GetIndex() == index
+      // then keep going
+      // otherwise
+      // send again
+      string s = string(buffer);
+      cout << "Index:" << endl;
+      cout << s.substr(3) << endl;
+
+      int idx = strtol(s.c_str(), NULL, 10);
+
+      if (idx == block.GetIndex())
+      {
+        cout << "GOOD, CONTINUE" << endl;
+        continue;
+      }
+      else {
+        cout << "BAD, RESEND" << endl;
+      }
+    }
+    else{
+      cout << "NO ACK" << endl;
+    }
+
+    // if( bytes_read > 0 )
+    //    cout << "Msg Recieved" << endl << string(buffer) << endl;
+    // else
+    //    cout << "Nothing recieved" << endl;
   }
 
   server.broadcastToOne(to, "END");
