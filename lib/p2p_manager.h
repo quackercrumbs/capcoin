@@ -7,19 +7,35 @@
 
 #include <boost/uuid/uuid_io.hpp>
 #include <breep/network/tcp.hpp>
+#include <breep/util/serialization.hpp>
 
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <vector>
+#include <vector> 
 #include <chrono>
+
+/*
+ *  Tells BREEP about classes
+ */
+BREEP_DECLARE_TYPE(std::string)
+
+class RequestManager {
+public:
+    RequestManager();
+
+    void connection_event(breep::tcp::network& network, const breep::tcp::peer& peer);
+
+    void message_recieved(breep::tcp::netdata_wrapper<std::string>& dw);
+
+};
 
 class timed_message {
 
 public:
     timed_message();
 
-    void operator() (breep::tcp::peer_manager&, const breep::tcp::peer& source, breep::cuint8_random_iterator data, size_t data_size, bool);
+    void operator() (breep::tcp::network&, const breep::tcp::peer& source, breep::cuint8_random_iterator data, size_t data_size, bool);
 
 private:
     const time_t m_starting_time;
@@ -28,7 +44,7 @@ private:
 
 
 // A function that will be passed to respond to connections and disconnections to client
-void connection_disconnection(breep::tcp::peer_manager&, const breep::tcp::peer& peer);
+void connection_disconnection(breep::tcp::network&, const breep::tcp::peer& peer);
 
 class P2P_Manager {
 public:
@@ -74,8 +90,7 @@ public:
 private:
     
     unsigned short port_; //listening port
-    breep::tcp::peer_manager* peer_manager_; //peer manager, managers connections with peers
-    
+    breep::tcp::network* network_; //peer manager, managers connections with peers
 
     // Data sources
     Blockchain* bc_;

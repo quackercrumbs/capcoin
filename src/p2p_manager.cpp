@@ -6,8 +6,8 @@ P2P_Manager::P2P_Manager(Blockchain* blockchain/*, TransactionPool* pool*/, unsi
     port_ = port;
 
     //Create peer manager object
-    peer_manager_ = new breep::tcp::peer_manager(static_cast<unsigned short>(port_));
-    
+    network_ = new breep::tcp::network(static_cast<unsigned short>(port_));
+
     //Initial data source locations
     bc_ = blockchain;
     //txpool_ = pool;
@@ -43,32 +43,39 @@ void P2P_Manager::init() {
     }
 
     //Display number of successful connections from config file
-    auto my_peers = peer_manager_->peers(); //Retrieves all peers connected
+    auto my_peers = network_->peers(); //Retrieves all peers connected
     std::cout << "Successfully connected to " << my_peers.size() << "/" << peer_details.size() << std::endl;
     std::cout << "========== Network Initalization Complete =============" << std::endl;
 }
 
 void P2P_Manager::OpenListeners() {
-     //Adding Listeners
-    data_listener_id_ = peer_manager_->add_data_listener(timed_message());
-    connection_listener_id_ = peer_manager_->add_connection_listener(&connection_disconnection);
-    disconnection_listener_id_ = peer_manager_->add_disconnection_listener(&connection_disconnection);
+    RequestManager request_manager_x;
+    //Adding Listeners
+    network_->add_data_listener<std::string>([&request_manager_x](breep::tcp::netdata_wrapper<std::string>& dw) -> void {
+                request_manager_x.message_recieved(dw);
+            });
+    network_->add_connection_listener([&request_manager_x](breep::tcp::network &net, const breep::tcp::peer& peer) -> void {
+                request_manager_x.connection_event(net, peer);
+            });
+    network_->add_disconnection_listener([&request_manager_x](breep::tcp::network &net, const breep::tcp::peer& peer) -> void {
+                request_manager_x.connection_event(net, peer);
+            });
 
 
 }
 
 void P2P_Manager::Close() {
     disconnect();
-    peer_manager_->remove_data_listener(data_listener_id_);
-    peer_manager_->remove_connection_listener(connection_listener_id_);
-    peer_manager_->remove_disconnection_listener(disconnection_listener_id_);
+    //network_->remove_data_listener(data_listener_id_);
+    //network_->remove_connection_listener(connection_listener_id_);
+    //network_->remove_disconnection_listener(disconnection_listener_id_);
 }
 
 bool P2P_Manager::AddPeer(std::string address, unsigned short port) {
     //Attempt to connect to new peer
     std::cout << "Attempting connection with " << address << ":" << port << std::endl;  
     boost::asio::ip::address p_address = boost::asio::ip::address::from_string(address);
-    if(!peer_manager_->connect(p_address,port)) {
+    if(!network_->connect(p_address,port)) {
         //Failed to connect
         //TO DO: Try again one more time
         std::cout << "Connection failed!" << std::endl;
@@ -80,7 +87,7 @@ bool P2P_Manager::AddPeer(std::string address, unsigned short port) {
 
 void P2P_Manager::broadcastMessage(std::string msg) {
     //Send message information to each peer
-    peer_manager_->send_to_all(msg);
+    network_->send_object(msg);
 }
 
 void P2P_Manager::broadcastBlock(Block& block) {
@@ -113,15 +120,15 @@ void P2P_Manager::SetTransactionPool(/*TransactionPool* pool*/) {
  *
  */
 void P2P_Manager::disconnect() {
-    peer_manager_->disconnect();
+    network_->disconnect();
 }
 
 void P2P_Manager::send_to_all(std::string msg) {
-    peer_manager_->send_to_all(msg);
+    network_->send_object(msg);
 }
 
 void P2P_Manager::run() {
-    peer_manager_->run();
+    network_->awake();
 }
 
 /*
@@ -131,7 +138,7 @@ void P2P_Manager::run() {
  */
 timed_message::timed_message(): m_starting_time{time(0)} {}
 
-void timed_message::operator() (breep::tcp::peer_manager&, const breep::tcp::peer& source, breep::cuint8_random_iterator data, size_t data_size, bool) {
+void timed_message::operator() (breep::tcp::network&, const breep::tcp::peer& source, breep::cuint8_random_iterator data, size_t data_size, bool) {
     //Calculate time of message
     time_t now = time(0) - m_starting_time;
     //Pretty print time of message
@@ -151,11 +158,30 @@ void timed_message::operator() (breep::tcp::peer_manager&, const breep::tcp::pee
  *
  *
  */ 
-void connection_disconnection(breep::tcp::peer_manager&, const breep::tcp::peer& peer) {
+void connection_disconnection(breep::tcp::network&, const breep::tcp::peer& peer) {
     if(peer.is_connected()) {
         //someone connected
         std::cout << peer.id_as_string().substr(0,4) << " connected!" << std::endl;
     } else {
         std::cout << peer.id_as_string().substr(0,4) << " disconnected!" << std::endl;
     }
+}
+
+/*
+ *
+ *      Request Manager
+ *  
+ */ 
+RequestManager::RequestManager() {}
+
+void RequestManager::connection_event(breep::tcp::network& network, const breep::tcp::peer& peer) {
+    if(peer.is_connected()) {
+        std::cout << "Peer connected" << std::endl;
+    } else {
+        std::cout << "Peer disconnected" << std::endl;
+    }
+}
+
+void RequestManager::message_recieved(breep::tcp::netdata_wrapper<std::string>& dw) {
+    std::cout << dw.source.id_as_string() << ":" << dw.data << std::endl;
 }

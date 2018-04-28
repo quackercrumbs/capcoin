@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
     unsigned short p = atoi(argv[1]);
-         
+    
 
     std::cout << "====================================" << std::endl;
     std::cout << "Listening from port " << p << std::endl;
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
                 std::cout << "!help, help menu" << std::endl;
             }
             else {
-                net.send_to_all(ans);
+                net.broadcastMessage(ans);
             }
     }
     net.Close();
