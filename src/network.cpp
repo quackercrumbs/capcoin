@@ -145,7 +145,7 @@ void Network::listen(){
       }
       else if(s.substr(1,11) == "TRANSACTION") {
         //Deserialize transaction
-        Transaction newTx = JSONtoTx(s);
+        Transaction * newTx = JSONtoDynamicTx(s);
         //Push transaction into pool
         bool result = txpool->AddTransaction(newTx);
       }
