@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <thread>
+#include <exception>
 
 using namespace std;
 
@@ -142,7 +143,12 @@ void Network::listen(){
         broadcastMessage("GOT" + idx);
 
       }
-
+      else if(s.substr(1,11) == "TRANSACTION") {
+        //Deserialize transaction
+        Transaction newTx = JSONtoTx(s);
+        //Push transaction into pool
+        bool result = txpool->AddTransaction(newTx);
+      }
       if(s.substr(0, 3) == "END")
       {
         broadcastMessage("EOC\n");
@@ -157,7 +163,7 @@ void Network::listen(){
   }
 }
 
-void Network::startClient(Blockchain * bc){
+void Network::startClient(Blockchain * bc, TransactionPool * transaction_pool){
 
   if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0){
     cout << "\n Socket creation error \n";
@@ -180,6 +186,7 @@ void Network::startClient(Blockchain * bc){
   }
 
   blockchain = bc;
+  txpool = transaction_pool;
 }
 
 void Network::runServer(Blockchain * bc) {

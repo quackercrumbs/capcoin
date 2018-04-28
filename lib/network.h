@@ -4,6 +4,7 @@
 #include "socket.h"
 #include "block.h"
 #include "blockchain.h"
+#include "transactionpool.h"
 #include "serialize.h"
 #include <string>
 #include <thread>
@@ -12,7 +13,7 @@
 class Network{
 
 public:
-  void startClient(Blockchain * bc);
+  void startClient(Blockchain * bc, TransactionPool* txpool);
   void runServer(Blockchain * bc);
 
   void listen();
@@ -38,7 +39,7 @@ private:
   struct sockaddr_in serv_addr;
   struct sockaddr_in address;
   std::string ip_addr =  "167.99.12.102";
-  // std::string ip_addr =  "127.0.0.1";
+  //std::string ip_addr =  "127.0.0.1";
   std::string strMessage = "Established Network Connection \r\n";
   const char *message = strMessage.c_str();
   TCPSocket* client_socket;
@@ -47,6 +48,7 @@ private:
   std::string lastReceived = "";
 
   Blockchain * blockchain = nullptr;
+  TransactionPool * txpool = nullptr;
 };
 
 #endif
