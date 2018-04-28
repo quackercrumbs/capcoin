@@ -62,9 +62,9 @@ private:
     void updateWalletBalance();
     void writeWalletToDisk();
 
-    std::vector< std::pair<uint8_t, uint8_t> > walletAddressKeyPairs;
+    std::vector< std::pair<uint8_t, uint8_t> > rawKeyPairs;
 
-    std::vector< std::pair<std::string, std::string> > rawKeyPairs;
+    std::vector< std::pair<std::string, std::string> > walletAddressKeyPairs;
     std::vector< std::pair<std::string, double> > walletBalances;
 
 
@@ -74,4 +74,3 @@ private:
 
 
 #endif //WALLET_H
-
