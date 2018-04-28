@@ -11,6 +11,8 @@ public:
     std::string GetId()const;
     std::string GetSignature()const;
     size_t GetIndex()const;
+    
+    friend std::ostream& operator<<(std::ostream& os, const TxIn& txin);
 
 private:
     const std::string id_;
