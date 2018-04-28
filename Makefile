@@ -1,4 +1,4 @@
-C++FLAG = -g -std=c++11
+C++FLAG = -g -Wall -std=c++14
 CC = gcc
 
 Transaction_OBJ = src/transaction.o src/txin.o src/txout.o src/utxout.o src/utxoutpool.o
@@ -11,8 +11,8 @@ Wallet_OBJ = src/wallet.o
 ECC_OBJ = src/ecc.o
 
 #Compiles the main capcoin program and its prerequisutes
-Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Serialize_OBJ) \
-$(Network_OBJ) $(FullNode_OBJ) $(Wallet_OBJ) $(ECC_OBJ)
+Capcoin_OBJ = src/capcoin.o $(Wallet_OBJ) $(ECC_OBJ) $(Transaction_OBJ) $(Block_OBJ) $(Serialize_OBJ) \
+$(Network_OBJ) $(FullNode_OBJ)
 
 #Where to store all drivers
 EXEC_DIR = ./bin
