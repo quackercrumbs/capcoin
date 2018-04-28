@@ -1,4 +1,4 @@
-#include "../lib/ecc.h"
+#include "ecc.h"
 
 #include <string.h>
 
