@@ -4,44 +4,46 @@
 
 int main(int argc, char* argv[]) {
 
-
-        
-    Blockchain bc;
-    unsigned short p = 15465;
-    if ( argc >= 2 ) {
-        p = atoi(argv[1]);
+    if ( argc < 2 ) {
+        std::cout << "USAGE: ./bin/net_test<running port>" << std::endl;
+        return 0;
     }
+    unsigned short p = atoi(argv[1]);
+         
+
     std::cout << "====================================" << std::endl;
     std::cout << "Listening from port " << p << std::endl;
     std::cout << "====================================" << std::endl;
-    
+   
+    Blockchain bc;
     P2P_Manager net(&bc,p);
     net.init();
+   
+    //If the node is just listening AKA not trying to estable a connection ( 
     if (argc == 2) {
         net.run();
     }
-
-    //New Peer Address
-    std::string new_add = "127.0.0.1";
-    unsigned short new_port = 1;
-    
-    std::cout << argc << std::endl;
-    if(argc == 3 ) {
-        std::cout << "Three Params" << std::endl;
-        new_port = atoi(argv[2]);
-        net.AddPeer(new_add,new_port);
-    }
-
     std::string ans = "";
-    while(true) {
-        std::getline(std::cin, ans);
-        if(ans == "/q") {
-           std::cout << "Leaving..." << std::endl;
-           break;
-        } else {
-            net.send_to_all(ans);
-        }
-    }
+        while(true) {
+            std::getline(std::cin, ans);
+            if(ans == "!q") {
+               std::cout << "Leaving..." << std::endl;
+               break;
+            } 
+            else if(ans == "!connect") {
+                std::cout << "Enter node ip: " << std::endl;
+                std::string new_address; 
+                std::getline(std::cin, new_address);
+                
+                std::cout << "Enter node port: " << std::endl;
+                std::getline(std::cin, ans);
+                unsigned short new_port = atoi(ans.c_str());
 
+                net.AddPeer(new_address, new_port);
+            }
+            else {
+                net.send_to_all(ans);
+            }
+    }
     net.Close();
 }

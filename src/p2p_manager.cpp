@@ -19,15 +19,18 @@ void P2P_Manager::init() {
     OpenListeners(); 
 
     //This is the configs for GALE (Server)
-    std::string server_string = "167.99.12.102";
+    /*
+    std::string server_string = "159.89.42.192";
     size_t server_port = 1234;
     std::pair<std::string, size_t> server = {server_string,server_port};
+    */
 
     std::string local_server_string = "127.0.0.1";
     size_t local_server_port = 5555;
     std::pair<std::string, unsigned short> local_server = {local_server_string,local_server_port};
+    
     //Collection of peer configs
-    std::vector<std::pair<std::string, unsigned short>> peer_details = {server, local_server};
+    std::vector<std::pair<std::string, unsigned short>> peer_details = {local_server};
     std::cout << peer_details.size() << " connection configs loaded." << std::endl;
 
     //Initalize all peer connections
