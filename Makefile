@@ -10,6 +10,8 @@ Serialize_OBJ = src/serialize.o
 #Compiles the main capcoin program and its prerequisutes
 Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Serialize_OBJ) $(Network_OBJ) $(FullNode_OBJ)
 
+TTest_OBJ = la.o $(Transaction_OBJ) $(Block_OBJ) $(Serialize_OBJ) $(Network_OBJ) $(FullNode_OBJ)
+
 #Where to store all drivers
 EXEC_DIR = ./bin
 
@@ -32,9 +34,17 @@ CAPCOIN=capcoin.o #Executable name
 $(CAPCOIN): $(Capcoin_OBJ) #Rule to compile capcoin
 	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Capcoin_OBJ) $(LINKS) 
 
+TTest=ttest #Executable name
+$(TTest): $(TTest_OBJ) #Rule to compile capcoin
+	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(TTest_OBJ) $(LINKS)
+
+
+
 #General Rules to compile drivers
 all: capcoin
 
+t:
+	make $(TTest)
 
 #Specific Rules to compile specific drivers
 capcoin:
