@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "ecc.h"
+#include "picosha2.h"
 #include "transaction.h"
 #include "utxoutpool.h"
 
@@ -22,18 +23,7 @@
  * similar to bitcoin, but our own
  * */
 
-
-
-
 //todo:separate thread writes newly formed keypairs to wallet file ((appends))
-
-//
-//struct comparator {
-//    bool operator() (const double& left, const double& right) const {return left<right;}
-//};
-
-
-
 
 class Wallet{
 
@@ -41,32 +31,29 @@ class Wallet{
 public:
 
     Wallet();
-    bool isEmpty();
-
-    Transaction* createTransaction(const UnspentTxOutPool& UTXO_pool, \
-                                                    std::vector<TxIn>& tx_inputs, \
-                                                    std::vector<TxOut>& tx_outputs);
-    //may make of type address
+    Wallet(UnspentTxOutPool& UTXO);
+    Transaction* createTransaction(std::vector<TxIn>& tx_inputs, std::vector<TxOut>& tx_outputs);
     std::vector<std::pair<std::string, double> > getWalletBalance();
+    void createAddress(int quantity);
+
+    bool isEmpty();
     //void Wallet::shutdownWallet();
 
 private:
 
     bool empty;
+    void initAddresses(int quantity=0);
+    void makeKeyPairs(int quantity=0);
     void createWallet();
-    void initAddresses(); //fills address vector wallet address called on check after call to getWalletBalances
-    void initKeyPair();
     void initWallet();
-    void initBalances();
-    void createAddress(int quanity);
+    void validateAddresses();
+
     void updateWalletBalance();
     void writeWalletToDisk();
-
-    std::vector< std::pair<uint8_t, uint8_t> > rawKeyPairs;
-
+    UnspentTxOutPool* UTXO_pool;
+    std::vector< std::pair<std::string, std::string> > rawKeyPairs;
     std::vector< std::pair<std::string, std::string> > walletAddressKeyPairs;
     std::vector< std::pair<std::string, double> > walletBalances;
-
 
 
 };

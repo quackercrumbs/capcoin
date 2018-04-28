@@ -2,8 +2,15 @@
 
 #define WALLETDIR "wallet.capcoin"
 
-Wallet::Wallet(){
 
+/**
+ *
+ * key order:
+ * privatekey - > publickey
+ *
+ * */
+
+Wallet::Wallet(UnspentTxOutPool& UTXO):UTXO_pool{&UTXO}{
     //check if wallet file present; init wallet address vectors
     initWallet();
 
@@ -12,9 +19,32 @@ Wallet::Wallet(){
         std::cout << "no wallet";
         createWallet();
     }
-
     //verify validate addresses
-    //initAddresses();
+    validateAddresses();
+    initAddresses();
+}
+
+Wallet::Wallet():UTXO_pool{nullptr}{
+    //check if wallet file present; init wallet address vectors
+    initWallet();
+
+    if(isEmpty()){
+        //todo: delete cout
+        std::cout << "no wallet";
+        createWallet();
+    }
+    //verify validate addresses
+    //convert raw keys to CC addresses
+    validateAddresses();
+    initAddresses();
+
+}
+
+void Wallet::validateAddresses(){
+
+    for(int i = 0; i < rawKeyPairs.size(); i++){
+        //todo: some validator function
+    }
 
 }
 
@@ -32,7 +62,8 @@ void Wallet::initWallet() {
 
     //read in
     //each line is an address:private key \n public
-    std::vector<std::string> addressPairsFromFile((std::istream_iterator<std::string>(walletFile)), std::istream_iterator<std::string>());
+    std::vector<std::string> addressPairsFromFile((std::istream_iterator<std::string>(walletFile)), \
+                                                    std::istream_iterator<std::string>());
 
     //empty wallet file
     if(addressPairsFromFile.empty()){
@@ -48,17 +79,14 @@ void Wallet::initWallet() {
     }
 
     //store address keypairs
-    //set public facing walletaddress
+    //set private facing rawkeypairs vect
     for(int i = 0; i < addressPairsFromFile.size(); i++){
 
         std::string privatekey = addressPairsFromFile[i];
         std::string publickey = addressPairsFromFile[++i];
 
         std::pair<std::string, std::string> kp = std::make_pair(privatekey, publickey);
-        walletAddressKeyPairs.emplace_back(kp);
-
-        std::pair<std::string, double> addrBal = std::make_pair(publickey, 0.00);
-        walletBalances.emplace_back(std::make_pair(publickey, 0.00));
+        rawKeyPairs.emplace_back(kp);
 
     }
 
@@ -72,34 +100,42 @@ bool Wallet::isEmpty() {
     return empty;
 }
 
-//appends an address to wallet file
-//todo: overload function createAddress(int numAddr) - create numAddr
-//todo: overload createAddress(int numAddr, private key index or key itself) support HD WALLET
-void Wallet::createAddress(int quantity) {
+void Wallet::makeKeyPairs(int quantity){
 
-    uint8_t p_publicKey[ECC_BYTES+1], p_privateKey[ECC_BYTES];
-    //creates keys
-    //hashes
-    //store in key vector
+    int idx;
+    if(rawKeyPairs.empty())
+        idx = 0;
+    else {
+        idx = rawKeyPairs.size();
+        quantity += rawKeyPairs.size();
+    }
+
+
+    for( ; idx < quantity; idx++){
+
+        uint8_t p_publicKey[ECC_BYTES+1];
+        uint8_t p_privateKey[ECC_BYTES];
+
+        if(0 == ecc_make_key(p_publicKey, p_privateKey)){
+            //todo:
+            //unable to create address
+            //handle
+        }
+
+        std::string pbk = (char *)p_publicKey;
+        std::string prk = (char *)p_privateKey;
+        rawKeyPairs.emplace_back(std::make_pair(prk, pbk));
+
+    }
 
 }
-
-
 
 void Wallet::createWallet(){
 
-    uint8_t p_publicKey[ECC_BYTES+1];
-    uint8_t p_privateKey[ECC_BYTES];
-
-    if(0 == ecc_make_key(p_publicKey, p_privateKey)){
-        //unable to create address
-        //handle
-    }
-
-    //rawKeyPairs.emplace_back(std::make_pair(p_publicKey, p_privateKey));
-    initKeyPair();
+    makeKeyPairs(1);
     writeWalletToDisk();
 }
+
 
 void Wallet::writeWalletToDisk(){
 
@@ -112,20 +148,21 @@ void Wallet::writeWalletToDisk(){
     }
 }
 
-//todo: error flag
-void Wallet::initKeyPair(){
-//
-//    if (0 == ecc_make_key(p_publicKey, p_privateKey)){
-//        std::cout << "Unable to create keys. \n";
-//    }
+
+
+void Wallet::createAddress(int quantity) {
+
+    makeKeyPairs(quantity);
+    initAddresses(quantity);
 
 }
 
+
+
 //todo: user specifies from which (from) addresses to choose from
 //most likely called by a more abstracted public function
-Transaction* Wallet::createTransaction(const UnspentTxOutPool& UTXO_pool, \
-                                                    std::vector<TxIn>& tx_inputs, \
-                                                    std::vector<TxOut>& tx_outputs){
+Transaction* Wallet::createTransaction(std::vector<TxIn>& tx_inputs, \
+                                        std::vector<TxOut>& tx_outputs){
 
 //    updateWalletBalance();
 //
@@ -178,54 +215,54 @@ Transaction* Wallet::createTransaction(const UnspentTxOutPool& UTXO_pool, \
 
 }
 
-void Wallet::initAddresses() {
+//hashes address, from keys to addresses
+void Wallet::initAddresses(int quantity) {
 
-//    //check base58 encoding
-//    for(auto& i : walletkeyPairs){
-//        if(Base58::base58().is_valid(i.getPrivateKey_base58()) && Base58::base58().is_valid(i.getPublicKey_base58())){
-//            i.setValidity(true);
-//        } else
-//            i.setValidity(false);
-//
-//    }
-//    //todo:set type (i.e: normal, hierarchical, etc.)
-//
-//    //pull balances
-//    initBalances();
+    int idx;
+    if(rawKeyPairs.empty())
+        idx = 0;
+    else {
+        idx = quantity;
+        quantity += rawKeyPairs.size();
+    }
+    for(; idx < quantity; idx++){
+
+        walletAddressKeyPairs[idx].first = picosha2::hash256_hex_string( \
+        picosha2::hash256_hex_string(rawKeyPairs[idx].first));
+
+        walletAddressKeyPairs[idx].second = picosha2::hash256_hex_string( \
+        picosha2::hash256_hex_string(rawKeyPairs[idx].second));
+
+    }
+
+    updateWalletBalance();
 
 }
+
+std::vector<std::pair<std::string, double> > Wallet::getWalletBalance(){
+
+    return walletBalances;
+}
+
+//set balances
+void Wallet::updateWalletBalance(){
+
+    for(int i = 0; i < walletAddressKeyPairs.size(); i++){
+
+        std::string publickey = walletAddressKeyPairs[i].first;
+
+        //returns double
+        //UTXO_pool.search(publickey);
+        //walletAddressKeyPairs[i].second = UTXO_pool.search(publickey);
+
+    }
+    //todo: search db, rematch, sum, and store value in private member vect
+}
+
+
 
 //void Wallet::shutdownWallet(){
 //    //receives kill request
 //    //stop/kill requests
 //    //flush changes saves to disk
 //}
-
-std::vector<std::pair<std::string, double> > Wallet::getWalletBalance(){
-
-    std::vector<std::pair<std::string, double> > a;
-    return a;
-}
-
-void Wallet::updateWalletBalance(){
-    //todo: search db, rematch, sum, and store value in private member vect
-}
-
-void Wallet::initBalances(){
-
-//    for(auto i; i < walletAddressKeyPairs.size(); i++){
-//
-//        AddresskeyPair* kp = &walletAddressKeyPairs[i];
-//        auto wallet_address_base_58 = kp->getPublicKey_base58();
-//
-//        double cbalance = 0;
-//        //todo: search unspentpool for wallet_address_ match and sum for balance
-//        //store and populate <double>walletbalances
-//        kp->setBalance(cbalance);
-//        //links addresskeypairs with balance vector
-//        walletBalances[i] = kp->getBalance();
-//
-//
-//    }
-
-}
