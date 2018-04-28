@@ -11,8 +11,11 @@
 
 class Blockchain {
 public:
-	//Initalize the blockchain by loading data
+	//Initalize the blockchain w/ a Genesis block
 	Blockchain ();
+
+	//Initalize the blockchain by loading data
+	Blockchain (const std::vector<Block>& blocks);
 
 	//Returns the current mining difficulty
 	size_t GetDifficulty();
@@ -33,6 +36,12 @@ public:
 
 	//Returns the latest block on the chain
 	Block GetLastBlock();
+
+    //Return a copy of the block chain as a vector
+    std::vector<Block> GetChain();
+
+
+    friend std::ostream& operator<<(std::ostream& os, const Blockchain& b);
 
 private:
 	std::vector<Block> blocks_;

@@ -10,7 +10,7 @@ public:
 	//All unspent TxOuts are loaded through this constructor
 	UnspentTxOutPool();
 	bool AddTxn(UnspentTxOut& input);
-	UnspentTxOut* FindFromIn(const TxIn& input);
+	UnspentTxOut* FindFromIn(const TxIn& input) const;
 private:
 	std::vector<UnspentTxOut> uTxOuts_;
 };

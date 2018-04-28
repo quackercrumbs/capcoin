@@ -1,6 +1,23 @@
 #include "serialize.h"
 #include <iostream>
 
+Serialize::Serialize(){
+
+}
+
+Serialize::Serialize(Transaction& toBeSent){
+  this->operator()(toBeSent);
+}
+
+Serialize::Serialize(Block& toBeSent){
+  this->operator()(toBeSent);
+}
+
+Serialize::Serialize(UnspentTxOut& toBeSent){
+  this->operator()(toBeSent);
+}
+
+
 void Serialize::operator()(Transaction& toBeSent){
   std::stringstream accumulator;
   Serialize smallSerial;
@@ -61,7 +78,7 @@ std::string Serialize::toString(){
 }
 
 Block JSONtoBlock(std::string blockString){
-    size_t index, difficulty, nonce, start = 19, end = 19;
+    size_t index, difficulty, nonce, start = 18, end = 18;
     time_t timestamp;
     std::string prevHash, hash;
     std::vector<Transaction> data;

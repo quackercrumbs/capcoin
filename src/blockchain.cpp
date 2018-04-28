@@ -1,4 +1,6 @@
 #include "blockchain.h"
+#include "../lib/socket.h"
+#include "../lib/network.h"
 
 Blockchain::Blockchain(){
     //initialize the chain with the genesis block.
@@ -16,9 +18,23 @@ Blockchain::Blockchain(){
     blocks_.push_back(Genesis);
 }
 
+Blockchain::Blockchain(const std::vector<Block>& blocks)
+  : blocks_{blocks} {}
+
 
 Block Blockchain::GetLastBlock(){
     return blocks_[blocks_.size()-1];
+}
+std::vector<Block> Blockchain::GetChain(){
+    return blocks_;
+}
+
+bool Blockchain::Push(Block& b){
+  //Needs to verify block eventually
+
+  blocks_.push_back(b);
+
+  return true;
 }
 
 Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
@@ -27,7 +43,7 @@ Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
     size_t difficulty = GetDifficulty();
     size_t nonce = 0;
     std::string hash_;
-    std::string prevHash = blocks_[blocks_.size()-1].GetPreviousHash();
+    std::string prevHash = blocks_[blocks_.size()-1].GetHash();
     while (true) {
         hash_ = CalculateHash(index, prevHash, timestamp, data, difficulty, nonce);
         if (HashMatchesDifficulty(hash_, difficulty)){break;}
@@ -43,6 +59,8 @@ Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
     return newBlock;
 
 }
+
+
 
 bool Blockchain::HashMatchesDifficulty(std::string hash, size_t difficulty){
     //check to see if there are any non-hex characters.
@@ -114,4 +132,11 @@ bool Blockchain::IsValidHash(const Block& newBlock){
         return false;
     //otherwise, return true
     return true;
+}
+
+std::ostream& operator<<(std::ostream& os, const Blockchain& bc) {
+    for(auto i = bc.blocks_.rbegin(); i != bc.blocks_.rend(); ++i) {
+        os << *i << std::endl;
+    }
+    return os;
 }

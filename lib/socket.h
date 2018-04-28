@@ -247,6 +247,7 @@ public:
   unsigned int maxClients();
   void closeConnection(int);
   void broadcastAll(int, const std::string&);
+  void broadcastToOne(int sd, const std::string &msg);
 
   std::vector<TCPSocket*> client_sockets;
 
