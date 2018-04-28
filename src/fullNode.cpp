@@ -3,10 +3,11 @@
 
 
 
-FullNode::FullNode(Blockchain * bc, Network * nw, Wallet * w){
+FullNode::FullNode(Blockchain * bc, Network * nw, Wallet * w, TransactionPool * transactionpool){
   blockchain = bc;
   network = nw;
   wallet = w;
+  txpool = transactionpool;
 }
 
 bool FullNode::updateChain(){
@@ -145,13 +146,14 @@ void FullNode::run(){
           Block block = blockchain->GenerateNextBlock(data);
           */
           network->broadcastTransaction(*NewTxn);
+          txpool->AddTransaction(*NewTxn);
         }
       }
 
     }
     else if(selection == "T" || selection == "t" ){
       // This could be used to display the current transaction pool
-      std::cout << "run transactions" << std::endl;
+      displayTransactionPool();
     }
     else if(selection == "H" || selection == "h" ){
       // general help menu.  Might not be necessary
@@ -169,19 +171,26 @@ void FullNode::run(){
   }
 }
 
+void FullNode::displayTransactionPool() {
+    std::cout << "               __________________" << std::endl;
+    std::cout << "==============| Transaction Pool |===============" << std::endl;
+    std::cout << "               ------------------" << std::endl;
+    std::cout << *txpool << std::endl;
+}
+
 void FullNode::displayLastBlock() {
-    std::cout << "         ______________" << std::endl;
-    std::cout << "========| Latest Block |========" << std::endl;
-    std::cout << "         --------------" << std::endl;
+    std::cout << "               ______________" << std::endl;
+    std::cout << "==============| Latest Block |================" << std::endl;
+    std::cout << "               --------------" << std::endl;
 
     Block latest = blockchain->GetLastBlock();
     std::cout << latest << std::endl;
 }
 
 void FullNode::displayBlockchain() {
-    std::cout << "         _________________" << std::endl;
-    std::cout << "========| Full Blockchain |========" << std::endl;
-    std::cout << "         -----------------" << std::endl;
+    std::cout << "                _________________" << std::endl;
+    std::cout << "===============| Full Blockchain |===============" << std::endl;
+    std::cout << "                -----------------" << std::endl;
     std::cout << *blockchain << std::endl;
 
 }
