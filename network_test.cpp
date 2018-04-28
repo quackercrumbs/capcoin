@@ -19,9 +19,12 @@ int main(int argc, char* argv[]) {
     P2P_Manager net(&bc,p);
     net.init();
    
-    //If the node is just listening AKA not trying to estable a connection ( 
-    if (argc == 2) {
-        net.run();
+    //If the node is hosting (aka the inital node)  THIS IS REQUIRED
+    if (argc == 3) {
+        if(strcmp(argv[2],"initial") == 0) {
+            std::cout << "Initial Node" << std::endl;
+            net.run();
+        }
     }
     std::string ans = "";
         while(true) {
@@ -40,6 +43,11 @@ int main(int argc, char* argv[]) {
                 unsigned short new_port = atoi(ans.c_str());
 
                 net.AddPeer(new_address, new_port);
+            }
+            else if(ans == "!help") {
+                std::cout << "!connect, form to connect to node" << std::endl;
+                std::cout << "!q, exit node" << std::endl;
+                std::cout << "!help, help menu" << std::endl;
             }
             else {
                 net.send_to_all(ans);
