@@ -18,7 +18,7 @@ For example to install boost...
  - Mac OS
 	```brew install libboost-all-dev ```
 - Ubuntu
-	```apt-get install boost ```
+	```apt-get install libboost-all-dev ```
 - Arch
 	```pacman -S boost ```
 	```pacman -S boost-libs ```
