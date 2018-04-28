@@ -1,12 +1,17 @@
 #ifndef WALLET_H
 #define WALLET_H
 
-#include <string>
 #include <vector>
+#include <iostream>
+#include <sstream>
+#include <fstream>
 #include <memory>
+
 #include "ecc.h"
-#include "transaction.h
+#include "transaction.h"
 #include "utxoutpool.h"
+
+
 
 /*
  * AddressFormat:
@@ -19,53 +24,48 @@
 
 
 
-#include "json.hpp"
-namespace wallet{
 
-    void to_json(nlohmann::json& j, const AddresskeyPair& kp) {
-        j = nlohmann::json{{"publickey", kp.getPublicKey_base58()}, {"privatekey", kp.getPrivateKey_base58()}, {"test", kp.validate()}};
-    }
+//todo:separate thread writes newly formed keypairs to wallet file ((appends))
 
-    void from_json(const nlohmann::json& j, AddresskeyPair& kp) {
-        kp.setPublicKey(j.at("publickey").get<std::string>());
-        kp.setPrivateKey(j.at("privatekey").get<std::string>());
-        kp.setValidity(j.at("test").get<bool>());
-    }
-}
+//
+//struct comparator {
+//    bool operator() (const double& left, const double& right) const {return left<right;}
+//};
 
 
 
-
-//todo:seperate thread writes newly formed keypairs to wallet file ((appends))
 
 class Wallet{
+
 
 public:
 
     Wallet();
     bool isEmpty();
+
     Transaction* createTransaction(const UnspentTxOutPool& UTXO_pool, \
                                                     std::vector<TxIn>& tx_inputs, \
                                                     std::vector<TxOut>& tx_outputs);
     //may make of type address
-    std::vector<double> getWalletBalance();
-    void Wallet::shutdownWallet();
+    std::vector<std::pair<std::string, double> > getWalletBalance();
+    //void Wallet::shutdownWallet();
 
 private:
 
     bool empty;
     void createWallet();
     void initAddresses(); //fills address vector wallet address called on check after call to getWalletBalances
-    void initKeyPair(uint8_t p_publicKey[ECC_BYTES+1], uint8_t p_privateKey[ECC_BYTES]);
+    void initKeyPair();
     void initWallet();
     void initBalances();
-    void createAddress();
+    void createAddress(int quanity);
     void updateWalletBalance();
+    void writeWalletToDisk();
 
-    std::vector<AddresskeyPair> walletAddressKeyPairs;
+    std::vector< std::pair<uint8_t, uint8_t> > walletAddressKeyPairs;
 
-    //std::vector<keyPair> walletkeyPairs;
-    std::vector<double*> walletBalances;
+    std::vector< std::pair<std::string, std::string> > rawKeyPairs;
+    std::vector< std::pair<std::string, double> > walletBalances;
 
 
 
