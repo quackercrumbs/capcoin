@@ -16,35 +16,36 @@
 #include <chrono>
 
 /*
- *  Tells BREEP about classes
+ *  Tells BREEP about data types 
  */
-BREEP_DECLARE_TYPE(std::string)
+BREEP_DECLARE_TYPE(std::string);
+/*
+BREEP_DECLARE_TYPE(Block);
+BREEP_DECLARE_TYPE(Transaction);
+*/
 
+
+/*
+ *
+ *  RequestManager is contains functions that will attach to network listeners
+ *      The idea is to have a seperate listener for each data type.
+ *
+ */
 class RequestManager {
 public:
     RequestManager();
-
+    
+    /*
+     * Called when there is a connection or disconnection to the network
+     */ 
     void connection_event(breep::tcp::network& network, const breep::tcp::peer& peer);
 
+    /*
+     * General string data listener
+     */ 
     void message_recieved(breep::tcp::netdata_wrapper<std::string>& dw);
 
 };
-
-class timed_message {
-
-public:
-    timed_message();
-
-    void operator() (breep::tcp::network&, const breep::tcp::peer& source, breep::cuint8_random_iterator data, size_t data_size, bool);
-
-private:
-    const time_t m_starting_time;
-
-};
-
-
-// A function that will be passed to respond to connections and disconnections to client
-void connection_disconnection(breep::tcp::network&, const breep::tcp::peer& peer);
 
 class P2P_Manager {
 public:
@@ -53,39 +54,44 @@ public:
     P2P_Manager( Blockchain* blockchain/*, TransactionPool* pool*/, unsigned short port);
 
     //Initalize all peer connections and listen threads
-    void init();
+    void Init();
 
     // Activates data and connection/disconnect listeners
     void OpenListeners();
 
-    // Deactivates peer manager and close all listeners
+    // Deactivates peer manager
     void Close();
 
     //Add a peer into managers connection list
     bool AddPeer(std::string address, unsigned short port);
    
     // Broadcast message
-    void broadcastMessage(std::string msg);
+    void BroadcastMessage(std::string msg);
 
     // Broadcast the provided block
-    void broadcastBlock(Block& block);
+    void BroadcastBlock(Block& block);
 
     // Retrieve the previous message
-    std::string getLastRecieved();
+    std::string GetLastRecieved();
 
-    // Getters and Setter Functions
+
+    // This update private member variable port_
+    // It does not restart the connection onto this port
     void SetPort(unsigned short port);
 
+    // Updates the networks ptr to blockchain in main memory.
     void SetBlockchain(Blockchain* bc);
 
+    // Upddates the networks ptr to transaction pool in main memory.
     void SetTransactionPool(/*TransactionPool* pool*/);
 
     // Peer Manager Function Wrappers
-    void disconnect();
+    void Disconnect();
 
-    void send_to_all(std::string msg);
 
-    void run();    
+    void Send_to_all(std::string msg);
+
+    void Run();    
     
 private:
     
@@ -95,12 +101,6 @@ private:
     // Data sources
     Blockchain* bc_;
     //TransactionPool* txpool_;
-
-    breep::listener_id data_listener_id_;
-    breep::listener_id connection_listener_id_;
-    breep::listener_id disconnection_listener_id_;
-
-
 
 };
 

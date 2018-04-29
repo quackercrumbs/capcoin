@@ -13,7 +13,7 @@ P2P_Manager::P2P_Manager(Blockchain* blockchain/*, TransactionPool* pool*/, unsi
     //txpool_ = pool;
 }
 
-void P2P_Manager::init() {
+void P2P_Manager::Init() {
     
     std::cout << "================ Network Initalization ================" << std::endl; 
     OpenListeners(); 
@@ -54,6 +54,12 @@ void P2P_Manager::OpenListeners() {
     network_->add_data_listener<std::string>([&request_manager_x](breep::tcp::netdata_wrapper<std::string>& dw) -> void {
                 request_manager_x.message_recieved(dw);
             });
+
+    /**
+     *
+     * REQUIRED: These listeners are for handling connections and disconnection
+     *
+     */ 
     network_->add_connection_listener([&request_manager_x](breep::tcp::network &net, const breep::tcp::peer& peer) -> void {
                 request_manager_x.connection_event(net, peer);
             });
@@ -65,10 +71,7 @@ void P2P_Manager::OpenListeners() {
 }
 
 void P2P_Manager::Close() {
-    disconnect();
-    //network_->remove_data_listener(data_listener_id_);
-    //network_->remove_connection_listener(connection_listener_id_);
-    //network_->remove_disconnection_listener(disconnection_listener_id_);
+    Disconnect();
 }
 
 bool P2P_Manager::AddPeer(std::string address, unsigned short port) {
@@ -85,19 +88,19 @@ bool P2P_Manager::AddPeer(std::string address, unsigned short port) {
     return true;
 }
 
-void P2P_Manager::broadcastMessage(std::string msg) {
+void P2P_Manager::BroadcastMessage(std::string msg) {
     //Send message information to each peer
     network_->send_object(msg);
 }
 
-void P2P_Manager::broadcastBlock(Block& block) {
+void P2P_Manager::BroadcastBlock(Block& block) {
     //Serialize block into JSON data
     Serialize s(block);
     std::string data = s.toString();
-    broadcastMessage(data);
+    BroadcastMessage(data);
 }
 
-std::string P2P_Manager::getLastRecieved() {
+std::string P2P_Manager::GetLastRecieved() {
     return "default";
 }
 
@@ -113,58 +116,12 @@ void P2P_Manager::SetTransactionPool(/*TransactionPool* pool*/) {
     //txpool_ = pool;
 }
 
-/*
- *
- *      Wrapper functions for peer manager
- *
- *
- */
-void P2P_Manager::disconnect() {
+void P2P_Manager::Disconnect() {
     network_->disconnect();
 }
 
-void P2P_Manager::send_to_all(std::string msg) {
-    network_->send_object(msg);
-}
-
-void P2P_Manager::run() {
+void P2P_Manager::Run() {
     network_->awake();
-}
-
-/*
- *
- *      For Message Listener
- *
- */
-timed_message::timed_message(): m_starting_time{time(0)} {}
-
-void timed_message::operator() (breep::tcp::network&, const breep::tcp::peer& source, breep::cuint8_random_iterator data, size_t data_size, bool) {
-    //Calculate time of message
-    time_t now = time(0) - m_starting_time;
-    //Pretty print time of message
-    std::cout << '[' << std::string(ctime(&now)).substr(14,5) << "] " << source.id_as_string().substr(0, 4) << ": ";
-    
-    // prints what he sent.
-    for (; data_size > 0 ; --data_size) {
-        std::cout << static_cast<char>(*data++);
-    }
-    std::cout << std::endl;
-}
-
-/*
- *
- *
- *      Listener Functions
- *
- *
- */ 
-void connection_disconnection(breep::tcp::network&, const breep::tcp::peer& peer) {
-    if(peer.is_connected()) {
-        //someone connected
-        std::cout << peer.id_as_string().substr(0,4) << " connected!" << std::endl;
-    } else {
-        std::cout << peer.id_as_string().substr(0,4) << " disconnected!" << std::endl;
-    }
 }
 
 /*

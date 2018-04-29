@@ -17,13 +17,13 @@ int main(int argc, char* argv[]) {
    
     Blockchain bc;
     P2P_Manager net(&bc,p);
-    net.init();
+    net.Init();
    
-    //If the node is hosting (aka the inital node)  THIS IS REQUIRED
+    //If the node is running as the initial node (starting up the first network)
     if (argc == 3) {
         if(strcmp(argv[2],"initial") == 0) {
             std::cout << "Your are running as the initial node" << std::endl;
-            net.run();
+            net.Run(); 
         }
     }
     std::string ans = "";
@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
             std::cout << "!help, help menu" << std::endl;
         }
         else {
-            net.broadcastMessage(ans);
+            net.BroadcastMessage(ans);
         }
     }
     net.Close();
