@@ -12,6 +12,18 @@
 #include "transaction.h"
 #include "utxoutpool.h"
 
+// required for further testing:
+// check todo's
+// -UTXO search method/UTXO rework
+// -safe kill wallet, flush
+// (currently only available in destructor, or safe exit)
+// -TxIn/TxOut mutators
+// -shared access to transactionpool
+// -address pretty printer/maker
+// -CC address validator, alternativly rawaddressvalidator
+// -offline wallet usage (i.e no UTXO)
+// -address disponal (corrupt, burned, etc.)
+
 /*
  * AddressFormat:
  * 4 char prefix[ CC (for capcoin) + XX (place for future stuff, default 00) ] + address + 4 char checksum
@@ -29,6 +41,7 @@ class Wallet{
 public:
 
     Wallet();
+    ~Wallet();
     Wallet(UnspentTxOutPool* UTXO);
     void send(double ccAmt, std::string toCCAddresses);
     std::vector<std::pair<std::string, double> >* getWalletBalance();
