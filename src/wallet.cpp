@@ -302,11 +302,11 @@ int Wallet::gatherUnspentOutputs(double& ccAmt, std::vector<TxOut>& vtxOut, doub
 
 Wallet::~Wallet(){
 
-  std::ofstream walletOut(WALLETDIR, std::ios_base::out);
-  for (int i = 0; i < rawKeyPairs; i++){
+    std::ofstream walletOut(WALLETDIR, std::ios_base::out);
+    for (int i = 0; i < rawKeyPairs.size(); i++){
     walletOut << rawKeyPairs[i].first << rawKeyPairs[i].second << "\n" ;
-  }
-  walletOut.close();
+    }
+    walletOut.close();
 
 }
 
