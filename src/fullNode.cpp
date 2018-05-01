@@ -8,6 +8,21 @@ FullNode::FullNode(Blockchain * bc, Network * nw){
   network = nw;
 }
 
+bool FullNode::updateChain(){
+
+
+  network->broadcastMessage("REQUEST");
+
+  return false;
+  /*
+    //listen for responses, perhaps for a reply that states the size of the current chain
+    //for(i = 0; i < current chain size; i++)
+      //wait for a message, attempt to parse it into the chain.
+      //if constant failures, that means that at some stage, a block was lost, break and try again
+
+  }*/
+}
+
 void FullNode::welcome(){
   std::cout << "***************************************************************************" << std::endl;
   std::cout << "***************************************************************************" << std::endl;
@@ -116,13 +131,22 @@ void FullNode::run(){
           std::cout << "*    Transaction Sent!" << std::endl;
           std::cout << "***************************************************************************" << std::endl;
 
+          //Creating a fake transaction and send as a block
+
+          network->broadcastMessage(std::to_string(amt));
+          
+          TxIn dummyIn("", "", 0);
+          TxOut dummyOut("32ba5334aafcd8e7266e47076996b55", amt);
+          std::vector<TxIn> TxIns{dummyIn};
+          std::vector<TxOut> TxOuts{dummyOut};
+          Transaction NewTxn(TxIns, TxOuts);
+          std::vector<Transaction> data{NewTxn};
+          
+          Block block = blockchain->GenerateNextBlock(data);
+
+          network->broadcastBlock(block);
         }
       }
-
-      // for testing only
-      Block b = blockchain->GenerateNextBlock();
-      network->broadcastBlock( b );
-      // network->broadcastMessage(amt);
 
     }
     else if(selection == "T" || selection == "t" ){
