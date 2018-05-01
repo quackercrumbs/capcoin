@@ -3,7 +3,8 @@
 
 #include "utxout.h"
 #include "txin.h"
-#include <vector>
+#include <map>
+
 //Container for all unspent transactions (coins)
 class UnspentTxOutPool{
 public:
@@ -11,8 +12,11 @@ public:
 	UnspentTxOutPool();
 	bool AddTxn(UnspentTxOut& input);
 	UnspentTxOut* FindFromIn(const TxIn& input) const;
+	double search(const std::string& publicKey) const;
+
+	friend std::ostream& operator<<(std::ostream& os, const UnspentTxOutPool& pool);
 private:
-	std::vector<UnspentTxOut> uTxOuts_;
+	std::map<std::string, UnspentTxOut> uTxOuts_;
 };
 
 #endif
