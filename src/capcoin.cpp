@@ -2,6 +2,7 @@
 #include "network.h"
 #include "block.h"
 #include "blockchain.h"
+#include "wallet.h"
 
 #include <string.h>
 #include <iostream>
@@ -75,10 +76,10 @@ int main(int argc, char *argv[]) {
     // create Miner
 
     // create Wallet
-
+    Wallet wa;
 
     // then, create full node, using these 4 parts
-    FullNode node (&bc, &nw);
+    FullNode node (&bc, &nw, &wa);
 
     node.updateChain();
     node.welcome();

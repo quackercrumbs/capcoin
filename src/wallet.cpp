@@ -315,3 +315,4 @@ Wallet::~Wallet(){
 //    //stop/kill requests
 //    //flush changes saves to disk
 //}
+  
