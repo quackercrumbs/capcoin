@@ -134,7 +134,9 @@ void FullNode::run(){
 
           //Creating a fake transaction and send as a block
 
-          wallet->createTransaction();
+
+
+          wallet->send(address, amt);
 
           network->broadcastMessage(std::to_string(amt));
 
