@@ -38,7 +38,15 @@ int main(int argc, char* argv[]) {
             std::cout << "Enter node ip: " << std::endl;
             std::string new_address; 
             std::getline(std::cin, new_address);
-            
+            if(new_address == "localhost") {
+                new_address = "127.0.0.1";
+            }
+            else if(new_address == "gale") {
+                new_address = "159.89.42.192";
+            }
+            else if (new_address == "orien") {
+                new_address = "167.99.12.102";
+            }
             std::cout << "Enter node port: " << std::endl;
             std::getline(std::cin, ans);
             unsigned short new_port = atoi(ans.c_str());
@@ -49,6 +57,10 @@ int main(int argc, char* argv[]) {
             std::cout << "!connect, form to connect to node" << std::endl;
             std::cout << "!q, exit node" << std::endl;
             std::cout << "!help, help menu" << std::endl;
+        }
+        else if(ans == "!Message") {
+            Message m = {"testMessage"};
+            net.BroadcastM(m);
         }
         else {
             net.BroadcastMessage(ans);

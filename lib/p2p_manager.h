@@ -21,11 +21,30 @@
  *
  */
 BREEP_DECLARE_TYPE(std::string);
-/*
-BREEP_DECLARE_TYPE(Block);
-BREEP_DECLARE_TYPE(Transaction);
-*/
 
+struct Message {
+
+    std::string data_;
+
+};
+
+BREEP_DECLARE_TYPE(Message);
+
+breep::serializer& operator<<(breep::serializer& s, Message m) {
+
+    s << m.data_;
+    return s;
+
+}
+
+breep::deserializer& operator>>(breep::deserializer& d, Message& m) {
+
+    std::string data;
+    d >> data;
+    m.data_ = data;
+    return d;
+
+}
 
 /**
  *
@@ -45,7 +64,12 @@ public:
     /**
      * General string data listener
      */ 
-    void message_recieved(breep::tcp::netdata_wrapper<std::string>& dw);
+    void str_recieved(breep::tcp::netdata_wrapper<std::string>& dw);
+
+    /**
+     * Capcoin message request handler
+     */
+    void message_recieved(breep::tcp::netdata_wrapper<Message>& dw);
 
 };
 
@@ -100,6 +124,13 @@ public:
      *
      */
     void BroadcastBlock(Block& block);
+
+    /*
+     *
+     * Broadcast Message
+     *
+     */ 
+    void BroadcastM(Message m);
 
     /**
      *

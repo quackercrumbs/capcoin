@@ -49,10 +49,17 @@ void P2P_Manager::Init() {
 }
 
 void P2P_Manager::OpenListeners() {
-    RequestManager request_manager_x;
+    RequestManager request_manager;
     //Adding Listeners
-    network_->add_data_listener<std::string>([&request_manager_x](breep::tcp::netdata_wrapper<std::string>& dw) -> void {
-                request_manager_x.message_recieved(dw);
+    
+    //Data listener for strings
+    network_->add_data_listener<std::string>([&request_manager](breep::tcp::netdata_wrapper<std::string>& dw) -> void {
+                request_manager.str_recieved(dw);
+            });
+    
+    //Data listener for capcoin messages
+    network_->add_data_listener<Message>([&request_manager](breep::tcp::netdata_wrapper<Message>& dw) -> void {
+                request_manager.message_recieved(dw);
             });
 
     /**
@@ -60,11 +67,11 @@ void P2P_Manager::OpenListeners() {
      * REQUIRED: These listeners are for handling connections and disconnection
      *
      */ 
-    network_->add_connection_listener([&request_manager_x](breep::tcp::network &net, const breep::tcp::peer& peer) -> void {
-                request_manager_x.connection_event(net, peer);
+    network_->add_connection_listener([&request_manager](breep::tcp::network &net, const breep::tcp::peer& peer) -> void {
+                request_manager.connection_event(net, peer);
             });
-    network_->add_disconnection_listener([&request_manager_x](breep::tcp::network &net, const breep::tcp::peer& peer) -> void {
-                request_manager_x.connection_event(net, peer);
+    network_->add_disconnection_listener([&request_manager](breep::tcp::network &net, const breep::tcp::peer& peer) -> void {
+                request_manager.connection_event(net, peer);
             });
 
 
@@ -91,6 +98,10 @@ bool P2P_Manager::AddPeer(std::string address, unsigned short port) {
 void P2P_Manager::BroadcastMessage(std::string msg) {
     //Send message information to each peer
     network_->send_object(msg);
+}
+
+void P2P_Manager::BroadcastM(Message m) {
+    network_->send_object(m);
 }
 
 void P2P_Manager::BroadcastBlock(Block& block) {
@@ -139,6 +150,10 @@ void RequestManager::connection_event(breep::tcp::network& network, const breep:
     }
 }
 
-void RequestManager::message_recieved(breep::tcp::netdata_wrapper<std::string>& dw) {
+void RequestManager::str_recieved(breep::tcp::netdata_wrapper<std::string>& dw) {
     std::cout << dw.source.id_as_string() << ":" << dw.data << std::endl;
+}
+
+void RequestManager::message_recieved(breep::tcp::netdata_wrapper<Message>& dw) {
+    std::cout << "Message Recieved by Handler" << std::endl;
 }
