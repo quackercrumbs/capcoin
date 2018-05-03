@@ -1,6 +1,6 @@
 #include "blockchain.h"
-#include "../lib/socket.h"
-#include "../lib/network.h"
+//#include "../lib/socket.h"
+//#include "../lib/network.h"
 
 Blockchain::Blockchain(){
     //initialize the chain with the genesis block.
