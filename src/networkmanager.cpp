@@ -103,6 +103,15 @@ void NetworkManager::BroadcastMessage(Message m) {
     network_->send_object(m);
 }
 
+void NetworkManager::RequestAndUpdateBlockchain() {
+    auto node_peers = network_->peers();
+    if(node_peers.empty())
+        return;
+    auto first_peer = node_peers.begin();
+    Message request = {"REQUEST_BLOCKCHAIN",""};
+    network_->send_object_to((*first_peer).second,request);
+}
+
 std::string NetworkManager::GetLastRecieved() {
     return "default";
 }

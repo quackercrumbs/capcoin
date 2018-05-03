@@ -87,6 +87,19 @@ public:
      *
      */ 
     void BroadcastMessage(Message m);
+    
+    /**
+     *
+     * @brief:  Searches for longest bc and updates bc with it.
+     * @detail: Sends a request for blockchain to the network.
+     *          The longest chain with the most votes gets selected.
+     *          This chain will replace/update nodes current chain
+     *
+     * @warning: This function only request block chain from one node
+     *           And assumes that it is correct(the longest chain).
+     *
+     */
+    void RequestAndUpdateBlockchain(); 
 
     /**
      *

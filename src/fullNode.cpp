@@ -12,8 +12,10 @@ FullNode::FullNode(Blockchain * bc, NetworkManager * nw, Wallet * w, Transaction
 
 bool FullNode::updateChain(){
 
+  // Request the blockchain from one peer
+  
   Message request = {"REQUEST_BLOCKCHAIN", ""};
-  network->BroadcastMessage(request);
+  network->RequestAndUpdateBlockchain();
 
   return false;
   /*
