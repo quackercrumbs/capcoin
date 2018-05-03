@@ -17,7 +17,7 @@ using namespace std;
 int main(int argc, char *argv[]) {
 
   if ( argc < 2 ) {
-    std::cout << "USAGE: ./bin/capcoin.o <port> [<initial>]" << std::endl;
+    std::cout << "USAGE: ./bin/capcoin <port> [<initial>]" << std::endl;
     return 0;
   }
   unsigned short port = atoi(argv[1]);

@@ -1,4 +1,5 @@
 /bin/*.o
+/bin/*
 /src/*.o
 /test/*.o
 /test/*.a

@@ -35,7 +35,7 @@ LINKS = -pthread -lboost_system
 
 
 #Capcoin Main Driver
-CAPCOIN=capcoin.o #Executable name
+CAPCOIN=capcoin #Executable name
 $(CAPCOIN): $(Capcoin_OBJ) #Rule to compile capcoin
 	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Capcoin_OBJ) $(LINKS) 
 
@@ -46,19 +46,19 @@ $(NET_TEST): $(NET_TEST_OBJ) #Rule to compile capcoin
 
 
 #General Rules to compile drivers
-all: capcoin
+all: Capcoin
 
 net_test:
 	make $(NET_TEST)
 
 #Specific Rules to compile specific drivers
-capcoin:
+Capcoin:
 	make $(CAPCOIN)
 
 #Removes all executable objects from root, bin, and tests
 clean:
 	(rm -f *.o;)
-	(rm -f bin/*.o;)
+	(rm -f bin/*;)
 	(rm -f src/*.o;)
 	(rm -f test/*.o;)
 	(rm -f test/gtest.a test/gtest_main.a;)
