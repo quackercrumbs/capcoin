@@ -120,7 +120,7 @@ public:
      * Broadcast message
      *
      */
-    void BroadcastMessage(std::string msg);
+    void BroadcastString(std::string msg);
 
     /**
      *
@@ -134,7 +134,7 @@ public:
      * Broadcast Message
      *
      */ 
-    void BroadcastM(Message m);
+    void BroadcastMessage(Message m);
 
     /**
      *

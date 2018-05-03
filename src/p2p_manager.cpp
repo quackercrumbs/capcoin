@@ -95,12 +95,12 @@ bool P2P_Manager::AddPeer(std::string address, unsigned short port) {
     return true;
 }
 
-void P2P_Manager::BroadcastMessage(std::string msg) {
+void P2P_Manager::BroadcastString(std::string msg) {
     //Send message information to each peer
     network_->send_object(msg);
 }
 
-void P2P_Manager::BroadcastM(Message m) {
+void P2P_Manager::BroadcastMessage(Message m) {
     network_->send_object(m);
 }
 
@@ -108,7 +108,7 @@ void P2P_Manager::BroadcastBlock(Block& block) {
     //Serialize block into JSON data
     Serialize s(block);
     std::string data = s.toString();
-    BroadcastMessage(data);
+    BroadcastString(data);
 }
 
 std::string P2P_Manager::GetLastRecieved() {
