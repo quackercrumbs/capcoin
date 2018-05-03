@@ -156,4 +156,5 @@ void RequestManager::str_recieved(breep::tcp::netdata_wrapper<std::string>& dw) 
 
 void RequestManager::message_recieved(breep::tcp::netdata_wrapper<Message>& dw) {
     std::cout << "Message Recieved by Handler" << std::endl;
+    std::cout << dw.data.type_ << " " << dw.data.data_ << std::endl;
 }

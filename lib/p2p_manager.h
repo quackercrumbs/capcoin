@@ -24,6 +24,7 @@ BREEP_DECLARE_TYPE(std::string);
 
 struct Message {
 
+    std::string type_;
     std::string data_;
 
 };
@@ -32,6 +33,7 @@ BREEP_DECLARE_TYPE(Message);
 
 breep::serializer& operator<<(breep::serializer& s, Message m) {
 
+    s << m.type_;
     s << m.data_;
     return s;
 
@@ -39,8 +41,10 @@ breep::serializer& operator<<(breep::serializer& s, Message m) {
 
 breep::deserializer& operator>>(breep::deserializer& d, Message& m) {
 
-    std::string data;
+    std::string type, data;
+    d >> type;
     d >> data;
+    m.type_ = type; 
     m.data_ = data;
     return d;
 
