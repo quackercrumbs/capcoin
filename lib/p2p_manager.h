@@ -4,10 +4,12 @@
 #include "blockchain.h"
 #include "block.h"
 #include "serialize.h"
+#include "message.h"
 
 #include <boost/uuid/uuid_io.hpp>
 #include <breep/network/tcp.hpp>
 #include <breep/util/serialization.hpp>
+
 
 #include <string>
 #include <fstream>
@@ -22,62 +24,17 @@
  */
 BREEP_DECLARE_TYPE(std::string);
 
-struct Message {
-
-    std::string type_;
-    std::string data_;
-
-};
-
+//Serialization and Deserialization overrides defined in message header
 BREEP_DECLARE_TYPE(Message);
-
-breep::serializer& operator<<(breep::serializer& s, Message m) {
-
-    s << m.type_;
-    s << m.data_;
-    return s;
-
-}
-
-breep::deserializer& operator>>(breep::deserializer& d, Message& m) {
-
-    std::string type, data;
-    d >> type;
-    d >> data;
-    m.type_ = type; 
-    m.data_ = data;
-    return d;
-
-}
 
 /**
  *
- *  RequestManager is contains functions that will attach to network listeners
- *      The idea is to have a seperate listener for each data type.
+ *  @brief: This class provides an interface to connect, send and recieve messages
+ *      on the capcoin network.
  *
  */
-class RequestManager {
-public:
-    RequestManager();
-    
-    /**
-     * Called when there is a connection or disconnection to the network
-     */ 
-    void connection_event(breep::tcp::network& network, const breep::tcp::peer& peer);
 
-    /**
-     * General string data listener
-     */ 
-    void str_recieved(breep::tcp::netdata_wrapper<std::string>& dw);
-
-    /**
-     * Capcoin message request handler
-     */
-    void message_recieved(breep::tcp::netdata_wrapper<Message>& dw);
-
-};
-
-class P2P_Manager {
+class NetworkManager {
 public:
 
     /**
@@ -85,7 +42,7 @@ public:
      * Initalize all private member variables. Must run init() explicitly.
      *
      */ 
-    P2P_Manager( Blockchain* blockchain/*, TransactionPool* pool*/, unsigned short port);
+    NetworkManager(unsigned short port, Blockchain* bc);
 
     /**
      * 
@@ -122,13 +79,6 @@ public:
      */
     void BroadcastString(std::string msg);
 
-    /**
-     *
-     * Broadcast the provided block
-     *
-     */
-    void BroadcastBlock(Block& block);
-
     /*
      *
      * Broadcast Message
@@ -153,21 +103,6 @@ public:
 
     /**
      *
-     * Updates the networks ptr to blockchain in main memory.
-     *
-     */    
-    void SetBlockchain(Blockchain* bc);
-
-    /**
-     *
-     * Upddates the networks ptr to transaction pool in main memory.
-     *
-     */
-     void SetTransactionPool(/*TransactionPool* pool*/);
-
-
-    /**
-     *
      * Close clients connection from network 
      *
      */
@@ -182,14 +117,38 @@ public:
      */
     void Run();    
     
+    /**
+    * Called when there is a connection or disconnection to the network
+    */ 
+    void connection_event(breep::tcp::network& network, const breep::tcp::peer& peer);
+
+    /**
+    * General string data listener
+    */ 
+    void str_recieved(breep::tcp::netdata_wrapper<std::string>& dw);
+
+    /**
+    *
+    *
+    *   @brief: A handler that parses incoming Messages
+    *   @example: This handler will handle different types of message headers.
+    *       For example, if the header for an incoming message is TRANSACTION.
+    *       The handler will perform verify the incoming TRANSACTION information.
+    *       From there on, it will post this request into the TxPool. 
+    *   
+        @info: Handles BLOCK, TRANSACTION ....
+    *   
+    *
+    */
+    void message_recieved(breep::tcp::netdata_wrapper<Message>& dw);
+
+
 private:
     
     unsigned short port_; //listening port
     breep::tcp::network* network_; //peer manager, managers connections with peers
 
-    // Data sources
     Blockchain* bc_;
-    //TransactionPool* txpool_;
 
 };
 

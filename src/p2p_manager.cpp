@@ -1,6 +1,6 @@
 #include "p2p_manager.h"
 
-P2P_Manager::P2P_Manager(Blockchain* blockchain/*, TransactionPool* pool*/, unsigned short port) {
+NetworkManager::NetworkManager(unsigned short port, Blockchain* bc) {
 
     //Initialize client config vars
     port_ = port;
@@ -8,12 +8,11 @@ P2P_Manager::P2P_Manager(Blockchain* blockchain/*, TransactionPool* pool*/, unsi
     //Create peer manager object
     network_ = new breep::tcp::network(static_cast<unsigned short>(port_));
 
-    //Initial data source locations
-    bc_ = blockchain;
-    //txpool_ = pool;
+    //Initialize Blockchain
+    bc_ = bc;
 }
 
-void P2P_Manager::Init() {
+void NetworkManager::Init() {
     
     std::cout << "================ Network Initalization ================" << std::endl; 
     OpenListeners(); 
@@ -48,18 +47,15 @@ void P2P_Manager::Init() {
     std::cout << "========== Network Initalization Complete =============" << std::endl;
 }
 
-void P2P_Manager::OpenListeners() {
-    RequestManager request_manager;
-    //Adding Listeners
-    
+void NetworkManager::OpenListeners() {
     //Data listener for strings
-    network_->add_data_listener<std::string>([&request_manager](breep::tcp::netdata_wrapper<std::string>& dw) -> void {
-                request_manager.str_recieved(dw);
+    network_->add_data_listener<std::string>([this](breep::tcp::netdata_wrapper<std::string>& dw) -> void {
+                str_recieved(dw);
             });
     
     //Data listener for capcoin messages
-    network_->add_data_listener<Message>([&request_manager](breep::tcp::netdata_wrapper<Message>& dw) -> void {
-                request_manager.message_recieved(dw);
+    network_->add_data_listener<Message>([this](breep::tcp::netdata_wrapper<Message>& dw) -> void {
+                message_recieved(dw);
             });
 
     /**
@@ -67,21 +63,21 @@ void P2P_Manager::OpenListeners() {
      * REQUIRED: These listeners are for handling connections and disconnection
      *
      */ 
-    network_->add_connection_listener([&request_manager](breep::tcp::network &net, const breep::tcp::peer& peer) -> void {
-                request_manager.connection_event(net, peer);
+    network_->add_connection_listener([this](breep::tcp::network &net, const breep::tcp::peer& peer) -> void {
+                connection_event(net, peer);
             });
-    network_->add_disconnection_listener([&request_manager](breep::tcp::network &net, const breep::tcp::peer& peer) -> void {
-                request_manager.connection_event(net, peer);
+    network_->add_disconnection_listener([this](breep::tcp::network &net, const breep::tcp::peer& peer) -> void {
+                connection_event(net, peer);
             });
 
 
 }
 
-void P2P_Manager::Close() {
+void NetworkManager::Close() {
     Disconnect();
 }
 
-bool P2P_Manager::AddPeer(std::string address, unsigned short port) {
+bool NetworkManager::AddPeer(std::string address, unsigned short port) {
     //Attempt to connect to new peer
     std::cout << "Attempting connection with " << address << ":" << port << std::endl;  
     boost::asio::ip::address p_address = boost::asio::ip::address::from_string(address);
@@ -95,54 +91,38 @@ bool P2P_Manager::AddPeer(std::string address, unsigned short port) {
     return true;
 }
 
-void P2P_Manager::BroadcastString(std::string msg) {
+void NetworkManager::BroadcastString(std::string msg) {
     //Send message information to each peer
     network_->send_object(msg);
 }
 
-void P2P_Manager::BroadcastMessage(Message m) {
+void NetworkManager::BroadcastMessage(Message m) {
     network_->send_object(m);
 }
 
-void P2P_Manager::BroadcastBlock(Block& block) {
-    //Serialize block into JSON data
-    Serialize s(block);
-    std::string data = s.toString();
-    BroadcastString(data);
-}
-
-std::string P2P_Manager::GetLastRecieved() {
+std::string NetworkManager::GetLastRecieved() {
     return "default";
 }
 
-void P2P_Manager::SetPort(unsigned short port) {
+void NetworkManager::SetPort(unsigned short port) {
     port_ = port;
 }
 
-void P2P_Manager::SetBlockchain(Blockchain* blockchain) {
-    bc_ = blockchain;
-}
-
-void P2P_Manager::SetTransactionPool(/*TransactionPool* pool*/) {
-    //txpool_ = pool;
-}
-
-void P2P_Manager::Disconnect() {
+void NetworkManager::Disconnect() {
     network_->disconnect();
 }
 
-void P2P_Manager::Run() {
+void NetworkManager::Run() {
     network_->awake();
 }
 
-/*
+/**
  *
- *      Request Manager
- *  
- */ 
-RequestManager::RequestManager() {}
+ *  Request Handlers
+ *
+ */
 
-void RequestManager::connection_event(breep::tcp::network& network, const breep::tcp::peer& peer) {
+void NetworkManager::connection_event(breep::tcp::network& network, const breep::tcp::peer& peer) {
     if(peer.is_connected()) {
         std::cout << "Peer connected" << std::endl;
     } else {
@@ -150,11 +130,22 @@ void RequestManager::connection_event(breep::tcp::network& network, const breep:
     }
 }
 
-void RequestManager::str_recieved(breep::tcp::netdata_wrapper<std::string>& dw) {
+void NetworkManager::str_recieved(breep::tcp::netdata_wrapper<std::string>& dw) {
     std::cout << dw.source.id_as_string() << ":" << dw.data << std::endl;
 }
 
-void RequestManager::message_recieved(breep::tcp::netdata_wrapper<Message>& dw) {
-    std::cout << "Message Recieved by Handler" << std::endl;
-    std::cout << dw.data.type_ << " " << dw.data.data_ << std::endl;
+void NetworkManager::message_recieved(breep::tcp::netdata_wrapper<Message>& dw) {
+    if(dw.data.type_ == "BLOCK") {
+        std::cout << "Recieved a block!" << std::endl;
+        std::cout << "DATA: " << dw.data.data_ << std::endl;
+    }
+    else if(dw.data.type_ == "TRANSACTION") {
+        std::cout << "Recieved a transaction" << std::endl;
+        std::cout << "DATA: " << dw.data.data_ << std::endl;
+    }
+    else {
+        std::cout << "Unknown type recieved" << std::endl;
+        std::cout << "TYPE: " << dw.data.type_ << std::endl;
+        std::cout << "DATA: " << dw.data.data_ << std::endl;
+    }
 }
