@@ -8,9 +8,9 @@ FullNode_OBJ = src/fullNode.o
 Serialize_OBJ = src/serialize.o
 
 #Compiles the main capcoin program and its prerequisutes
-Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Serialize_OBJ) $(Network_OBJ) $(FullNode_OBJ)
+Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Serialize_OBJ)
 
-NET_TEST_OBJ = network_test.o $(Transaction_OBJ) $(Block_OBJ) $(Serialize_OBJ) $(Network_OBJ) $(FullNode_OBJ)
+NET_TEST_OBJ = network_test.o $(Transaction_OBJ) $(Block_OBJ) $(Serialize_OBJ)
 
 #Where to store all drivers
 EXEC_DIR = ./bin
