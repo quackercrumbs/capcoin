@@ -1,5 +1,5 @@
 #include "blockchain.h"
-#include "p2p_manager.h"
+#include "networkmanager.h"
 
 
 int main(int argc, char* argv[]) {
@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     std::cout << "====================================" << std::endl;
    
     Blockchain bc;
-    P2P_Manager net(&bc,p);
+    NetworkManager net(p, &bc);
     net.Init();
    
     //If the node is running as the initial node (starting up the first network)
@@ -59,11 +59,36 @@ int main(int argc, char* argv[]) {
             std::cout << "!help, help menu" << std::endl;
         }
         else if(ans == "!Message") {
-            Message m = {"testMessage"};
-            net.BroadcastM(m);
+            Message m = {"GET","testMessage"};
+            net.BroadcastMessage(m);
+        }
+        else if(ans == "!SBlock") {
+            Message m = {"BLOCK",""};
+            Block genBlock = bc.GetLastBlock();
+            Serialize s(genBlock);
+            m.data_ = s.toString();
+            net.BroadcastMessage(m);
+        }
+        else if(ans == "!STransaction") {
+            Message m = {"Transaction",""};
+            TxIn in1("a", "asdasdasd", 1);
+            TxOut out1("b", 50);
+
+            TxIn in2("c", "asdfasdfasdf", 2);
+            TxOut out2("d", 100);
+
+            TxIn in3("e", "asdfadf", 3);
+            TxOut out3("f", 150);
+
+            std::vector<TxIn> ins{in1, in2, in3};
+            std::vector<TxOut> outs{out1, out2, out3};
+            Transaction first(ins, outs);
+            Serialize s(first);
+            m.data_ = s.toString();
+            net.BroadcastMessage(m);
         }
         else {
-            net.BroadcastMessage(ans);
+            net.BroadcastString(ans);
         }
     }
     net.Close();

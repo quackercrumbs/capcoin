@@ -1,4 +1,4 @@
-#include "p2p_manager.h"
+#include "networkmanager.h"
 
 NetworkManager::NetworkManager(unsigned short port, Blockchain* bc) {
 

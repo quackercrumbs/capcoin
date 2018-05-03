@@ -1,5 +1,5 @@
-#ifndef P2P_MANAGE_h_
-#define P2P_MANAGE_h_
+#ifndef NETWORK_MANAGER_H
+#define NETWORK_MANAGER_H
 
 #include "blockchain.h"
 #include "block.h"
@@ -152,5 +152,5 @@ private:
 
 };
 
-#include "../src/p2p_manager.cpp"
+#include "../src/networkmanager.cpp"
 #endif
