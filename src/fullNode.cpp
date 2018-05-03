@@ -12,8 +12,8 @@ FullNode::FullNode(Blockchain * bc, NetworkManager * nw, Wallet * w, Transaction
 
 bool FullNode::updateChain(){
 
-
-  network->BroadcastString("REQUEST");
+  Message request = {"REQUEST_BLOCKCHAIN", ""};
+  network->BroadcastMessage(request);
 
   return false;
   /*
@@ -47,10 +47,15 @@ void FullNode::welcome(){
 }
 
 void FullNode::displayMenu(){
-  std::cout << "O - Overview     S - Send     ";
-  std::cout << "T - Transactions     H - Help     ";
-  std::cout << "BC - Blockchain     LB - Last Block" << std::endl;
-  std::cout << "CC - Connect to a peer" << std::endl;
+  std::cout << "------------------------------------------------" << std::endl;
+  std::cout << "                    MENU                       " << std::endl;
+  std::cout << "------------------------------------------------" << std::endl;
+  std::cout << "|        O - Overview      S - Send            |" << std::endl;
+  std::cout << "|        T - Transactions  H - Help            |" << std::endl;
+  std::cout << "|        BC - Blockchain   LB - Last Block     |" << std::endl;
+  std::cout << "|        CC - Connect to a peer                |" << std::endl;
+  std::cout << "|        RBC - Request BC                      |" << std::endl;
+  std::cout << "------------------------------------------------" << std::endl;
 }
 
 void FullNode::run(){
@@ -189,6 +194,9 @@ void FullNode::run(){
 
         network->AddPeer(new_address, new_port);
 
+    }
+    else if(selection == "RBC" || selection == "rbc") {
+        updateChain();        
     }
     else{
       std::cout << "input not valid" << std::endl;

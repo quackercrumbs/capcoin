@@ -140,13 +140,35 @@ void NetworkManager::str_recieved(breep::tcp::netdata_wrapper<std::string>& dw) 
 void NetworkManager::message_recieved(breep::tcp::netdata_wrapper<Message>& dw) {
     if(dw.data.type_ == "BLOCK") {
         std::cout << "Recieved a block!" << std::endl;
-        std::cout << "DATA: " << dw.data.data_ << std::endl;
+        //std::cout << "DATA: " << dw.data.data_ << std::endl;
+        
+        //TODO:
+        //If this block has a bigger index than ours, 
+        // Perform validation on blocks integretiy
+        // If pass, append to chain, else ignore
+        Block newBlock = JSONtoBlock(dw.data.data_);
+        bc_->Push(newBlock);
     }
     else if(dw.data.type_ == "TRANSACTION") {
         std::cout << "Recieved a transaction" << std::endl;
-        std::cout << "DATA: " << dw.data.data_ << std::endl;
+        //std::cout << "DATA: " << dw.data.data_ << std::endl;
         Transaction* newTx = JSONtoDynamicTx(dw.data.data_);
         bool result = txpool_->AddTransaction(newTx);
+    }
+    else if(dw.data.type_ == "REQUEST_BLOCKCHAIN") {
+        // This will return the entire blockchain, but skips the genesis block
+        std::cout << "Recieved a request for the blockchain" << std::endl;
+        //Retrieve block chain and send everyblock back to socket
+        std::vector<Block> chain = bc_->GetChain();
+        int i = 1; //Skipping the genesis block (TODO: Fix this)
+        Serialize s;
+        for(; i < chain.size(); i++) {
+            std::cout << "Sending block " << i << "/" << chain.size()-1 << std::endl;
+            Block block = chain[i];
+            s(block);
+            Message m = {"BLOCK", s.toString()};
+            network_->send_object_to(dw.source, m);
+        }
     }
     else {
         std::cout << "Unknown type recieved" << std::endl;
