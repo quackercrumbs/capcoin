@@ -1,6 +1,6 @@
 #include "networkmanager.h"
 
-NetworkManager::NetworkManager(unsigned short port, Blockchain* bc) {
+NetworkManager::NetworkManager(unsigned short port, Blockchain* bc, TransactionPool* txpool) {
 
     //Initialize client config vars
     port_ = port;
@@ -10,6 +10,9 @@ NetworkManager::NetworkManager(unsigned short port, Blockchain* bc) {
 
     //Initialize Blockchain
     bc_ = bc;
+    
+    //Initialize TxPool
+    txpool_ = txpool;
 }
 
 void NetworkManager::Init() {
@@ -142,6 +145,8 @@ void NetworkManager::message_recieved(breep::tcp::netdata_wrapper<Message>& dw) 
     else if(dw.data.type_ == "TRANSACTION") {
         std::cout << "Recieved a transaction" << std::endl;
         std::cout << "DATA: " << dw.data.data_ << std::endl;
+        Transaction* newTx = JSONtoDynamicTx(dw.data.data_);
+        bool result = txpool_->AddTransaction(newTx);
     }
     else {
         std::cout << "Unknown type recieved" << std::endl;

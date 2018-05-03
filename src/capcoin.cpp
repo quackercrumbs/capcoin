@@ -46,8 +46,10 @@ int main(int argc, char *argv[]) {
 
     bc.GenerateNextBlock(GenTxns);
 
+    TransactionPool txpool;
+
     //create Network
-    NetworkManager nw{port, &bc};
+    NetworkManager nw{port, &bc, &txpool};
     nw.Init();
     nw.Run();
 
@@ -71,7 +73,7 @@ int main(int argc, char *argv[]) {
     TransactionPool txpool;
    
     // create network
-    NetworkManager nw{port, &bc};
+    NetworkManager nw{port, &bc, &txpool};
     //connect as server or client
     nw.Init();
  

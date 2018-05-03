@@ -1,6 +1,8 @@
 #ifndef NETWORK_MANAGER_H
 #define NETWORK_MANAGER_H
 
+#include "transactionpool.h"
+#include "transaction.h"
 #include "blockchain.h"
 #include "block.h"
 #include "serialize.h"
@@ -42,7 +44,7 @@ public:
      * Initalize all private member variables. Must run init() explicitly.
      *
      */ 
-    NetworkManager(unsigned short port, Blockchain* bc);
+    NetworkManager(unsigned short port, Blockchain* bc, TransactionPool* txpool);
 
     /**
      * 
@@ -149,6 +151,7 @@ private:
     breep::tcp::network* network_; //peer manager, managers connections with peers
 
     Blockchain* bc_;
+    TransactionPool* txpool_;
 
 };
 
