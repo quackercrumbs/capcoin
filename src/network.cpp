@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <thread>
+#include <exception>
 
 using namespace std;
 
@@ -20,6 +21,12 @@ void Network::broadcastBlock(Block& block){
 
   send(sock, str.c_str(), str.size(), 0);
 
+}
+
+void Network::broadcastTransaction(Transaction& t) {
+    Serialize serializer(t);
+    string str = serializer.toString();
+    send(sock, str.c_str(), str.size(), 0);
 }
 
 void Network::sendChain(int to)
@@ -136,7 +143,12 @@ void Network::listen(){
         broadcastMessage("GOT" + idx);
 
       }
-
+      else if(s.substr(1,11) == "TRANSACTION") {
+        //Deserialize transaction
+        Transaction * newTx = JSONtoDynamicTx(s);
+        //Push transaction into pool
+        bool result = txpool->AddTransaction(newTx);
+      }
       if(s.substr(0, 3) == "END")
       {
         broadcastMessage("EOC\n");
@@ -151,7 +163,7 @@ void Network::listen(){
   }
 }
 
-void Network::startClient(Blockchain * bc){
+void Network::startClient(Blockchain * bc, TransactionPool * transaction_pool){
 
   if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0){
     cout << "\n Socket creation error \n";
@@ -174,6 +186,7 @@ void Network::startClient(Blockchain * bc){
   }
 
   blockchain = bc;
+  txpool = transaction_pool;
 }
 
 void Network::runServer(Blockchain * bc) {
@@ -316,9 +329,12 @@ void Network::runServer(Blockchain * bc) {
                   cout << "No blocks: " << blockchain->GetChain().size() << "\n";
 
                 }
-            		else{
+                else if(s.substr(1,11) == "TRANSACTION") {
+                    server.broadcastAll(sd, string(buffer));
+                }
+            	else{
             		  server.broadcastAll(sd, string(buffer));
-            		}
+            	}
 
             		// print out all incoming messages
                 cout << string(buffer) << endl;

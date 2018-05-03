@@ -3,6 +3,8 @@
 #include "block.h"
 #include "blockchain.h"
 #include "networkmanager.h"
+#include "wallet.h"
+#include "transactionpool.h"
 
 #include <string.h>
 #include <iostream>
@@ -14,16 +16,18 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 
+  if ( argc < 2 ) {
+    std::cout << "USAGE: ./bin/capcoin.o <port> [<initial>]" << std::endl;
+    return 0;
+  }
+  unsigned short port = atoi(argv[1]);
 
-  if((argc > 1) && (strncmp (argv[1], "server", 6) == 0)){
-    //server
-
+  //Check if running as INITIAL node  
+  if((argc == 3) && strcmp(argv[2],"initial") == 0){
+    std::cout << "You're running as the initial node." << std::endl;
 
     // create Blockchain
     Blockchain bc;
-    // Block genBlock = bc.GetLastBlock();
-
-
 
     //Test input data for generating a new block
     TxIn in1("a", "asdasdasd", 1);
@@ -40,24 +44,18 @@ int main(int argc, char *argv[]) {
     Transaction first(ins, outs);
     std::vector<Transaction> GenTxns{first};
 
-
-
     bc.GenerateNextBlock(GenTxns);
 
-    unsigned short DEFAULT_PORT = 9999;
     //create Network
-    NetworkManager nw{DEFAULT_PORT, &bc};
+    NetworkManager nw{port, &bc};
     nw.Init();
     nw.Run();
 
-    //  network listen on seperate thread
-    
+    //TODO: REMOVE LOOP?
     //Infinite Loop
     while(1) {
     
     }
-    //FullNode node (&bc, &nw);
-    // node.run();
 
 
   }else{
@@ -68,25 +66,25 @@ int main(int argc, char *argv[]) {
     // create Blockchain
     Blockchain bc;
     Block genBlock = bc.GetLastBlock();
-
-    //create Network
-    unsigned short DEFAULT_CLIENT_PORT = 8888;
-    NetworkManager nw{DEFAULT_CLIENT_PORT, &bc};
+    
+    // create Transaction Pool
+    TransactionPool txpool;
+   
+    // create network
+    NetworkManager nw{port, &bc};
     //connect as server or client
     nw.Init();
-    //nw.startClient(&bc);
-    //start listening for incoming messages, on another thread
-    //std::thread listenThread = nw.listenThread();
-
-
-
+ 
     // create Miner
 
+
     // create Wallet
+    Wallet w;
 
-
-    // then, create full node, using these 4 parts
-    FullNode node (&bc, &nw);
+    // Initalize Full Node with:
+    // Blockchain, Network, Wallet, TxPool, Miner
+    // TransactionPool
+    FullNode node (&bc, &nw, &w, &txpool);
 
     node.updateChain();
     node.welcome();
@@ -96,8 +94,5 @@ int main(int argc, char *argv[]) {
     node.run();
   }
 
-
-
-
-    return 0;
+  return 0;
 }

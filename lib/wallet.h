@@ -3,13 +3,25 @@
 
 #include <string>
 #include <stdint.h>
-#include "ecc.h"
+#include <vector>
 
+#include "ecc.h"
+#include "transaction.h"
 
 class Wallet{
 public:
 
     Wallet();
+
+    Transaction *createTransaction(std::string address="test", double amount=0) {
+            std::vector<TxIn> in;
+            std::vector<TxOut> out;
+            in.push_back({"ADDRESSTEST0", "SIGNATURETEST0", 0});
+            out.push_back({address, amount});
+            auto a = new Transaction(in, out);
+            return a;
+    }
+
     double getBal();
 
 private:

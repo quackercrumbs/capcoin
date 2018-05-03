@@ -129,6 +129,41 @@ Block JSONtoBlock(std::string blockString){
     return output;
 }
 
+Transaction* JSONtoDynamicTx(std::string txnString){
+    std::string id, prefix;
+    std::vector<TxIn> ins;
+    std::vector<TxOut> outs;
+    size_t start = 21, end = 21;
+    while (txnString[end] != '\"'){end++;}
+    id = txnString.substr(start, end-start);
+    start = end + 2;
+    end = start + 2;
+    prefix = txnString.substr(start+1, end-start);
+    while(prefix == "IN"){
+        while(txnString[end] != '}'){end++;}
+        TxIn in = JSONtoTxIn(txnString.substr(start, end-start));
+        ins.push_back(in);
+        start = end + 2;
+        end = start + 2;
+        if (end > txnString.length())
+            break;
+        prefix = txnString.substr(start+1, end-start);
+    }
+    prefix = txnString.substr(start+1, (++end)-start);
+    while(prefix == "OUT"){
+        while(txnString[end] != '}'){end++;}
+        TxOut out = JSONtoTxOut(txnString.substr(start, end-start));
+        outs.push_back(out);
+        start = end + 2;
+        end = start + 3;
+        if (end > txnString.length())
+            break;
+        prefix = txnString.substr(start+1, end-start);
+    }
+    Transaction* output = new Transaction(ins, outs);
+    return output;
+}
+
 Transaction JSONtoTx(std::string txnString){
     std::string id, prefix;
     std::vector<TxIn> ins;
