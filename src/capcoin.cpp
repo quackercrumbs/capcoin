@@ -2,6 +2,8 @@
 #include "network.h"
 #include "block.h"
 #include "blockchain.h"
+#include "wallet.h"
+#include "transactionpool.h"
 
 #include <string.h>
 #include <iostream>
@@ -63,22 +65,26 @@ int main(int argc, char *argv[]) {
     Blockchain bc;
     Block genBlock = bc.GetLastBlock();
 
-    //create Network
+    // create Transaction Pool
+    TransactionPool txpool;
+
+    // create Network
     Network nw;
-    //connect as server or client
-    nw.startClient(&bc);
+    //connect as client
+    nw.startClient(&bc, &txpool);
     //start listening for incoming messages, on another thread
     std::thread listenThread = nw.listenThread();
 
-
-
     // create Miner
 
+
     // create Wallet
+    Wallet w;
 
-
-    // then, create full node, using these 4 parts
-    FullNode node (&bc, &nw);
+    // Initalize Full Node with:
+    // Blockchain, Network, Wallet, Miner
+    // TransactionPool
+    FullNode node (&bc, &nw, &w, &txpool);
 
     node.updateChain();
     node.welcome();

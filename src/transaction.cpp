@@ -40,8 +40,8 @@ bool Transaction:: ValidTxIns(UnspentTxOutPool& source) const{
   }
   return true;
 }
-        
-        
+
+
 bool Transaction:: OneToOne(UnspentTxOutPool& source) const{
   double inAmt = 0, outAmt = 0;
   for (TxIn x: txIns_){
@@ -72,4 +72,20 @@ std::vector<TxIn> Transaction::GetTxIns(){
 
 std::vector<TxOut> Transaction::GetTxOuts(){
     return txOuts_;
+}
+
+std::ostream& operator<<(std::ostream& os, const Transaction& t) {
+    os << "================ TRANSACTION ================" << std::endl;
+    os << "id:" << t.id_ << std::endl;
+    for(auto txin = t.txIns_.begin(); txin != t.txIns_.end(); ++txin) {
+        // Replace with txin os override
+        os << *txin << std::endl;
+    }
+    for(auto txout = t.txOuts_.begin(); txout != t.txOuts_.end(); ++txout) {
+        // Replace with txouts os override
+        os << *txout << std::endl;
+    }
+    os << "=============================================" << std::endl;
+
+    return os;
 }

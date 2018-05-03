@@ -27,6 +27,8 @@ private:
 TxIn JSONtoTxIn(std::string instring);
 TxOut JSONtoTxOut(std::string outstring);
 Transaction JSONtoTx(std::string txnString);
+
+Transaction* JSONtoDynamicTx(std::string txnString);
 UnspentTxOut JSONtoUTxO(std::string blockString);
 Block JSONtoBlock(std::string blockString);
 
