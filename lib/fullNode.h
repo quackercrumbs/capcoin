@@ -1,13 +1,13 @@
 #ifndef FULLNODE_H
 #define FULLNODE_H
 #include "blockchain.h"
-#include "network.h"
-
+//#include "network.h"
+#include "networkmanager.h"
 
 class FullNode{
 public:
 
-  FullNode(Blockchain * bc, Network * nw);
+  FullNode(Blockchain * bc, NetworkManager * nw);
 
   void welcome();
 
@@ -26,11 +26,11 @@ public:
 private:
 
   Blockchain * blockchain = new Blockchain();
-  Network * network = new Network();
-
+  //Network * network = new Network();
+  NetworkManager* network;
 
 };
 
-
+#include "../src/fullNode.cpp"
 
 #endif

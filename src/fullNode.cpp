@@ -1,9 +1,9 @@
-#include "../lib/fullNode.h"
+#include "fullNode.h"
 #include <iostream>
 
 
 
-FullNode::FullNode(Blockchain * bc, Network * nw){
+FullNode::FullNode(Blockchain * bc, NetworkManager * nw){
   blockchain = bc;
   network = nw;
 }
@@ -11,7 +11,7 @@ FullNode::FullNode(Blockchain * bc, Network * nw){
 bool FullNode::updateChain(){
 
 
-  network->broadcastMessage("REQUEST");
+  network->BroadcastString("REQUEST");
 
   return false;
   /*
@@ -48,6 +48,7 @@ void FullNode::displayMenu(){
   std::cout << "O - Overview     S - Send     ";
   std::cout << "T - Transactions     H - Help     ";
   std::cout << "BC - Blockchain     LB - Last Block" << std::endl;
+  std::cout << "CC - Connect to a peer" << std::endl;
 }
 
 void FullNode::run(){
@@ -70,7 +71,7 @@ void FullNode::run(){
       std::cout << "***************************************************************************" << std::endl << std::endl;
 
       // display the last incoming message, as a string.  This is for testing purposes only
-      std::cout << "last received is: " << network->getLastReceived() << std::endl;
+      //std::cout << "last received is: " << network->getLastReceived() << std::endl;
     }
     else if(selection == "S" || selection == "s" ){
 
@@ -133,7 +134,7 @@ void FullNode::run(){
 
           //Creating a fake transaction and send as a block
 
-          network->broadcastMessage(std::to_string(amt));
+          network->BroadcastString(std::to_string(amt));
           
           TxIn dummyIn("", "", 0);
           TxOut dummyOut("32ba5334aafcd8e7266e47076996b55", amt);
@@ -143,8 +144,9 @@ void FullNode::run(){
           std::vector<Transaction> data{NewTxn};
           
           Block block = blockchain->GenerateNextBlock(data);
-
-          network->broadcastBlock(block);
+          Serialize s(block);
+          Message m = {"BLOCK",s.toString()};
+          network->BroadcastMessage(m);
         }
       }
 
@@ -162,6 +164,28 @@ void FullNode::run(){
     }
     else if(selection == "LB" || selection == "lb") {
       displayLastBlock();
+    }
+    else if(selection == "CC" || selection == "cc") {
+        std::cout << "Enter node ip: " << std::endl;
+        std::string new_address; 
+        std::getline(std::cin, new_address); //TODO: fix, some reason this is required
+        std::getline(std::cin, new_address);
+        if(new_address == "localhost") {
+            new_address = "127.0.0.1";
+        }
+        else if(new_address == "gale") {
+            new_address = "159.89.42.192";
+        }
+        else if (new_address == "orien") {
+            new_address = "167.99.12.102";
+        }
+        std::string ans;
+        std::cout << "Enter node port: " << std::endl;
+        std::getline(std::cin, ans);
+        unsigned short new_port = atoi(ans.c_str());
+
+        network->AddPeer(new_address, new_port);
+
     }
     else{
       std::cout << "input not valid" << std::endl;

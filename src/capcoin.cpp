@@ -1,7 +1,8 @@
 #include "fullNode.h"
-#include "network.h"
+//#include "network.h"
 #include "block.h"
 #include "blockchain.h"
+#include "networkmanager.h"
 
 #include <string.h>
 #include <iostream>
@@ -43,13 +44,18 @@ int main(int argc, char *argv[]) {
 
     bc.GenerateNextBlock(GenTxns);
 
+    unsigned short DEFAULT_PORT = 9999;
     //create Network
-    Network nw;
-    nw.runServer(&bc);
+    NetworkManager nw{DEFAULT_PORT, &bc};
+    nw.Init();
+    nw.Run();
 
     //  network listen on seperate thread
-
-
+    
+    //Infinite Loop
+    while(1) {
+    
+    }
     //FullNode node (&bc, &nw);
     // node.run();
 
@@ -64,11 +70,13 @@ int main(int argc, char *argv[]) {
     Block genBlock = bc.GetLastBlock();
 
     //create Network
-    Network nw;
+    unsigned short DEFAULT_CLIENT_PORT = 8888;
+    NetworkManager nw{DEFAULT_CLIENT_PORT, &bc};
     //connect as server or client
-    nw.startClient(&bc);
+    nw.Init();
+    //nw.startClient(&bc);
     //start listening for incoming messages, on another thread
-    std::thread listenThread = nw.listenThread();
+    //std::thread listenThread = nw.listenThread();
 
 
 
@@ -82,7 +90,6 @@ int main(int argc, char *argv[]) {
 
     node.updateChain();
     node.welcome();
-
 
 
     // start the node
