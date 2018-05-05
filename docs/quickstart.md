@@ -3,15 +3,17 @@
 So you've decided to try out capcoin. The instructions listed below are to help guide you in installing the project dependencies. Then we go onto have to run capcoin.
 
 ## Requirements
-Standard C++ Tools
+Standard C++ Tools:
 ```
  make
  gcc					#Make sure you're not using clang
  g++
  ```
  
- Additonal Libraries
+ Additonal Libraries: 
+ 
 [boost](https://www.boost.org/users/download/)
+
 [Breep](https://github.com/Organic-Code/Breep)
 
 
