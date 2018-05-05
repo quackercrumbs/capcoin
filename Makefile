@@ -31,17 +31,17 @@ LINKS = -pthread -lboost_system
 
 #Compiles all cpp files listed in the given OBJ variable
 .cpp.o:
-	g++ $(C++FLAG) -c $< -o $@ $(INCLUDES) $(LIBSDIR) $(LINKS)
+	g++-8 $(C++FLAG) -c $< -o $@ $(INCLUDES) $(LIBSDIR) $(LINKS)
 
 
 #Capcoin Main Driver
 CAPCOIN=capcoin #Executable name
 $(CAPCOIN): $(Capcoin_OBJ) #Rule to compile capcoin
-	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(Capcoin_OBJ) $(LINKS) 
+	g++-8 $(C++FLAG) -o $(EXEC_DIR)/$@ $(Capcoin_OBJ) $(LINKS)
 
 NET_TEST=net_test.o#Executable name
 $(NET_TEST): $(NET_TEST_OBJ) #Rule to compile capcoin
-	g++ $(C++FLAG) -o $(EXEC_DIR)/$@ $(NET_TEST_OBJ) $(LINKS)
+	g++-8 $(C++FLAG) -o $(EXEC_DIR)/$@ $(NET_TEST_OBJ) $(LINKS)
 
 
 
