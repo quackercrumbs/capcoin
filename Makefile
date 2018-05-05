@@ -1,4 +1,5 @@
-COMPILER = g++					# Assumes machine is Linux
+#Assumes machine is Linux
+COMPILER = g++
 
 # Determine which compiler to use
 UNAME_S := $(shell uname -s)	# Retrieve OS name

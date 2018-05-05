@@ -41,6 +41,6 @@ Then run ```./setup.sh``` to clone Breep and build it onto your local machine.
 ```
 make all							#This will compile capcoin
 ./bin/capcoin <port> [initial]		#This will start the full node client on your machine.
-									#Use the initial flag if you're the first node in the network.
+                                    #Use the initial flag if you're the first node in the network.
 ```
 

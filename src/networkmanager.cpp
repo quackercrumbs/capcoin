@@ -20,7 +20,7 @@ void NetworkManager::Init() {
     std::cout << "================ Network Initalization ================" << std::endl; 
     OpenListeners(); 
 
-    //This is the configs for GALE (Server)
+    // Initialize a list of trusted nodes to connect to
     /*
     std::string server_string = "159.89.42.192";
     size_t server_port = 1234;
@@ -41,12 +41,15 @@ void NetworkManager::Init() {
         unsigned short p_port = peer->second;
         //attempt connection with peer
         bool success = AddPeer(raw_address, p_port);
-        if(success) { }
+        // If successfully connect to a peer, we are done and connect to the entire network
+        if(success) {
+            break;
+        }
     }
 
     //Display number of successful connections from config file
     auto my_peers = network_->peers(); //Retrieves all peers connected
-    std::cout << "Successfully connected to " << my_peers.size() << "/" << peer_details.size() << std::endl;
+    std::cout << "Successfully connected to " << my_peers.size() << " peers."  << std::endl;
     std::cout << "========== Network Initalization Complete =============" << std::endl;
 }
 
@@ -61,11 +64,7 @@ void NetworkManager::OpenListeners() {
                 message_recieved(dw);
             });
 
-    /**
-     *
-     * REQUIRED: These listeners are for handling connections and disconnection
-     *
-     */ 
+    //REQUIRED: These listeners are for handling connections and disconnection
     network_->add_connection_listener([this](breep::tcp::network &net, const breep::tcp::peer& peer) -> void {
                 connection_event(net, peer);
             });
@@ -81,9 +80,12 @@ void NetworkManager::Close() {
 }
 
 bool NetworkManager::AddPeer(std::string address, unsigned short port) {
-    //Attempt to connect to new peer
+    //@brief: Attempt to connect to new peer
+    std::cout << "===================================================" << std::endl;
     std::cout << "Attempting connection with " << address << ":" << port << std::endl;  
+    //convert string address to a boost ip address type
     boost::asio::ip::address p_address = boost::asio::ip::address::from_string(address);
+    //attempt a connection to provided address and port
     if(!network_->connect(p_address,port)) {
         //Failed to connect
         //TO DO: Try again one more time
@@ -95,19 +97,23 @@ bool NetworkManager::AddPeer(std::string address, unsigned short port) {
 }
 
 void NetworkManager::BroadcastString(std::string msg) {
-    //Send message information to each peer
+    //@brief: Send string to ever peer
     network_->send_object(msg);
 }
 
 void NetworkManager::BroadcastMessage(Message m) {
+    //@brief: Send a message to every peer 
     network_->send_object(m);
 }
 
 void NetworkManager::RequestAndUpdateBlockchain() {
+    //Retrieve a list of peers for the node
     auto node_peers = network_->peers();
     if(node_peers.empty())
         return;
+    //Get the "first peer" from the collection
     auto first_peer = node_peers.begin();
+    //Send the request to said peer
     Message request = {"REQUEST_BLOCKCHAIN",""};
     network_->send_object_to((*first_peer).second,request);
 }
