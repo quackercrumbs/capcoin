@@ -1,3 +1,12 @@
+COMPILER = g++					# Assumes machine is Linux
+
+# Determine which compiler to use
+UNAME_S := $(shell uname -s)	# Retrieve OS name
+
+ifeq ($(UNAME_S),Darwin) 		# For MACOS
+	COMPILER+=-8
+endif
+
 C++FLAG = -g -std=c++14
 
 Transaction_OBJ = src/transaction.o src/txin.o src/txout.o src/transactionpool.o\
@@ -14,9 +23,6 @@ ECC_OBJ = src/ecc.o
 Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Serialize_OBJ) $(Wallet_OBJ)\
 			  $(ECC_OBJ)
 
-NET_TEST_OBJ = network_test.o $(Transaction_OBJ) $(Block_OBJ) $(Serialize_OBJ) $(Wallet_OBJ)\
-			   $(ECC_OBJ)
-
 #Where to store all drivers
 EXEC_DIR = ./bin
 
@@ -31,19 +37,13 @@ LINKS = -pthread -lboost_system
 
 #Compiles all cpp files listed in the given OBJ variable
 .cpp.o:
-	g++-8 $(C++FLAG) -c $< -o $@ $(INCLUDES) $(LIBSDIR) $(LINKS)
+	$(COMPILER) $(C++FLAG) -c $< -o $@ $(INCLUDES) $(LIBSDIR) $(LINKS)
 
 
 #Capcoin Main Driver
 CAPCOIN=capcoin #Executable name
 $(CAPCOIN): $(Capcoin_OBJ) #Rule to compile capcoin
-	g++-8 $(C++FLAG) -o $(EXEC_DIR)/$@ $(Capcoin_OBJ) $(LINKS)
-
-NET_TEST=net_test.o#Executable name
-$(NET_TEST): $(NET_TEST_OBJ) #Rule to compile capcoin
-	g++-8 $(C++FLAG) -o $(EXEC_DIR)/$@ $(NET_TEST_OBJ) $(LINKS)
-
-
+	$(COMPILER) $(C++FLAG) -o $(EXEC_DIR)/$@ $(Capcoin_OBJ) $(LINKS)
 
 #General Rules to compile drivers
 all: Capcoin
