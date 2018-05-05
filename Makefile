@@ -2,10 +2,10 @@
 COMPILER = g++
 
 # Determine which compiler to use
-UNAME_S := $(shell uname -s)	# Retrieve OS name
+UNAME_S := $(shell uname -s)
 
-ifeq ($(UNAME_S),Darwin) 		# For MACOS
-	COMPILER+=-8
+ifeq ($(UNAME_S),Darwin)
+	COMPILER := g++-8
 endif
 
 C++FLAG = -g -std=c++14
