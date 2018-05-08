@@ -2,6 +2,7 @@
 #define MINER_H
 
 #include "transactionpool.h"
+#include "blockchain.h"
 
 class Miner{
 public:
