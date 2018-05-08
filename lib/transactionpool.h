@@ -13,6 +13,7 @@ public:
 	
 	//Pushes the newTx into the memory pool
 	bool AddTransaction(Transaction& newTx);
+	size_t size() const;
 	
 	friend std::ostream& operator<<(std::ostream& os, const TransactionPool& txpool);
 private:
