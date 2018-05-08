@@ -14,7 +14,7 @@ Wallet::Wallet(UnspentTxOutPool* UTXO):UTXO_pool(UTXO) {
     //check if wallet file present; init wallet address vectors
     initWallet();
 
-    if(isWalletActive()){
+    if(!isWalletActive()){
 
         createWallet();
     }
@@ -32,7 +32,7 @@ Wallet::Wallet():UTXO_pool{nullptr}{
     //check if wallet file present; init wallet address vectors
     initWallet();
 
-    if(isWalletActive()){
+    if(!isWalletActive()){
         //todo: delete cout
         std::cout << "no wallet";
         createWallet();
@@ -149,6 +149,8 @@ void Wallet::writeWalletToDisk(){
         walletFile << walletAddressKeyPairs[i].first << "\n" \
                 << walletAddressKeyPairs[i].second << "\n";
     }
+
+    std::cout << "walletFile: " << std::endl;
 }
 
 void Wallet::createAddress(int quantity){
@@ -315,4 +317,3 @@ Wallet::~Wallet(){
 //    //stop/kill requests
 //    //flush changes saves to disk
 //}
-  

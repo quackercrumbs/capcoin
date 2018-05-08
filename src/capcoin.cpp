@@ -3,6 +3,7 @@
 #include "block.h"
 #include "blockchain.h"
 #include "wallet.h"
+#include "utxoutpool.h"
 
 #include <string.h>
 #include <iostream>
@@ -76,7 +77,9 @@ int main(int argc, char *argv[]) {
     // create Miner
 
     // create Wallet
-    Wallet wa;
+    UnspentTxOutPool utxoutpool;
+    Wallet wa(&utxoutpool);
+    // Wallet wa;
 
     // then, create full node, using these 4 parts
     FullNode node (&bc, &nw, &wa);
