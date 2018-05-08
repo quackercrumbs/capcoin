@@ -2,22 +2,17 @@
 
 #define WALLETDIR "wallet.capcoin"
 
-/**
- *
- * key order:
+/* key order:
  * privatekey - > publickey
- *
- * */
+*/
 
 Wallet::Wallet(UnspentTxOutPool* UTXO):UTXO_pool(UTXO) {
 
     //check if wallet file present; init wallet address vectors
     initWallet();
 
-    if(!isWalletActive()){
-
-        createWallet();
-    }
+    createWalletFile();
+    std::cout << "wallet file created" << std::endl;
 
     //verify validate addresses
     validateRawAddresses();
@@ -32,10 +27,10 @@ Wallet::Wallet():UTXO_pool{nullptr}{
     //check if wallet file present; init wallet address vectors
     initWallet();
 
-    if(!isWalletActive()){
+    if(!valid){
         //todo: delete cout
         std::cout << "no wallet";
-        createWallet();
+        createWalletFile();
     }
     //verify validate addresses
     //convert raw keys to CC addresses
@@ -134,8 +129,7 @@ void Wallet::makeKeyPairs(int quantity){
 
 }
 
-void Wallet::createWallet(){
-
+void Wallet::createWalletFile(){
     makeKeyPairs(1);
     writeWalletToDisk();
 }
@@ -150,7 +144,7 @@ void Wallet::writeWalletToDisk(){
                 << walletAddressKeyPairs[i].second << "\n";
     }
 
-    std::cout << "walletFile: " << std::endl;
+    std::cout << "writeWalletToDisk ran" << std::endl;
 }
 
 void Wallet::createAddress(int quantity){

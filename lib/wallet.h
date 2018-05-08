@@ -56,7 +56,7 @@ private:
     Transaction* createTransaction(std::string& ccAddress, double& ccAmt);
     void initAddresses(int quantity=0);
     void makeKeyPairs(int quantity=0);
-    void createWallet();
+    void createWalletFile();
     void initWallet();
     void validateRawAddresses();
 
