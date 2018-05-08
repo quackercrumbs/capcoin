@@ -136,9 +136,9 @@ void FullNode::run(){
 
 
 
-          wallet->send(address, amt);
+          // wallet->send(amt, address);
 
-          network->broadcastMessage(std::to_string(amt));
+          // network->broadcastMessage(std::to_string(amt));
 
           TxIn dummyIn("", "", 0);
           TxOut dummyOut("32ba5334aafcd8e7266e47076996b55", amt);
