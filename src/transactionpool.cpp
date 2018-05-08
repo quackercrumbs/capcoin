@@ -12,6 +12,10 @@ bool TransactionPool::AddTransaction(Transaction& newTx) {
     return true;
 }
 
+size_t TransactionPool size() const{
+    return pool_.size();
+}
+
 std::ostream& operator<<(std::ostream& os, const TransactionPool& txpool) {
     std::queue<Transaction> tmp_pool {txpool.pool_};
 
