@@ -9,7 +9,7 @@ public:
   Miner(Blockchain* chain, std::string address);
   
   //To mine, we pass a vector of transactions 
-  mine(TransactionPool& pool);
+  bool mine(TransactionPool& pool);
 private:
   Blockchain* chain_;
   std::string address_;
