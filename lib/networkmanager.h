@@ -163,24 +163,32 @@ private:
     
     /**
      *
-     *  @brief: A helper function that parses messages with BLOCK type
-     *  @info: Assumes Message has type BLOCK 
+     *  @brief:     A helper function that parses messages with BLOCK type
+     *  @assume:    Assumes Message has type BLOCK 
+     *  @detail:    When this node recieves a new block, this function will update the
+     *              transaction pool, UTxOutPool and blockchain.
      *
      */
     bool HandleBlockMessage(breep::tcp::netdata_wrapper<Message>& dw);
     
     /**
      *
-     *  @brief: A helper function that parses messages with TRANSACTION type
-     *  @info: Assumes Message have type property TRANSACTION
+     *  @brief:     A helper function that parses messages with TRANSACTION type
+     *  @assume:    Assumes Message have type property TRANSACTION
+     *  @detail:    When this node recieves a transaction request, this function will
+     *              update the transaction pool with a new unverified transaction.
      *
      */
     bool HandleTransactionMessage(breep::tcp::netdata_wrapper<Message>& dw);
     
     /**
      *
-     *  @brief: A helper funciton that parses messages with REQUEST_BLOCKCHAIN type
-     *  @info:  Assumes Message have type property REQUEST_BLOCKCHAIN
+     *  @brief:     A helper funciton that parses messages with REQUEST_BLOCKCHAIN type
+     *  @assume:    Assumes Message have type property REQUEST_BLOCKCHAIN
+     *  @detail:    Sends back to the socket requesting for the Blockchain, the blockchain
+     *              stored in the node. The block chain is sent block per block.
+     *              The starting index is an optional parameter that can be attached
+     *              to the request. If it is present, it will be used as the starting index.
      *
      */
     bool HandleRequestBlockchainMessage(breep::tcp::netdata_wrapper<Message>& dw);
