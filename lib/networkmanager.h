@@ -103,11 +103,33 @@ public:
      *          The longest chain with the most votes gets selected.
      *          This chain will replace/update nodes current chain
      *
-     * @warning: This function only request block chain from one node
+     * @warning: Currently this function only request block chain from one node
      *           And assumes that it is correct(the longest chain).
      *
      */
     void RequestAndUpdateBlockchain(); 
+
+    /**
+     *
+     * @brief:  Queries its peer to update its transaction pool 
+     * @detail: Sends a request for a transaction pool.
+     *
+     * @warning: Currently this function only request for a transaction pool to one peer 
+     *           And assumes that it is correct (the most updated pool).
+     *
+     */
+    void RequestAndUpdateTransactionPool(); 
+    
+    /**
+    *
+    * @brief:  Queries its peers to update its UTxOut Pool 
+    * @detail: Sends a request for a UTxOutpool.
+    *
+    * @warning: Currently this function only request UTxOut pool from one peer
+    *           And assumes that it is correct (the most updated pool).
+    *
+    */
+    void RequestAndUpdateUTxOutPool(); 
 
     /**
      *
