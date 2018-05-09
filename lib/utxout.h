@@ -7,10 +7,13 @@
 class UnspentTxOut {
 public:
     UnspentTxOut(std::string txOutId, std::string address, size_t txOutIndex, double amount);
+    UnspentTxOut(const UnspentTxOut&);
     std::string GetId() const;
     std::string GetAddress() const;
     size_t GetIndex() const;
     double GetAmount() const;
+
+    UnspentTxOut& operator = (const UnspentTxOut&);
 
 private:
     const std::string txOutId_;

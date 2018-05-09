@@ -136,7 +136,7 @@ void FullNode::run(){
 
 
 
-          wallet->send(amt, address);
+          //wallet->send(amt, address);
 
           std::cout << "isWalletActive: " << wallet->isWalletActive() << std::endl;
 

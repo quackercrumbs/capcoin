@@ -44,34 +44,36 @@ public:
     ~Wallet();
     Wallet(UnspentTxOutPool* UTXO);
     void send(double ccAmt, std::string toCCAddresses);
-    std::vector<std::pair<std::string, double> >* getWalletBalance();
-    void createAddress(int quantity);
-
     bool isWalletActive();
     //void Wallet::shutdownWallet();
 
 private:
 
     bool valid;
+    std::string myAddress;
     Transaction* createTransaction(std::string& ccAddress, double& ccAmt);
-    void initAddresses(int quantity=0);
-    void makeKeyPairs(int quantity=0);
+    void makeKeyPair();
 
     void initWallet();
-    void validateRawAddresses();
+    void validateRawAddress();
 
     // returns 1 if unspentBal >= 0, and enough vtxOut were found to send ccAmt; returns 0 otherwise
     int getUnspentTx(const double& ccAmt, std::vector<UnspentTxOut>& vtxOut, double& unspentBal);
 
     void setTxInput(std::vector<TxIn> &txinputs, std::vector<UnspentTxOut> &txoutput);
-    int setTxOutput(std::vector<TxOut> &txoutputs, std::string& ccAddress, double& ccAmt, double& unspentBal);
+    void setTxOutput(std::vector<TxOut> &txoutputs, std::string& ccAddress, double& ccAmt, double& unspentBal);
 
     void updateWalletBalance();
     void writeWalletToDisk();
     UnspentTxOutPool* UTXO_pool;
+
+    std::pair<std::string, std::string> keyPair;
+    double balance_;
+
+    // don't need this
     std::vector< std::pair<std::string, std::string> > rawKeyPairs;
     std::vector< std::pair<std::string, std::string> > walletAddressKeyPairs;
-    std::vector< std::pair<std::string, double> > walletBalances;
+    std::map< std::string, double > walletBalances;
 
 
 };

@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
 
     // then, create full node, using these 4 parts
     FullNode node (&bc, &nw, &wa);
-
+    
     node.updateChain();
     node.welcome();
 

@@ -2,7 +2,8 @@
 
 using namespace std;
 
-UnspentTxOutPool:: UnspentTxOutPool(){}
+UnspentTxOutPool:: UnspentTxOutPool() : uTxOuts_{map<string, vector<UnspentTxOut>>{}}
+  {}
 
 UnspentTxOut* UnspentTxOutPool:: FindFromIn(const TxIn& input) const{
   UnspentTxOut* outptr = nullptr;
@@ -52,6 +53,16 @@ double UnspentTxOutPool:: balance(const string& publicKey) const {
   }
 
   return -1.0;
+}
+
+std::vector<UnspentTxOut>* UnspentTxOutPool::operator[] (std::string& address) {
+  auto search = uTxOuts_.find(address);
+
+  if(search != uTxOuts_.end()) {
+    return &search->second;
+  }
+
+  return nullptr;
 }
 
 std::ostream& operator<<(std::ostream& os, const UnspentTxOutPool& pool){

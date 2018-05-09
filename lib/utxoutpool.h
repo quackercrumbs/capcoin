@@ -14,6 +14,7 @@ public:
 	bool insert(UnspentTxOut& input);
 	UnspentTxOut* FindFromIn(const TxIn& input) const;
 	double balance(const std::string& publicKey) const;
+	std::vector<UnspentTxOut>* operator[] (std::string&);
 
 	friend std::ostream& operator<<(std::ostream& os, const UnspentTxOutPool& pool);
 private:
