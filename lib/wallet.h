@@ -12,31 +12,8 @@
 #include "transaction.h"
 #include "utxoutpool.h"
 
-// required for further testing:
-// check todo's
-// -UTXO search method/UTXO rework
-// -safe kill wallet, flush
-// (currently only available in destructor, or safe exit)
-// -TxIn/TxOut mutators
-// -shared access to transactionpool
-// -address pretty printer/maker
-// -CC address validator, alternativly rawaddressvalidator
-// -offline wallet usage (i.e no UTXO)
-// -address disponal (corrupt, burned, etc.)
-
-/*
- * AddressFormat:
- * 4 char prefix[ CC (for capcoin) + XX (place for future stuff, default 00) ] + address + 4 char checksum
- *
- * example address:
- * CC00BvBMSEYstWetqTFn5Au4m4GFg7xJaNvn2
- * similar to bitcoin, but our own
- * */
-
-//todo:separate thread writes newly formed keypairs to wallet file ((appends))
 
 class Wallet{
-
 
 public:
 
@@ -75,9 +52,6 @@ private:
     std::vector< std::pair<std::string, std::string> > walletAddressKeyPairs;
     std::map< std::string, double > walletBalances;
 
-
 };
-
-
 
 #endif //WALLET_H

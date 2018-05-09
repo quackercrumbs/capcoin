@@ -46,7 +46,6 @@ void Wallet::validateRawAddress(){
   uint8_t p_publicKey[ECC_BYTES+1];
   uint8_t p_privateKey[ECC_BYTES];
 
-
 // have a feeling this won't work
   for(int i=0; i < ECC_BYTES; i++)
     p_privateKey[i] = keyPair.first[i];
@@ -64,7 +63,6 @@ void Wallet::validateRawAddress(){
    // verifies signature
   if( ecdsa_verify(p_publicKey, p_hash, p_signature) == 0 )
     std::cerr << "error: signature unverified" << std::endl;
-
 
 }
 
@@ -136,8 +134,6 @@ void Wallet::makeKeyPair(){
     keyPair = std::make_pair(prk, pbk);
 
 }
-
-
 
 void Wallet::writeWalletToDisk(){
     std::ofstream walletFile(WALLETDIR, std::ios_base::out);
