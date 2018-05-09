@@ -8,28 +8,40 @@
 
 Wallet::Wallet(UnspentTxOutPool* UTXO):UTXO_pool(UTXO) {
 
-    makeKeyPair(); //works
-    writeWalletToDisk(); //works, writes key pairs to disk
+    if( true ){
+      // no valid wallet file found.  Create Key pairs, and save to new wallet file
+      makeKeyPair();
+      validateKeyPairs();
+      writeWalletToDisk();
+    }
 
-    std::cout << "wallet file created" << std::endl;
+    // walletFileIsValid();
 
-    validateKeyPairs(); //seems to be working
 
     //check if wallet file present; init wallet address vectors
-    initWallet();
+    // initWallet();
 
 }
 
-void Wallet::validateKeyPairs(){
+bool walletFileIsValid(){
 
-  // break key pair, to test this function
-  // keyPair.first = "äO†£¥ÂnÂ0¡‹„ﬁGÛÄ¸0f~q[Gxˆ’Ô›#€høã√π2rì(+¢[u-fıÙ∞˝∞ÖeDS1õoö‹,iˇ";
+  std::ifstream walletFile(WALLETDIR);
+  if( !walletFile.good() ){
+      std::cout << "no valid wallet file found" << std::endl;
+      return false;
+  }
+  std::cout << "wallet file is valid.  " << std::endl;
+  return true;
+
+}
+
+
+
+
+void Wallet::validateKeyPairs(){
 
   uint8_t p_publicKey[ECC_BYTES+1];
   uint8_t p_privateKey[ECC_BYTES];
-
-  // std::cout << "p_publicKey: " << p_publicKey << std::endl;
-  // std::cout << "ECC_BYTES: " << ECC_BYTES << std::endl;
 
   for(int i=0; i < ECC_BYTES; i++)
     p_privateKey[i] = keyPair.first[i];
@@ -47,8 +59,6 @@ void Wallet::validateKeyPairs(){
    // verifies signature
   if( ecdsa_verify(p_publicKey, p_hash, p_signature) == 0 )
     std::cerr << "error: signature unverified" << std::endl;
-  else
-    std::cout << "signature verified" << std::endl;
 
 }
 
@@ -66,8 +76,7 @@ void Wallet::initWallet(){
 
     //read in
     //each line is an address:private key \n public
-    std::vector<std::string> addressPairsFromFile((std::istream_iterator<std::string>(walletFile)), \
-                                                    std::istream_iterator<std::string>());
+    std::vector<std::string> addressPairsFromFile((std::istream_iterator<std::string>(walletFile)),std::istream_iterator<std::string>());
 
     //empty wallet file
     if(addressPairsFromFile.empty()){

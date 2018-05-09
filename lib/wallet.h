@@ -26,6 +26,8 @@ public:
 private:
 
     bool valid;
+    bool walletFileIsValid();
+
     std::string myAddress;
     Transaction* createTransaction(std::string& ccAddress, double& ccAmt);
     void makeKeyPair();
