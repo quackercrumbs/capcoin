@@ -134,6 +134,10 @@ bool Blockchain::IsValidHash(const Block& newBlock){
     return true;
 }
 
+size_t Blockchain::GetHeight() {
+    return blocks_.size();
+}
+
 std::ostream& operator<<(std::ostream& os, const Blockchain& bc) {
     for(auto i = bc.blocks_.rbegin(); i != bc.blocks_.rend(); ++i) {
         os << *i << std::endl;

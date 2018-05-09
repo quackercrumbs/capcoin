@@ -40,6 +40,8 @@ public:
     //Return a copy of the block chain as a vector
     std::vector<Block> GetChain();
 
+    //Returns the current height of the blockchain
+    size_t GetHeight();
 
     friend std::ostream& operator<<(std::ostream& os, const Blockchain& b);
 
