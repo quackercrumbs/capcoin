@@ -8,15 +8,19 @@
 
 Wallet::Wallet(UnspentTxOutPool* UTXO):UTXO_pool(UTXO) {
 
+    makeKeyPairs(1); //works
+    writeWalletToDisk(); //works, writes key pairs to disk
+
+    std::cout << "wallet file created" << std::endl;
+
     //check if wallet file present; init wallet address vectors
     initWallet();
 
-    createWalletFile();
-    std::cout << "wallet file created" << std::endl;
+    initAddresses();
 
     //verify validate addresses
     validateRawAddresses();
-    initAddresses();
+    // initAddresses();
 
 }
 
@@ -30,7 +34,9 @@ Wallet::Wallet():UTXO_pool{nullptr}{
     if(!valid){
         //todo: delete cout
         std::cout << "no wallet";
-        createWalletFile();
+
+        makeKeyPairs(1);
+        writeWalletToDisk();
     }
     //verify validate addresses
     //convert raw keys to CC addresses
@@ -56,6 +62,7 @@ void Wallet::initWallet(){
     if(!walletFile.good()){
         //no wallet file
         valid = false;
+        std::cout << "no valid wallet file" << std::endl;
         return;
     }
 
@@ -123,35 +130,34 @@ void Wallet::makeKeyPairs(int quantity){
 
         std::string pbk = (char *)p_publicKey;
         std::string prk = (char *)p_privateKey;
+
+        // std::cout << "keys:  " << pbk << prk << std::endl;
+
         rawKeyPairs.push_back(std::make_pair(prk, pbk));
 
+        // std::cout << "rawKeyPairs:1 " << std::endl;
+        // std::cout << rawKeyPairs[0].first << std::endl;
+        // std::cout << "rawKeyPairs:2 " << std::endl;
+        // std::cout << rawKeyPairs[0].second << std::endl;
+
     }
 
 }
 
-void Wallet::createWalletFile(){
-    makeKeyPairs(1);
-    writeWalletToDisk();
-}
+
 
 void Wallet::writeWalletToDisk(){
-
     std::ofstream walletFile(WALLETDIR, std::ios_base::out);
-
-    for(int i = 0; i < walletAddressKeyPairs.size(); i++){
-
-        walletFile << walletAddressKeyPairs[i].first << "\n" \
-                << walletAddressKeyPairs[i].second << "\n";
+    for(int i = 0; i < rawKeyPairs.size(); i++){
+        walletFile << rawKeyPairs[i].first << "\n" << rawKeyPairs[i].second << "\n";
+        // std::cout << rawKeyPairs[i].first << rawKeyPairs[i].second << std::endl;
     }
-
     std::cout << "writeWalletToDisk ran" << std::endl;
 }
 
 void Wallet::createAddress(int quantity){
-
     makeKeyPairs(quantity);
     initAddresses(quantity);
-
 }
 
 void Wallet::send(double ccAmt, std::string toCCAddresses){
@@ -166,21 +172,17 @@ void Wallet::send(double ccAmt, std::string toCCAddresses){
 //hashes address, from keys to addresses
 void Wallet::initAddresses(int quantity){
 
-    int idx;
+    // std::cout<<"rawKeyPairs size is: " << rawKeyPairs.size() << std::endl;
+    int i;
     if(rawKeyPairs.empty())
-        idx = 0;
+        i = 0;
     else {
-        idx = quantity;
+        i = quantity;
         quantity += rawKeyPairs.size();
     }
-    for(; idx < quantity; idx++){
-
-        walletAddressKeyPairs[idx].first = picosha2::hash256_hex_string( \
-        picosha2::hash256_hex_string(rawKeyPairs[idx].first));
-
-        walletAddressKeyPairs[idx].second = picosha2::hash256_hex_string( \
-        picosha2::hash256_hex_string(rawKeyPairs[idx].second));
-
+    for(; i < quantity; i++){
+        walletAddressKeyPairs[i].first = picosha2::hash256_hex_string( picosha2::hash256_hex_string(rawKeyPairs[i].first) );
+        walletAddressKeyPairs[i].second = picosha2::hash256_hex_string( picosha2::hash256_hex_string(rawKeyPairs[i].second) );
     }
 
     updateWalletBalance();
