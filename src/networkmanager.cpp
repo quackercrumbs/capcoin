@@ -177,7 +177,9 @@ void NetworkManager::str_recieved(breep::tcp::netdata_wrapper<std::string>& dw) 
 }
 
 void NetworkManager::message_recieved(breep::tcp::netdata_wrapper<Message>& dw) {
+    std::cout << "In router" << std::endl;
     if(dw.data.type_ == "BLOCK") {
+        std::cout << "In block route" << std::endl;
         HandleBlockMessage(dw); 
     }
     else if(dw.data.type_ == "BLOCKCHAIN_HEIGHT") {
