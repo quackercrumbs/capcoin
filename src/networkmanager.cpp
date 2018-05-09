@@ -106,16 +106,44 @@ void NetworkManager::BroadcastMessage(Message m) {
     network_->send_object(m);
 }
 
+void NetworkManager::RequestBlockchainHeight() {
+    //Retrieve longest blockchain in the network
+    std::cout << "Sending a request for blockchain." << std::endl;
+    auto node_peers = network_->peers();
+    if(node_peers.empty())
+        return;
+    //Get the "first peer" from the collection
+    auto first_peer = node_peers.begin();
+    //Send the request to said peer on what their height is.
+    Message request = {"REQUEST_HEIGHT", std::to_string(bc_->GetHeight())};
+    network_->send_object_to((*first_peer).second,request);
+}
+
 void NetworkManager::RequestAndUpdateBlockchain() {
     //Retrieve a list of peers for the node
+    std::cout << "Sending a request for blockchain." << std::endl;
+    auto node_peers = network_->peers();
+    if(node_peers.empty())
+        return;
+    //Get the "first peer" from the collection
+    auto first_peer = node_peers.begin();
+    //Send the request to said peer on what their height is.
+    Message request = {"REQUEST_BLOCKCHAIN", std::to_string(bc_->GetHeight())};
+    network_->send_object_to((*first_peer).second,request);
+}
+
+void NetworkManager::RequestAndUpdateTransactionPool() {
+    //Retrieve a list of peers
+    std::cout << "Sending a request for transaction pool." << std::endl;
     auto node_peers = network_->peers();
     if(node_peers.empty())
         return;
     //Get the "first peer" from the collection
     auto first_peer = node_peers.begin();
     //Send the request to said peer
-    Message request = {"REQUEST_BLOCKCHAIN", std::to_string(bc_->GetHeight())};
+    Message request = {"REQUEST_TRANSACTIONPOOL", ""};
     network_->send_object_to((*first_peer).second,request);
+
 }
 
 void NetworkManager::SetPort(unsigned short port) {
@@ -152,11 +180,23 @@ void NetworkManager::message_recieved(breep::tcp::netdata_wrapper<Message>& dw) 
     if(dw.data.type_ == "BLOCK") {
         HandleBlockMessage(dw); 
     }
+    else if(dw.data.type_ == "BLOCKCHAIN_HEIGHT") {
+        HandleBlockchainHeightMessage(dw);
+    }
     else if(dw.data.type_ == "TRANSACTION") {
         HandleTransactionMessage(dw);
     }
     else if(dw.data.type_ == "REQUEST_BLOCKCHAIN") {
         HandleRequestBlockchainMessage(dw);
+    }
+    else if(dw.data.type_ == "REQUEST_TRANSACTIONPOOL") {
+        HandleRequestTransactionPoolMessage(dw);
+    }
+    else if(dw.data.type_ == "REQUEST_UTXOPOOL") {
+        HandleRequestUTxOutPoolMessage(dw);
+    }
+    else if(dw.data.type_ == "REQUEST_HEIGHT") {
+        HandleRequestBlockchainHeightMessage(dw);
     }
     else {
         std::cout << "Unknown type recieved" << std::endl;
@@ -166,24 +206,27 @@ void NetworkManager::message_recieved(breep::tcp::netdata_wrapper<Message>& dw) 
 }
 
 bool NetworkManager::HandleTransactionMessage(breep::tcp::netdata_wrapper<Message>& dw) {
+    std::cout << "Transaction recieved!" << std::endl;
     Transaction* newTx = JSONtoDynamicTx(dw.data.data_);
     bool result = txpool_->AddTransaction(newTx);
     return result;
 }
 
-bool NetworkManager::HandleUTxOut(breep::tcp::netdata_wrapper<Message>& dw) {
+bool NetworkManager::HandleUTxOutMessage(breep::tcp::netdata_wrapper<Message>& dw) {
     return true;
 }
 
 
 
 bool NetworkManager::HandleBlockMessage(breep::tcp::netdata_wrapper<Message>& dw) {
-    //TODO:
+    std::cout << "Block recieved!" << std::endl;
+    // TO DO:
     //If this block has a bigger index than ours, 
     // Perform validation on blocks integretiy
     // If pass, append to chain, else ignore
-    Block newBlock = JSONtoBlock(dw.data.data_);
-    bc_->Push(newBlock);
+    //std::cout << "DATA:" << dw.data.data_ << std::endl; 
+    //Block newBlock = JSONtoBlock(dw.data.data_);
+    //bc_->Push(newBlock);
     return true;
 }
 
@@ -193,7 +236,7 @@ bool NetworkManager::HandleRequestBlockchainMessage(breep::tcp::netdata_wrapper<
     
     // Retrieve starting index from message.
     // Convert string data to int, then cast to size_t
-    size_t i = 0;
+    size_t i = 1;
     //first check if starting index is provided
     //if provided, then take it. else use default 0.
     if(dw.data.data_ != "")
@@ -202,22 +245,51 @@ bool NetworkManager::HandleRequestBlockchainMessage(breep::tcp::netdata_wrapper<
     //Begin sending process
     Serialize s;
     for(; i < chain.size(); i++) {
-        std::cout << "Sending block " << i << "/" << chain.size()-1 << std::endl;
+        std::cout << "Sending block " << i+1 << "/" << chain.size() << std::endl;
         Block block = chain[i];
         s(block); //serialize block data
 
         Message m = {"BLOCK", s.toString()};
+        std::cout << "Data:" << m.data_ << std::endl;
         network_->send_object_to(dw.source, m); //send block message to socket
+        //usleep(50000);
     }
     std::cout << "REQUEST BLOCKCHAIN complete." << std::endl;
     return true;
 }
 
 bool NetworkManager::HandleRequestTransactionPoolMessage(breep::tcp::netdata_wrapper<Message>& dw) {
-    
+    std::cout << "Processing TxPool Req" << std::endl;    
+    //Retrieve copy of transaction pool
+    std::queue<Transaction*> tmp_pool = txpool_->GetTransactionPoolCopy();
+    size_t pool_size = tmp_pool.size();
+    size_t index = 0;
+    //Begin sending process
+    Serialize s;
+    while(!tmp_pool.empty()) {
+        Transaction* tmp = tmp_pool.front();
+        std::cout << "Sending transaction " << ++index << "/" << pool_size << std::endl;
+        s(*tmp); //serialize transaction
+        tmp_pool.pop();
+        Message m = {"TRANSACTION", s.toString()};
+        network_->send_object_to(dw.source, m); //send transaction message to socket
+    }
+    std::cout << "REQUEST TRANSACTIONPOOL complete." << std::endl;
     return true;
 }
 
 bool NetworkManager::HandleRequestUTxOutPoolMessage(breep::tcp::netdata_wrapper<Message>& dw) {
+    return true;
+}
+
+bool NetworkManager::HandleRequestBlockchainHeightMessage(breep::tcp::netdata_wrapper<Message>& dw) {
+    size_t index = bc_->GetLastBlock().GetIndex();
+    Message m = {"BLOCKCHAIN_HEIGHT", std::to_string(index)};
+    network_->send_object_to(dw.source, m); 
+    return true;
+}
+
+bool NetworkManager::HandleBlockchainHeightMessage(breep::tcp::netdata_wrapper<Message>& dw) {
+    std::cout << "HEIGHT: " << dw.data.data_ << std::endl;
     return true;
 }

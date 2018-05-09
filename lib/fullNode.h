@@ -17,6 +17,10 @@ public:
 
   bool updateChain();
 
+  bool updateTransactionPool();
+
+  bool requestHeight();
+
   void displayMenu();
 
   void displayLastBlock();

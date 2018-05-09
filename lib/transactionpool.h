@@ -14,6 +14,9 @@ public:
     //Pushes the newTx into the memory pool
     bool AddTransaction(Transaction* newTx);
 
+    //Returns a copy of the current transaction pool
+    std::queue<Transaction*> GetTransactionPoolCopy();
+
     friend std::ostream& operator<<(std::ostream& os, const TransactionPool& txpool);
 
 private:

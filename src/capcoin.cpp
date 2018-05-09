@@ -46,6 +46,23 @@ int main(int argc, char *argv[]) {
 
     bc.GenerateNextBlock(GenTxns);
 
+    TxIn in1a("a", "asdasdasd", 1);
+    TxOut out1a("b", 50);
+
+    TxIn in2a("c", "asdfasdfasdf", 2);
+    TxOut out2a("d", 100);
+
+    TxIn in3a("e", "asdfadf", 3);
+    TxOut out3a("f", 150);
+
+    std::vector<TxIn> insa{in1a, in2a, in3a};
+    std::vector<TxOut> outsa{out1a, out2a, out3a};
+    Transaction firsta(insa, outsa);
+    std::vector<Transaction> GenTxns2{firsta};
+
+    bc.GenerateNextBlock(GenTxns2);
+
+
     TransactionPool txpool;
 
     //create Network

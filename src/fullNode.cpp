@@ -26,6 +26,15 @@ bool FullNode::updateChain(){
   }*/
 }
 
+bool FullNode::requestHeight() {
+    network->RequestBlockchainHeight();
+}
+
+bool FullNode::updateTransactionPool() {
+    network->RequestAndUpdateTransactionPool();
+    return false;
+}
+
 void FullNode::welcome(){
   std::cout << "***************************************************************************" << std::endl;
   std::cout << "***************************************************************************" << std::endl;
@@ -56,6 +65,7 @@ void FullNode::displayMenu(){
   std::cout << "|        BC - Blockchain   LB - Last Block     |" << std::endl;
   std::cout << "|        CC - Connect to a peer                |" << std::endl;
   std::cout << "|        RBC - Request BC                      |" << std::endl;
+  std::cout << "|        RTP - Request Transaction Pool        |" << std::endl;
   std::cout << "------------------------------------------------" << std::endl;
 }
 
@@ -198,6 +208,12 @@ void FullNode::run(){
     }
     else if(selection == "RBC" || selection == "rbc") {
         updateChain();        
+    }
+    else if(selection == "RTP" || selection == "rtp") {
+        updateTransactionPool();
+    }
+    else if(selection == "HI") {
+        requestHeight();
     }
     else{
       std::cout << "input not valid" << std::endl;

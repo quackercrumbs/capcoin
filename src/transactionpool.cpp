@@ -12,6 +12,11 @@ bool TransactionPool::AddTransaction(Transaction* newTx) {
     return true;
 }
 
+std::queue<Transaction*> TransactionPool::GetTransactionPoolCopy() {
+    std::queue<Transaction*> tmp_pool {pool_};
+    return tmp_pool;
+}
+
 std::ostream& operator<<(std::ostream& os, const TransactionPool& txpool) {
     std::queue<Transaction*> tmp_pool {txpool.pool_};
 

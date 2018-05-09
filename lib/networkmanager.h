@@ -131,6 +131,8 @@ public:
     */
     void RequestAndUpdateUTxOutPool(); 
 
+    void RequestBlockchainHeight();
+
     /**
      *
      * This update private member variable port_
@@ -246,7 +248,9 @@ private:
      */
     bool HandleRequestUTxOutPoolMessage(breep::tcp::netdata_wrapper<Message>& dw);
 
+    bool HandleBlockchainHeightMessage(breep::tcp::netdata_wrapper<Message>& dw);
 
+    bool HandleRequestBlockchainHeightMessage(breep::tcp::netdata_wrapper<Message>& dw);
 
 };
 
