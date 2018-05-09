@@ -11,9 +11,9 @@ class UnspentTxOutPool{
 public:
 	//All unspent TxOuts are loaded through this constructor
 	UnspentTxOutPool();
-	bool AddTxn(UnspentTxOut& input);
+	bool insert(UnspentTxOut& input);
 	UnspentTxOut* FindFromIn(const TxIn& input) const;
-	double search(const std::string& publicKey) const;
+	double balance(const std::string& publicKey) const;
 
 	friend std::ostream& operator<<(std::ostream& os, const UnspentTxOutPool& pool);
 private:
