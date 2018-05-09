@@ -28,7 +28,7 @@ private:
 
   Blockchain * blockchain = new Blockchain();
   Network * network = new Network();
-  Wallet * wallet = new Wallet();
+  Wallet * wallet;
 
 };
 

@@ -17,7 +17,6 @@ class Wallet{
 
 public:
 
-    Wallet();
     ~Wallet();
     Wallet(UnspentTxOutPool* UTXO);
     void send(double ccAmt, std::string toCCAddresses);

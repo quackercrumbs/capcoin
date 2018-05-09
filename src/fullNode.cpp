@@ -3,10 +3,9 @@
 
 
 
-FullNode::FullNode(Blockchain * bc, Network * nw, Wallet * wa){
+FullNode::FullNode(Blockchain * bc, Network * nw, Wallet * wa):wallet(wa) {
   blockchain = bc;
   network = nw;
-  wallet = wa;
 }
 
 bool FullNode::updateChain(){

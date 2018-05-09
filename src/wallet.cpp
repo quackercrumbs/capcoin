@@ -18,29 +18,6 @@ Wallet::Wallet(UnspentTxOutPool* UTXO):UTXO_pool(UTXO) {
     //check if wallet file present; init wallet address vectors
     initWallet();
 
-
-
-
-}
-
-//todo:
-//collaspe constructors
-//still needed for offline use, no UTXO present
-Wallet::Wallet():UTXO_pool{nullptr}{
-    //check if wallet file present; init wallet address vectors
-    initWallet();
-
-    if(!valid){
-        //todo: delete cout
-        std::cout << "no wallet";
-
-        makeKeyPair();
-        writeWalletToDisk();
-    }
-    //verify validate addresses
-    //convert raw keys to CC addresses
-    validateKeyPairs();
-
 }
 
 void Wallet::validateKeyPairs(){
