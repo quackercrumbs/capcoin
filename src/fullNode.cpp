@@ -3,9 +3,10 @@
 
 
 
-FullNode::FullNode(Blockchain * bc, Network * nw){
+FullNode::FullNode(Blockchain * bc, Network * nw, Wallet * wa){
   blockchain = bc;
   network = nw;
+  wallet = wa;
 }
 
 bool FullNode::updateChain(){
@@ -96,7 +97,7 @@ void FullNode::run(){
         std::cout << "*" << std::endl;
         std::cout << "***************************************************************************" << std::endl;
 
-        float amt;
+        double amt;
 
         std::cin >> amt;
 
@@ -133,15 +134,22 @@ void FullNode::run(){
 
           //Creating a fake transaction and send as a block
 
-          network->broadcastMessage(std::to_string(amt));
-          
+
+
+          wallet->send(amt, address);
+
+          std::cout << "isWalletActive: " << wallet->isWalletActive() << std::endl;
+
+
+          // network->broadcastMessage(std::to_string(amt));
+
           TxIn dummyIn("", "", 0);
           TxOut dummyOut("32ba5334aafcd8e7266e47076996b55", amt);
           std::vector<TxIn> TxIns{dummyIn};
           std::vector<TxOut> TxOuts{dummyOut};
           Transaction NewTxn(TxIns, TxOuts);
           std::vector<Transaction> data{NewTxn};
-          
+
           Block block = blockchain->GenerateNextBlock(data);
 
           network->broadcastBlock(block);
