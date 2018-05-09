@@ -205,15 +205,49 @@ private:
     
     /**
      *
+     *  @brief:     A helper function that parses messages with UTXOUT type
+     *  @assume:    Assumes Message have type property UTXOUT 
+     *  @detail:    When this node recieves a UTXOUT request, this function will
+     *              update the utxoutpool with new utxouts.
+     *
+     */
+    bool HandleUTxOutMessage(breep::tcp::netdata_wrapper<Message>& dw);
+    
+    /**
+     *
      *  @brief:     A helper funciton that parses messages with REQUEST_BLOCKCHAIN type
      *  @assume:    Assumes Message have type property REQUEST_BLOCKCHAIN
      *  @detail:    Sends back to the socket requesting for the Blockchain, the blockchain
-     *              stored in the node. The block chain is sent block per block.
+     *              stored in the node. The block chain is sent a block at a time.
      *              The starting index is an optional parameter that can be attached
      *              to the request. If it is present, it will be used as the starting index.
+     *              This uses BLOCK requests to send blocks.
      *
      */
     bool HandleRequestBlockchainMessage(breep::tcp::netdata_wrapper<Message>& dw);
+
+    /**
+     *
+     *  @brief:     A helper functio nthat parses messages with REQUEST_TRANSACTION_POOL type
+     *  @assume:    Assumes Message have type property REQUEST_TRANSACTION_POOL
+     *  @details:   Sends back to the socket requesting for TxPool, its current txpool.
+     *              The TxPool is sent a transaction at a time. It uses TRANSACTION
+     *              requests to send transactions.
+     */
+    bool HandleRequestTransactionPoolMessage(breep::tcp::netdata_wrapper<Message>& dw);
+
+    /**
+     *
+     *  @brief:     A helper function that parses messages with REQUEST_UTXOUTPOOL type
+     *  @assume:    Assumes Message have type property REQUEST_UTXOUTPOOL
+     *  @details:   Sends back to the socket requesting for UTxOutPool, its current
+     *              utxoutpool. The UTxOutPool is sent a utxout at a time. It uses
+     *              UTXOUT requests to send UTxOut.
+     */
+    bool HandleRequestUTxOutPoolMessage(breep::tcp::netdata_wrapper<Message>& dw);
+
+
+
 };
 
 #include "../src/networkmanager.cpp"

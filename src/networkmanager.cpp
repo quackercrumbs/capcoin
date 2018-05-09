@@ -171,6 +171,12 @@ bool NetworkManager::HandleTransactionMessage(breep::tcp::netdata_wrapper<Messag
     return result;
 }
 
+bool NetworkManager::HandleUTxOut(breep::tcp::netdata_wrapper<Message>& dw) {
+    return true;
+}
+
+
+
 bool NetworkManager::HandleBlockMessage(breep::tcp::netdata_wrapper<Message>& dw) {
     //TODO:
     //If this block has a bigger index than ours, 
@@ -182,7 +188,6 @@ bool NetworkManager::HandleBlockMessage(breep::tcp::netdata_wrapper<Message>& dw
 }
 
 bool NetworkManager::HandleRequestBlockchainMessage(breep::tcp::netdata_wrapper<Message>& dw) {
-    std::cout << dw.data.type_ << " \"" << dw.data.data_ << "\"" << std::endl;
     // Retrieve block chain and send blocks back to socket
     std::vector<Block> chain = bc_->GetChain();
     
@@ -205,5 +210,14 @@ bool NetworkManager::HandleRequestBlockchainMessage(breep::tcp::netdata_wrapper<
         network_->send_object_to(dw.source, m); //send block message to socket
     }
     std::cout << "REQUEST BLOCKCHAIN complete." << std::endl;
+    return true;
+}
+
+bool NetworkManager::HandleRequestTransactionPoolMessage(breep::tcp::netdata_wrapper<Message>& dw) {
+    
+    return true;
+}
+
+bool NetworkManager::HandleRequestUTxOutPoolMessage(breep::tcp::netdata_wrapper<Message>& dw) {
     return true;
 }
