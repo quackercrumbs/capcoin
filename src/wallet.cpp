@@ -13,7 +13,7 @@ Wallet::Wallet(UnspentTxOutPool* UTXO):UTXO_pool(UTXO) {
 
     std::cout << "wallet file created" << std::endl;
 
-    validateKeyPairs();
+    validateKeyPairs(); //seems to be working
 
     //check if wallet file present; init wallet address vectors
     initWallet();
@@ -22,10 +22,15 @@ Wallet::Wallet(UnspentTxOutPool* UTXO):UTXO_pool(UTXO) {
 
 void Wallet::validateKeyPairs(){
 
+  // break key pair, to test this function
+  // keyPair.first = "äO†£¥ÂnÂ0¡‹„ﬁGÛÄ¸0f~q[Gxˆ’Ô›#€høã√π2rì(+¢[u-fıÙ∞˝∞ÖeDS1õoö‹,iˇ";
+
   uint8_t p_publicKey[ECC_BYTES+1];
   uint8_t p_privateKey[ECC_BYTES];
 
-// have a feeling this won't work
+  // std::cout << "p_publicKey: " << p_publicKey << std::endl;
+  // std::cout << "ECC_BYTES: " << ECC_BYTES << std::endl;
+
   for(int i=0; i < ECC_BYTES; i++)
     p_privateKey[i] = keyPair.first[i];
   for(int i=0; i < ECC_BYTES+1; i++)
@@ -42,6 +47,8 @@ void Wallet::validateKeyPairs(){
    // verifies signature
   if( ecdsa_verify(p_publicKey, p_hash, p_signature) == 0 )
     std::cerr << "error: signature unverified" << std::endl;
+  else
+    std::cout << "signature verified" << std::endl;
 
 }
 
