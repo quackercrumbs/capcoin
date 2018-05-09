@@ -37,6 +37,14 @@ BREEP_DECLARE_TYPE(Message);
  */
 
 class NetworkManager {
+
+private:
+    unsigned short port_; //listening port
+    breep::tcp::network* network_; //peer manager, managers connections with peers
+
+    Blockchain* bc_;
+    TransactionPool* txpool_;
+
 public:
 
     /**
@@ -103,13 +111,6 @@ public:
 
     /**
      *
-     * Retrieve the previous message
-     *
-     */
-    std::string GetLastRecieved();
-
-    /**
-     *
      * This update private member variable port_
      * Note: It does not restart the connection onto this port
      *
@@ -131,6 +132,9 @@ public:
      *
      */
     void Run();    
+
+private:
+
     
     /**
     * Called when there is a connection or disconnection to the network
@@ -151,21 +155,35 @@ public:
     *       The handler will perform verify the incoming TRANSACTION information.
     *       From there on, it will post this request into the TxPool. 
     *   
-        @info: Handles BLOCK, TRANSACTION ....
+        @info: Handles BLOCK, TRANSACTION, REQUEST_BLOCKCHAIN ....
     *   
     *
     */
     void message_recieved(breep::tcp::netdata_wrapper<Message>& dw);
-
-
-private:
     
-    unsigned short port_; //listening port
-    breep::tcp::network* network_; //peer manager, managers connections with peers
-
-    Blockchain* bc_;
-    TransactionPool* txpool_;
-
+    /**
+     *
+     *  @brief: A helper function that parses messages with BLOCK type
+     *  @info: Assumes Message has type BLOCK 
+     *
+     */
+    bool HandleBlockMessage(breep::tcp::netdata_wrapper<Message>& dw);
+    
+    /**
+     *
+     *  @brief: A helper function that parses messages with TRANSACTION type
+     *  @info: Assumes Message have type property TRANSACTION
+     *
+     */
+    bool HandleTransactionMessage(breep::tcp::netdata_wrapper<Message>& dw);
+    
+    /**
+     *
+     *  @brief: A helper funciton that parses messages with REQUEST_BLOCKCHAIN type
+     *  @info:  Assumes Message have type property REQUEST_BLOCKCHAIN
+     *
+     */
+    bool HandleRequestBlockchainMessage(breep::tcp::netdata_wrapper<Message>& dw);
 };
 
 #include "../src/networkmanager.cpp"

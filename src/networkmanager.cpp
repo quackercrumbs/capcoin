@@ -114,12 +114,8 @@ void NetworkManager::RequestAndUpdateBlockchain() {
     //Get the "first peer" from the collection
     auto first_peer = node_peers.begin();
     //Send the request to said peer
-    Message request = {"REQUEST_BLOCKCHAIN",""};
+    Message request = {"REQUEST_BLOCKCHAIN", std::to_string(bc_->GetHeight())};
     network_->send_object_to((*first_peer).second,request);
-}
-
-std::string NetworkManager::GetLastRecieved() {
-    return "default";
 }
 
 void NetworkManager::SetPort(unsigned short port) {
@@ -154,40 +150,60 @@ void NetworkManager::str_recieved(breep::tcp::netdata_wrapper<std::string>& dw) 
 
 void NetworkManager::message_recieved(breep::tcp::netdata_wrapper<Message>& dw) {
     if(dw.data.type_ == "BLOCK") {
-        std::cout << "Recieved a block!" << std::endl;
-        //std::cout << "DATA: " << dw.data.data_ << std::endl;
-        
-        //TODO:
-        //If this block has a bigger index than ours, 
-        // Perform validation on blocks integretiy
-        // If pass, append to chain, else ignore
-        Block newBlock = JSONtoBlock(dw.data.data_);
-        bc_->Push(newBlock);
+        HandleBlockMessage(dw); 
     }
     else if(dw.data.type_ == "TRANSACTION") {
-        std::cout << "Recieved a transaction" << std::endl;
-        //std::cout << "DATA: " << dw.data.data_ << std::endl;
-        Transaction* newTx = JSONtoDynamicTx(dw.data.data_);
-        bool result = txpool_->AddTransaction(newTx);
+        HandleTransactionMessage(dw);
     }
     else if(dw.data.type_ == "REQUEST_BLOCKCHAIN") {
-        // This will return the entire blockchain, but skips the genesis block
-        std::cout << "Recieved a request for the blockchain" << std::endl;
-        //Retrieve block chain and send everyblock back to socket
-        std::vector<Block> chain = bc_->GetChain();
-        int i = 1; //Skipping the genesis block (TODO: Fix this)
-        Serialize s;
-        for(; i < chain.size(); i++) {
-            std::cout << "Sending block " << i << "/" << chain.size()-1 << std::endl;
-            Block block = chain[i];
-            s(block);
-            Message m = {"BLOCK", s.toString()};
-            network_->send_object_to(dw.source, m);
-        }
+        HandleRequestBlockchainMessage(dw);
     }
     else {
         std::cout << "Unknown type recieved" << std::endl;
         std::cout << "TYPE: " << dw.data.type_ << std::endl;
         std::cout << "DATA: " << dw.data.data_ << std::endl;
     }
+}
+
+bool NetworkManager::HandleTransactionMessage(breep::tcp::netdata_wrapper<Message>& dw) {
+    Transaction* newTx = JSONtoDynamicTx(dw.data.data_);
+    bool result = txpool_->AddTransaction(newTx);
+    return result;
+}
+
+bool NetworkManager::HandleBlockMessage(breep::tcp::netdata_wrapper<Message>& dw) {
+    //TODO:
+    //If this block has a bigger index than ours, 
+    // Perform validation on blocks integretiy
+    // If pass, append to chain, else ignore
+    Block newBlock = JSONtoBlock(dw.data.data_);
+    bc_->Push(newBlock);
+    return true;
+}
+
+bool NetworkManager::HandleRequestBlockchainMessage(breep::tcp::netdata_wrapper<Message>& dw) {
+    std::cout << dw.data.type_ << " \"" << dw.data.data_ << "\"" << std::endl;
+    // Retrieve block chain and send blocks back to socket
+    std::vector<Block> chain = bc_->GetChain();
+    
+    // Retrieve starting index from message.
+    // Convert string data to int, then cast to size_t
+    size_t i = 0;
+    //first check if starting index is provided
+    //if provided, then take it. else use default 0.
+    if(dw.data.data_ != "")
+        i = stoi(dw.data.data_); 
+
+    //Begin sending process
+    Serialize s;
+    for(; i < chain.size(); i++) {
+        std::cout << "Sending block " << i << "/" << chain.size()-1 << std::endl;
+        Block block = chain[i];
+        s(block); //serialize block data
+
+        Message m = {"BLOCK", s.toString()};
+        network_->send_object_to(dw.source, m); //send block message to socket
+    }
+    std::cout << "REQUEST BLOCKCHAIN complete." << std::endl;
+    return true;
 }
