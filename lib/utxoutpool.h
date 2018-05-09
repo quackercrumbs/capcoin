@@ -4,6 +4,7 @@
 #include "utxout.h"
 #include "txin.h"
 #include <map>
+#include <vector>
 
 //Container for all unspent transactions (coins)
 class UnspentTxOutPool{
@@ -16,7 +17,7 @@ public:
 
 	friend std::ostream& operator<<(std::ostream& os, const UnspentTxOutPool& pool);
 private:
-	std::map<std::string, UnspentTxOut> uTxOuts_;
+	std::map<std::string, std::vector<UnspentTxOut>> uTxOuts_;
 };
 
 #endif

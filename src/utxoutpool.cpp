@@ -22,16 +22,17 @@ UnspentTxOut* UnspentTxOutPool:: FindFromIn(const TxIn& input) const{
 // returns true on successful insert, false if UtxOut already exists
 bool UnspentTxOutPool:: AddTxn(UnspentTxOut& input){
 
-  auto res = uTxOuts_.insert( pair<string, UnspentTxOut>(input.GetAddress(), input) );
-  return res.second;
+  // auto res = uTxOuts_.insert( pair<string, UnspentTxOut>(input.GetAddress(), input) );
+  // return res.second;
+  return false;
 }
 
 std::ostream& operator<<(std::ostream& os, const UnspentTxOutPool& pool){
   cout << "--------------------------------------------------------------------" << endl;
-  for(auto it = pool.uTxOuts_.begin(); it!=pool.uTxOuts_.end(); it++)
-  {
-    cout << "PublicKey: " << it->first << "\t\tAmount: " << it->second.GetAmount() << endl;
-    cout << "--------------------------------------------------------------------" << endl;
-  }
+  // for(auto it = pool.uTxOuts_.begin(); it!=pool.uTxOuts_.end(); it++)
+  // {
+  //   cout << "PublicKey: " << it->first << "\t\tAmount: " << it->second.GetAmount() << endl;
+  //   cout << "--------------------------------------------------------------------" << endl;
+  // }
   return os;
 }

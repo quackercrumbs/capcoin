@@ -60,9 +60,10 @@ private:
     void initWallet();
     void validateRawAddresses();
 
-    int gatherUnspentOutputs(double& ccAmt, std::vector<TxOut>& vtxOut, double& unspentBal);
+    // returns 1 if unspentBal >= 0, and enough vtxOut were found to send ccAmt; returns 0 otherwise
+    int getUnspentTx(const double& ccAmt, std::vector<UnspentTxOut>& vtxOut, double& unspentBal);
 
-    void setTxInput(std::vector<TxIn> &txinputs, std::vector<TxOut> &txoutput);
+    void setTxInput(std::vector<TxIn> &txinputs, std::vector<UnspentTxOut> &txoutput);
     int setTxOutput(std::vector<TxOut> &txoutputs, std::string& ccAddress, double& ccAmt, double& unspentBal);
 
     void updateWalletBalance();

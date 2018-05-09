@@ -162,8 +162,9 @@ void Wallet::send(double ccAmt, std::string toCCAddresses){
 
     Transaction* tx = createTransaction(toCCAddresses, ccAmt);
 
-    //todo: -hugo
+    //todo:
     //send to transaction pool
+    // if nullptr, alert user, transaction is invalid
 
 }
 
@@ -199,13 +200,14 @@ Transaction* Wallet::createTransaction(std::string& ccAddress, double& ccAmt){
     updateWalletBalance();
 
     double unspentBal;
-    std::vector<TxOut> unspentOutputs;
+    std::vector<UnspentTxOut> unspentOutputs;
     std::vector<TxIn> tx_inputs;
     std::vector<TxOut> tx_outputs;
 
-    if(0 == gatherUnspentOutputs(ccAmt, unspentOutputs, unspentBal)){
-        //todo: -hugo
-        //not able to fulfill request: low balance - handle or print
+    if(0 == getUnspentTx(ccAmt, unspentOutputs, unspentBal)){
+        // balance too low, or UTxOs unavailable
+
+        return nullptr;
     }
 
     setTxInput(tx_inputs, unspentOutputs);
@@ -218,11 +220,12 @@ Transaction* Wallet::createTransaction(std::string& ccAddress, double& ccAmt){
 
 }
 
-void Wallet::setTxInput(std::vector<TxIn> &txinputs, std::vector<TxOut> &txoutputs){
+void Wallet::setTxInput(std::vector<TxIn> &txinputs, std::vector<UnspentTxOut> &txoutputs){
 
     for(int i = 0; i < txoutputs.size(); i++){
 
         std::string txinputAddress = txoutputs.at(i).GetAddress();
+        // todo: create signature
         TxIn t_txinput(txinputAddress);
         txinputs.push_back(t_txinput);
     }
@@ -235,7 +238,8 @@ int Wallet::setTxOutput(std::vector<TxOut> &txoutputs, std::string& ccAddress, d
     TxOut t_txoutput(ccAddress, ccAmt);
     txoutputs.push_back(t_txoutput);
 
-    if(unspentBal > 0){
+    // note: balance can be zero
+    if(unspentBal >= 0){
 
         std::string selfCC_address;
         TxOut t_txoutput(selfCC_address, unspentBal);
@@ -264,7 +268,7 @@ void Wallet::updateWalletBalance(){
     }
 }
 
-int Wallet::gatherUnspentOutputs(double& ccAmt, std::vector<TxOut>& vtxOut, double& unSpentBal){
+int Wallet::getUnspentTx(const double& ccAmt, std::vector<UnspentTxOut>& vtxOut, double& unSpentBal){
 
     double balanceSoFar = 0.00;
 
@@ -280,7 +284,7 @@ int Wallet::gatherUnspentOutputs(double& ccAmt, std::vector<TxOut>& vtxOut, doub
         //push ith entry of wallBal into txOut vec
         txOutAddress = walletBalances[i].first;
         txOutAddrBal = walletBalances[i].second;
-        vtxOut.push_back(TxOut(txOutAddress, txOutAddrBal));
+        vtxOut.push_back(UnspentTxOut("", txOutAddress, 0, txOutAddrBal));
 
         //check if threshold reached
         if (balanceSoFar >= ccAmt) {
@@ -290,7 +294,7 @@ int Wallet::gatherUnspentOutputs(double& ccAmt, std::vector<TxOut>& vtxOut, doub
 
             txOutAddress = walletBalances[i].first;
             txOutAddrBal = walletBalances[i].second;
-            vtxOut.push_back(TxOut(txOutAddress, txOutAddrBal));
+            vtxOut.push_back(UnspentTxOut("", txOutAddress, 0, txOutAddrBal));
 
             //vxt initialize, success
             return 1;
