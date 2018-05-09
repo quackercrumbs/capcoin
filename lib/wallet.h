@@ -32,7 +32,7 @@ private:
     void makeKeyPair();
 
     void initWallet();
-    void validateRawAddress();
+    void validateKeyPairs();
 
     // returns 1 if unspentBal >= 0, and enough vtxOut were found to send ccAmt; returns 0 otherwise
     int getUnspentTx(const double& ccAmt, std::vector<UnspentTxOut>& vtxOut, double& unspentBal);
@@ -46,11 +46,6 @@ private:
 
     std::pair<std::string, std::string> keyPair;
     double balance_;
-
-    // don't need this
-    std::vector< std::pair<std::string, std::string> > rawKeyPairs;
-    std::vector< std::pair<std::string, std::string> > walletAddressKeyPairs;
-    std::map< std::string, double > walletBalances;
 
 };
 

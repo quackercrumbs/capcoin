@@ -13,11 +13,13 @@ Wallet::Wallet(UnspentTxOutPool* UTXO):UTXO_pool(UTXO) {
 
     std::cout << "wallet file created" << std::endl;
 
+    validateKeyPairs();
+
     //check if wallet file present; init wallet address vectors
     initWallet();
 
-    //verify validate addresses
-    validateRawAddress();
+
+
 
 }
 
@@ -37,11 +39,11 @@ Wallet::Wallet():UTXO_pool{nullptr}{
     }
     //verify validate addresses
     //convert raw keys to CC addresses
-    validateRawAddress();
+    validateKeyPairs();
 
 }
 
-void Wallet::validateRawAddress(){
+void Wallet::validateKeyPairs(){
 
   uint8_t p_publicKey[ECC_BYTES+1];
   uint8_t p_privateKey[ECC_BYTES];
@@ -114,31 +116,23 @@ bool Wallet::isWalletActive(){
 }
 
 void Wallet::makeKeyPair(){
-
     uint8_t p_publicKey[ECC_BYTES+1];
     uint8_t p_privateKey[ECC_BYTES];
-
     if(0 == ecc_make_key(p_publicKey, p_privateKey)){
-        //todo:
-        //unable to create address
-        //handle
+        // handle error
         std::cerr << "unable to create address" << std::endl;
         return;
     }
-
     std::string pbk = (char *)p_publicKey;
     std::string prk = (char *)p_privateKey;
-
     // std::cout << "keys:  " << pbk << prk << std::endl;
-
     keyPair = std::make_pair(prk, pbk);
-
 }
 
 void Wallet::writeWalletToDisk(){
     std::ofstream walletFile(WALLETDIR, std::ios_base::out);
     walletFile << keyPair.first << "\n" << keyPair.second << "\n";
-    std::cout << "writeWalletToDisk ran" << std::endl;
+    // std::cout << "writeWalletToDisk ran" << std::endl;
 }
 
 void Wallet::send(double ccAmt, std::string toCCAddresses){
