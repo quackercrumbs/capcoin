@@ -3,6 +3,7 @@
 #include "block.h"
 #include "blockchain.h"
 #include "wallet.h"
+#include "utxoutpool.h"
 #include "transactionpool.h"
 
 #include <string.h>
@@ -77,19 +78,17 @@ int main(int argc, char *argv[]) {
 
     // create Miner
 
-
     // create Wallet
-    Wallet w;
+    UnspentTxOutPool utxoutpool;
+    Wallet wa(&utxoutpool);
 
     // Initalize Full Node with:
     // Blockchain, Network, Wallet, Miner
     // TransactionPool
-    FullNode node (&bc, &nw, &w, &txpool);
+    FullNode node (&bc, &nw, &wa, &txpool);
 
     node.updateChain();
     node.welcome();
-
-
 
     // start the node
     node.run();

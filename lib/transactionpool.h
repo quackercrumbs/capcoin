@@ -10,15 +10,16 @@ class TransactionPool {
 public:
 	//Initialize the transaction pool (loads data from pool)
 	TransactionPool();
-    
+
     //Pushes the newTx into the memory pool
-    bool AddTransaction(Transaction* newTx);
+    bool AddTransaction(const Transaction& newTx);
+		size_t size() const;
 
     friend std::ostream& operator<<(std::ostream& os, const TransactionPool& txpool);
 
 private:
 
-	std::queue<Transaction*> pool_;
+	std::queue<Transaction> pool_;
 };
 
 

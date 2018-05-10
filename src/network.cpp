@@ -74,7 +74,7 @@ bool Network::sendBlock(int to, Block& block)
   buffer[bytes_read] = '\0';
 
   if( bytes_read > 0 ){
-    
+
     string s = string(buffer);
     int idx = strtol(s.substr(3).c_str(), NULL, 10);
 
@@ -147,7 +147,7 @@ void Network::listen(){
         //Deserialize transaction
         Transaction * newTx = JSONtoDynamicTx(s);
         //Push transaction into pool
-        bool result = txpool->AddTransaction(newTx);
+        bool result = txpool->AddTransaction(*newTx);
       }
       if(s.substr(0, 3) == "END")
       {

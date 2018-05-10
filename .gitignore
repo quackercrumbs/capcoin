@@ -5,3 +5,4 @@
 /test/utils/*.o
 /test/bin/
 /test/googletest/
+/wallet.capcoin
