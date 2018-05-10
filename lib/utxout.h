@@ -2,7 +2,9 @@
 #define UNSPENTTXOUT_H
 
 #include <string>
+#include <sstream>
 #include <iostream>
+#include "picosha2.h"
 
 class UnspentTxOut {
 public:
@@ -12,6 +14,7 @@ public:
     std::string GetAddress() const;
     size_t GetIndex() const;
     double GetAmount() const;
+    std::string hash() const;
 
     UnspentTxOut& operator = (const UnspentTxOut&);
 

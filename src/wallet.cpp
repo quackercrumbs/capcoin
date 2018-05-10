@@ -23,7 +23,7 @@ Wallet::Wallet(UnspentTxOutPool* UTXO):UTXO_pool(UTXO) {
     validateKeyPairs();
 
     myAddress = picosha2::hash256_hex_string(keyPair.second);
-    
+
     // std::cout << "keypairs: "<< keyPair.first << " => " << keyPair.second << std::endl;
     // std::cout << "picosha2: "<< picosha2::hash256_hex_string(keyPair.first) << " => " << picosha2::hash256_hex_string(keyPair.second) << std::endl;
 
@@ -33,6 +33,10 @@ Wallet::Wallet(UnspentTxOutPool* UTXO):UTXO_pool(UTXO) {
     //check if wallet file present; init wallet address vectors
     //
 
+}
+
+std::string Wallet::GetAddress() {
+  return myAddress;
 }
 
 bool Wallet::walletFileIsValid(){
@@ -212,7 +216,7 @@ void Wallet::setTxOutput(std::vector<TxOut> &txoutputs, std::string& ccAddress, 
     // note: balance can be zero
     if(unspentBal >= 0){
 
-        std::string selfCC_address;
+        std::string selfCC_address = myAddress;
         TxOut t_txoutput(selfCC_address, unspentBal);
         txoutputs.push_back(t_txoutput);
     }
@@ -242,14 +246,32 @@ int Wallet::getUnspentTx(const double& ccAmt, std::vector<UnspentTxOut>& vtxOut,
 
 Wallet::~Wallet(){
 
-    std::ofstream walletOut(WALLETDIR, std::ios_base::out);
-      walletOut << keyPair.first << keyPair.second;
-    walletOut.close();
+    // std::ofstream walletOut(WALLETDIR, std::ios_base::out);
+    //   walletOut << keyPair.first << keyPair.second;
+    // walletOut.close();
 
 }
 
-//void Wallet::shutdownWallet(){
-//    //receives kill request
-//    //stop/kill requests
-//    //flush changes saves to disk
-//}
+std::string keyToHexString(uint8_t* key, size_t no_bytes) {
+  std::stringstream ss;
+  for(int i=0; i<no_bytes; i++) {
+    ss << std::setfill('0') << std::setw(2) << std::hex << (unsigned int) key[i];
+  }
+  return ss.str();
+}
+
+void keyToBytes(const std::string& hexKey, uint8_t* key) {
+  std::string hex_byte="";
+  uint8_t x;
+
+  for(int i=0; i< hexKey.size(); i++) {
+    hex_byte += hexKey[i];
+
+    if(i%2 != 0) {
+      x = strtoul(hex_byte.c_str(), NULL, 16);
+      hex_byte = "";
+      key[i/2] = x;
+    }
+  }
+
+}

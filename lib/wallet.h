@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <fstream>
 #include <memory>
@@ -21,6 +22,7 @@ public:
     Wallet(UnspentTxOutPool* UTXO);
     void send(double ccAmt, std::string toCCAddresses);
     bool isWalletActive();
+    std::string GetAddress();
     //void Wallet::shutdownWallet();
 
 private:
@@ -49,5 +51,8 @@ private:
     double balance_;
 
 };
+
+std::string keyToHexString(uint8_t* key, size_t no_bytes);
+void keyToBytes(const std::string& hexKey, uint8_t* key);
 
 #endif //WALLET_H

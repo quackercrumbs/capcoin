@@ -22,6 +22,18 @@ double UnspentTxOut::GetAmount() const {
     return amount_;
 }
 
+std::string UnspentTxOut::hash() const {
+  std::string dataHash = "";
+  std::stringstream accumu;
+
+  accumu << txOutId_ << address_ << txOutIndex_  << amount_;
+
+  accumu >> dataHash;
+  dataHash = picosha2::hash256_hex_string(dataHash);
+
+  return dataHash;
+}
+
 UnspentTxOut& UnspentTxOut::operator = (const UnspentTxOut& utxo) {
   return *this;
 }
