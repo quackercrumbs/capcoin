@@ -65,13 +65,13 @@ int main(int argc, char *argv[]) {
     Blockchain bc;
     Block genBlock = bc.GetLastBlock();
 
+
     //create Network
     Network nw;
     //connect as server or client
     nw.startClient(&bc);
     //start listening for incoming messages, on another thread
     std::thread listenThread = nw.listenThread();
-
 
     // create Miner
 

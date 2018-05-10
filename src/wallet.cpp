@@ -67,10 +67,15 @@ void Wallet::validateKeyPairs(){
   uint8_t p_publicKey[ECC_BYTES+1];
   uint8_t p_privateKey[ECC_BYTES];
 
+  /*
   for(int i=0; i < ECC_BYTES; i++)
     p_privateKey[i] = keyPair.first[i];
   for(int i=0; i < ECC_BYTES+1; i++)
     p_publicKey[i] = keyPair.second[i];
+  */
+
+  keyToBytes(keyPair.first, p_privateKey);
+  keyToBytes(keyPair.second, p_publicKey);
 
   uint8_t p_hash[ECC_BYTES];
   uint8_t p_signature[ECC_BYTES*2];
@@ -95,13 +100,13 @@ void Wallet::initWallet(){
 
     //read in
     //each line is an address:private key \n public
-    // std::vector<std::string> addressPairsFromFile( (std::istream_iterator<std::string>(walletFile)), std::istream_iterator<std::string>());
-    std::string prk, pbk;
-    for(int i=0; i<ECC_BYTES; i++)
-      prk += walletFile.get();
-    for(int i=ECC_BYTES; i<=2*ECC_BYTES; i++)
-      pbk += walletFile.get();
-    std::vector<std::string> addressPairsFromFile{prk, pbk};
+    std::vector<std::string> addressPairsFromFile( (std::istream_iterator<std::string>(walletFile)), std::istream_iterator<std::string>());
+    // std::string prk, pbk;
+    // for(int i=0; i<ECC_BYTES; i++)
+    //   prk += walletFile.get();
+    // for(int i=ECC_BYTES; i<=2*ECC_BYTES; i++)
+    //   pbk += walletFile.get();
+    // std::vector<std::string> addressPairsFromFile{prk, pbk};
 
     //empty wallet file
     if(addressPairsFromFile.empty()){
@@ -145,15 +150,15 @@ void Wallet::makeKeyPair(){
         std::cerr << "unable to create address" << std::endl;
         return;
     }
-    std::string pbk = (char *)p_publicKey;
-    std::string prk = (char *)p_privateKey;
+    std::string pbk = /*(char *)p_publicKey; */ keyToHexString(p_publicKey, ECC_BYTES+1);
+    std::string prk = /*(char *)p_privateKey; */ keyToHexString(p_privateKey, ECC_BYTES);
     // std::cout << "keys:  " << pbk << prk << std::endl;
     keyPair = std::make_pair(prk, pbk);
 }
 
 void Wallet::writeWalletToDisk(){
     std::ofstream walletFile(WALLETDIR, std::ios_base::out);
-    walletFile << keyPair.first << keyPair.second;
+    walletFile << keyPair.first << "\n" << keyPair.second;
     // std::cout << "writeWalletToDisk ran" << std::endl;
 }
 
