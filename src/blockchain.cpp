@@ -37,7 +37,7 @@ bool Blockchain::Push(Block& b){
   return true;
 }
 
-Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
+bool Blockchain::GenerateNextBlock(bool& killMiner, std::vector <Transaction>& data){
     size_t index = blocks_[blocks_.size()-1].GetIndex() + 1;
     time_t timestamp = time(0);
     size_t difficulty = GetDifficulty();
@@ -45,19 +45,22 @@ Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
     std::string hash_;
     std::string prevHash = blocks_[blocks_.size()-1].GetHash();
     while (true) {
+		if(killMiner)
+			return false;
         hash_ = CalculateHash(index, prevHash, timestamp, data, difficulty, nonce);
-        if (HashMatchesDifficulty(hash_, difficulty)){break;}
+        if (HashMatchesDifficulty(hash_, difficulty))
+			break;
         nonce++;
     }
     Block newBlock(index, timestamp, difficulty, nonce, prevHash, data);
 
-    if(IsValidNewBlock(newBlock)) {
+    if(IsValidNewBlock(newBlock))
         blocks_.push_back(newBlock);
-    }
+    else
+		return false;
     //TODO : Broadcast new block
 
-    return newBlock;
-
+    return true;
 }
 
 
@@ -132,6 +135,10 @@ bool Blockchain::IsValidHash(const Block& newBlock){
         return false;
     //otherwise, return true
     return true;
+}
+
+size_t Blockchain::GetHeight() {
+    return blocks_.size();
 }
 
 std::ostream& operator<<(std::ostream& os, const Blockchain& bc) {
