@@ -2,7 +2,7 @@
 
 TransactionPool::TransactionPool() {}
 
-bool TransactionPool::AddTransaction(Transaction* newTx) {
+bool TransactionPool::AddTransaction(const Transaction& newTx) {
     // Perform validation, to check if the newTx properties matches criteria
     // Check for double spending (double spend an input of transactiuon already in the pool
     // Check if transaction inputs and outputs matches
@@ -12,12 +12,15 @@ bool TransactionPool::AddTransaction(Transaction* newTx) {
     return true;
 }
 
+size_t TransactionPool::size() const{
+    return pool_.size();
+}
+
 std::ostream& operator<<(std::ostream& os, const TransactionPool& txpool) {
-    std::queue<Transaction*> tmp_pool {txpool.pool_};
+    std::queue<Transaction> tmp_pool {txpool.pool_};
 
     while(!tmp_pool.empty()) {
-        Transaction* tmp = tmp_pool.front();
-        os << *tmp << std::endl;
+        os << tmp_pool.front()<< std::endl;
         tmp_pool.pop();
     }
 

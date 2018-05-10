@@ -1,38 +1,65 @@
 #ifndef WALLET_H
 #define WALLET_H
 
+#include <vector>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <fstream>
+#include <memory>
 #include <string>
 #include <stdint.h>
-#include <vector>
+
+#include "ecc.h"
+#include "picosha2.h"
+#include "transaction.h"
+#include "utxoutpool.h"
 
 #include "ecc.h"
 #include "transaction.h"
 
 class Wallet{
+
 public:
 
-    Wallet();
+    ~Wallet();
+    Wallet(UnspentTxOutPool* UTXO);
+    void send(double ccAmt, std::string toCCAddresses);
+    bool isWalletActive();
+    std::string GetAddress();
+    //void Wallet::shutdownWallet();
 
-    Transaction *createTransaction(std::string address="test", double amount=0) {
-            std::vector<TxIn> in;
-            std::vector<TxOut> out;
-            in.push_back({"ADDRESSTEST0", "SIGNATURETEST0", 0});
-            out.push_back({address, amount});
-            auto a = new Transaction(in, out);
-            return a;
-    }
-
-    double getBal();
+    // originally private
+    Transaction* createTransaction(std::string& ccAddress, double& ccAmt);
 
 private:
 
-    void createWallet();
-    void getAddress();
-    void initAddresses();
-    void initKeyPair(uint8_t p_publicKey[ECC_BYTES+1], uint8_t p_privateKey[ECC_BYTES]);
-    std::string walletaddress;
-    double balance();
+    bool valid;
+    bool walletFileIsValid();
+
+    std::string myAddress;
+
+    void makeKeyPair();
+
+    void initWallet();
+    void validateKeyPairs();
+
+    // returns 1 if unspentBal >= 0, and enough vtxOut were found to send ccAmt; returns 0 otherwise
+    int getUnspentTx(const double& ccAmt, std::vector<UnspentTxOut>& vtxOut, double& unspentBal);
+
+    void setTxInput(std::vector<TxIn> &txinputs, std::vector<UnspentTxOut> &txoutput);
+    void setTxOutput(std::vector<TxOut> &txoutputs, std::string& ccAddress, double& ccAmt, double& unspentBal);
+
+    void updateWalletBalance();
+    void writeWalletToDisk();
+    UnspentTxOutPool* UTXO_pool;
+
+    std::pair<std::string, std::string> keyPair;
+    double balance_;
 
 };
+
+std::string keyToHexString(uint8_t* key, size_t no_bytes);
+void keyToBytes(const std::string& hexKey, uint8_t* key);
 
 #endif //WALLET_H

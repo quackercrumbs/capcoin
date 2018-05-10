@@ -8,7 +8,7 @@
 class FullNode{
 public:
 
-  FullNode(Blockchain * bc, Network * nw, Wallet * w, TransactionPool* txpool);
+  FullNode(Blockchain * bc, Network * nw, Wallet * wa, TransactionPool* txpool);
 
   void welcome();
 
@@ -28,7 +28,7 @@ private:
 
   Blockchain * blockchain = new Blockchain();
   Network * network = new Network();
-  Wallet * wallet = new Wallet();
+  Wallet * wallet;
   TransactionPool * txpool = new TransactionPool();
 
 };
