@@ -147,7 +147,7 @@ void FullNode::run(){
           TxOut dummyOut("32ba5334aafcd8e7266e47076996b55", amt);
           std::vector<TxIn> TxIns{dummyIn};
           std::vector<TxOut> TxOuts{dummyOut};
-          
+
           Transaction * NewTxn = wallet->createTransaction(address,amt);
           /*
           std::vector<Transaction> data{NewTxn};
@@ -155,7 +155,7 @@ void FullNode::run(){
           Block block = blockchain->GenerateNextBlock(data);
           */
           network->broadcastTransaction(*NewTxn);
-          txpool->AddTransaction(NewTxn);
+          txpool->AddTransaction(*NewTxn);
         }
       }
 

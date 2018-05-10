@@ -2,7 +2,7 @@
 
 TransactionPool::TransactionPool() {}
 
-bool TransactionPool::AddTransaction(Transaction& newTx) {
+bool TransactionPool::AddTransaction(const Transaction& newTx) {
     // Perform validation, to check if the newTx properties matches criteria
     // Check for double spending (double spend an input of transactiuon already in the pool
     // Check if transaction inputs and outputs matches

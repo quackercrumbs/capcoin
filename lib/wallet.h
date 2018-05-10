@@ -29,13 +29,16 @@ public:
     std::string GetAddress();
     //void Wallet::shutdownWallet();
 
+    // originally private
+    Transaction* createTransaction(std::string& ccAddress, double& ccAmt);
+
 private:
 
     bool valid;
     bool walletFileIsValid();
 
     std::string myAddress;
-    Transaction* createTransaction(std::string& ccAddress, double& ccAmt);
+
     void makeKeyPair();
 
     void initWallet();
