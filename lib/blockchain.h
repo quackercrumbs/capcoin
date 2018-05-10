@@ -29,7 +29,7 @@ public:
 	bool HashMatchesDifficulty(std::string hash, size_t difficulty);
 
 	//Generates a new block
-	Block GenerateNextBlock(std::vector<Transaction>& data);
+	bool GenerateNextBlock(bool& killMiner, std::vector<Transaction>& data);
 
 	//Pushes the new block onto the blockchain
 	bool Push(Block& newBlock);
@@ -40,6 +40,8 @@ public:
     //Return a copy of the block chain as a vector
     std::vector<Block> GetChain();
 
+    //Returns the current height of the blockchain
+    size_t GetHeight();
 
     friend std::ostream& operator<<(std::ostream& os, const Blockchain& b);
 
