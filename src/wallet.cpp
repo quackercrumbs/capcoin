@@ -8,22 +8,32 @@
 
 Wallet::Wallet(UnspentTxOutPool* UTXO):UTXO_pool(UTXO) {
 
-    if( true ){
+
+    if( !walletFileIsValid() ){
       // no valid wallet file found.  Create Key pairs, and save to new wallet file
       makeKeyPair();
-      validateKeyPairs();
       writeWalletToDisk();
+      initWallet();
     }
+    else{
+      // wallet file is found, initialize
+      initWallet();
+    }
+
+    validateKeyPairs();
+
+    // std::cout << "keypairs: "<< keyPair.first << " => " << keyPair.second << std::endl;
+    // std::cout << "picosha2: "<< picosha2::hash256_hex_string(keyPair.first) << " => " << picosha2::hash256_hex_string(keyPair.second) << std::endl;
 
     // walletFileIsValid();
 
 
     //check if wallet file present; init wallet address vectors
-    // initWallet();
+    //
 
 }
 
-bool walletFileIsValid(){
+bool Wallet::walletFileIsValid(){
 
   std::ifstream walletFile(WALLETDIR);
   if( !walletFile.good() ){
@@ -31,6 +41,14 @@ bool walletFileIsValid(){
       return false;
   }
   std::cout << "wallet file is valid.  " << std::endl;
+  unsigned int count = 0;
+  char c;
+  while(walletFile.get(c))
+    count++;
+  std::cout << "File is " << count << " bytes." << std::endl;
+  std::cout << "Size of char: "<< sizeof(char) << std::endl;
+  std::cout << "ECC: "<< ECC_BYTES<< std::endl;
+  walletFile.close();
   return true;
 
 }
@@ -59,7 +77,8 @@ void Wallet::validateKeyPairs(){
    // verifies signature
   if( ecdsa_verify(p_publicKey, p_hash, p_signature) == 0 )
     std::cerr << "error: signature unverified" << std::endl;
-
+  else
+    std::cerr << "signature verified!!!!" << std::endl;
 }
 
 void Wallet::initWallet(){
@@ -67,16 +86,16 @@ void Wallet::initWallet(){
     //open file
     std::ifstream walletFile(WALLETDIR);
 
-    if(!walletFile.good()){
-        //no wallet file
-        valid = false;
-        std::cout << "no valid wallet file" << std::endl;
-        return;
-    }
 
     //read in
     //each line is an address:private key \n public
-    std::vector<std::string> addressPairsFromFile((std::istream_iterator<std::string>(walletFile)),std::istream_iterator<std::string>());
+    // std::vector<std::string> addressPairsFromFile( (std::istream_iterator<std::string>(walletFile)), std::istream_iterator<std::string>());
+    std::string prk, pbk;
+    for(int i=0; i<ECC_BYTES; i++)
+      prk += walletFile.get();
+    for(int i=ECC_BYTES; i<=2*ECC_BYTES; i++)
+      pbk += walletFile.get();
+    std::vector<std::string> addressPairsFromFile{prk, pbk};
 
     //empty wallet file
     if(addressPairsFromFile.empty()){
@@ -89,6 +108,8 @@ void Wallet::initWallet(){
     if(addressPairsFromFile.size() != 2){
         //wallet file is corrupt, improper number of pairs
         valid = false;
+        for(auto address: addressPairsFromFile)
+          std::cout << "wallet: " << address << std::endl;
         std::cerr << "error: wallet file corrupt" << std::endl;
         return;
     }
@@ -97,6 +118,8 @@ void Wallet::initWallet(){
     std::string publickey = addressPairsFromFile[1];
 
     keyPair = std::make_pair(privatekey, publickey);
+
+
 
     valid = true;
     //close wallet file handler
@@ -124,7 +147,7 @@ void Wallet::makeKeyPair(){
 
 void Wallet::writeWalletToDisk(){
     std::ofstream walletFile(WALLETDIR, std::ios_base::out);
-    walletFile << keyPair.first << "\n" << keyPair.second << "\n";
+    walletFile << keyPair.first << keyPair.second;
     // std::cout << "writeWalletToDisk ran" << std::endl;
 }
 
@@ -218,7 +241,7 @@ int Wallet::getUnspentTx(const double& ccAmt, std::vector<UnspentTxOut>& vtxOut,
 Wallet::~Wallet(){
 
     std::ofstream walletOut(WALLETDIR, std::ios_base::out);
-      walletOut << keyPair.first << keyPair.second << "\n" ;
+      walletOut << keyPair.first << keyPair.second;
     walletOut.close();
 
 }
