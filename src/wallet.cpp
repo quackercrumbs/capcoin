@@ -22,6 +22,8 @@ Wallet::Wallet(UnspentTxOutPool* UTXO):UTXO_pool(UTXO) {
 
     validateKeyPairs();
 
+    myAddress = picosha2::hash256_hex_string(keyPair.second);
+    
     // std::cout << "keypairs: "<< keyPair.first << " => " << keyPair.second << std::endl;
     // std::cout << "picosha2: "<< picosha2::hash256_hex_string(keyPair.first) << " => " << picosha2::hash256_hex_string(keyPair.second) << std::endl;
 
