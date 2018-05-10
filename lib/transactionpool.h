@@ -10,7 +10,6 @@ class TransactionPool {
 public:
 	//Initialize the transaction pool (loads data from pool)
 	TransactionPool();
-
 	bool push(Transaction& newTx);
 	size_t size() const;
 	Transaction front() const;

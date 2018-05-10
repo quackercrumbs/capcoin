@@ -2,14 +2,21 @@
 #define UNSPENTTXOUT_H
 
 #include <string>
+#include <sstream>
+#include <iostream>
+#include "picosha2.h"
 
 class UnspentTxOut {
 public:
     UnspentTxOut(std::string txOutId, std::string address, size_t txOutIndex, double amount);
-    std::string GetId();
-    std::string GetAddress();
-    size_t GetIndex();
-    double GetAmount();
+    UnspentTxOut(const UnspentTxOut&);
+    std::string GetId() const;
+    std::string GetAddress() const;
+    size_t GetIndex() const;
+    double GetAmount() const;
+    std::string hash() const;
+
+    UnspentTxOut& operator = (const UnspentTxOut&);
 
 private:
     const std::string txOutId_;
@@ -17,6 +24,7 @@ private:
     const size_t txOutIndex_;
     const double amount_;
 
+    friend std::ostream& operator<<(std::ostream& os, const UnspentTxOut& u);
     friend class UnspentTxOutPool;
 };
 
