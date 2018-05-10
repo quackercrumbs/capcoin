@@ -1,7 +1,8 @@
 C++FLAG = -g -Wall -std=c++14
 CC = gcc
 
-Transaction_OBJ = src/transaction.o src/txin.o src/txout.o src/utxout.o src/utxoutpool.o
+Transaction_OBJ = src/transaction.o src/txin.o src/txout.o src/transactionpool.o\
+				  src/utxout.o src/utxoutpool.o
 Block_OBJ = src/block.o src/blockchain.o
 Merkle_OBJ = src/merkle.o
 Network_OBJ = src/network.o src/socket.o

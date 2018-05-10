@@ -20,6 +20,8 @@ public:
     std::string hash();
     bool Validate(UnspentTxOutPool& source) const;
     bool operator == (const Transaction& beta) const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Transaction& t);
 private:
     std::string CalcHash() const;
     bool ValidTxIns(UnspentTxOutPool& source) const;

@@ -12,6 +12,7 @@ public:
     std::string GetSignature()const;
     size_t GetIndex()const;
     std::string toString();
+    friend std::ostream& operator<<(std::ostream& os, const TxIn& txin);
 
 private:
 

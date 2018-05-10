@@ -7,12 +7,16 @@
 #include <sstream>
 #include <fstream>
 #include <memory>
+#include <string>
+#include <stdint.h>
 
 #include "ecc.h"
 #include "picosha2.h"
 #include "transaction.h"
 #include "utxoutpool.h"
 
+#include "ecc.h"
+#include "transaction.h"
 
 class Wallet{
 

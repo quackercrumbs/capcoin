@@ -8,9 +8,12 @@ class TxOut{
 public:
     TxOut(std::string address, double amount);
 
-    std::string GetAddress();
-    double GetAmount();
-    
+    std::string GetVal() const;
+    std::string GetAddress() const;
+    double GetAmount() const;
+
+    friend std::ostream& operator<<(std::ostream& os, const TxOut& txout);
+
 private:
     const std::string address_;
     const double amount_;

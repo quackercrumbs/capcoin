@@ -4,6 +4,7 @@
 #include "blockchain.h"
 #include "wallet.h"
 #include "utxoutpool.h"
+#include "transactionpool.h"
 
 #include <string.h>
 #include <iostream>
@@ -65,11 +66,13 @@ int main(int argc, char *argv[]) {
     Blockchain bc;
     Block genBlock = bc.GetLastBlock();
 
+    // create Transaction Pool
+    TransactionPool txpool;
 
-    //create Network
+    // create Network
     Network nw;
-    //connect as server or client
-    nw.startClient(&bc);
+    //connect as client
+    nw.startClient(&bc, &txpool);
     //start listening for incoming messages, on another thread
     std::thread listenThread = nw.listenThread();
 
@@ -78,10 +81,11 @@ int main(int argc, char *argv[]) {
     // create Wallet
     UnspentTxOutPool utxoutpool;
     Wallet wa(&utxoutpool);
-    // Wallet wa;
 
-    // then, create full node, using these 4 parts
-    FullNode node (&bc, &nw, &wa);
+    // Initalize Full Node with:
+    // Blockchain, Network, Wallet, Miner
+    // TransactionPool
+    FullNode node (&bc, &nw, &wa, &txpool);
 
     node.updateChain();
     node.welcome();

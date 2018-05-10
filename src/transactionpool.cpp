@@ -12,7 +12,7 @@ bool TransactionPool::AddTransaction(Transaction& newTx) {
     return true;
 }
 
-size_t TransactionPool size() const{
+size_t TransactionPool::size() const{
     return pool_.size();
 }
 

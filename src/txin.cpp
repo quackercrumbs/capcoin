@@ -18,3 +18,11 @@ std::string TxIn:: GetSignature()const{
 size_t TxIn:: GetIndex()const{
     return index_;
 }
+
+std::ostream& operator<<(std::ostream& os, const TxIn& txin) {
+    os << "=== TxIn ===" << std::endl;
+    os << "ID: " << txin.id_ << std::endl;
+    os << "SIG: " << txin.sig_ << std::endl;
+    os << "INDEX: " << txin.index_ << std::endl;
+    return os;
+}
