@@ -58,10 +58,10 @@ std::string Transaction:: CalcHash() const{
   std::string accuInTx = "", accuOutTx = "";
   //for each transaction in txIns_, append its id and index to accuInTx
   for (auto i : txIns_)
-    accuInTx = accuInTx + i.GetVal();
+    accuInTx = accuInTx + i.toString();
   //for each transaction in txOuts_, append its address and amount to accuOutTx
   for (auto i : txOuts_)
-    accuOutTx = accuOutTx + i.GetVal();
+    accuOutTx = accuOutTx + i.toString();
   //add the two strings and hash them for the id
   return picosha2::hash256_hex_string(accuOutTx);
 }
