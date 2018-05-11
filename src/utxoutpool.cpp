@@ -36,30 +36,43 @@ string UnspentTxOutPool:: GetHash(const TxIn& input) const{
   return s;
 }
 
-void UnspentTxOutPool:: RemoveFromIn(const TxIn& in, string& address) {
-
-  // this function almost ruined my life.
-  // don't try to erase from the vector.
-
+void UnspentTxOutPool:: RemoveTxIns(const vector<TxIn>& txIns, const string& address) {
   auto search = uTxOuts_.find(address);
 
-  if(search != uTxOuts_.end()) {
+  if(search == uTxOuts_.end())
+    return;
 
-    vector<UnspentTxOut> tempUTxOs = uTxOuts_[address];
-    vector<UnspentTxOut> newUTxOs{};
-    for(int i=0; i<tempUTxOs.size(); i++){
-      UnspentTxOut u{*(tempUTxOs.begin() + i)};
-      if(u.GetId() == in.GetId() && u.GetIndex() == in.GetIndex()){
-        // uTxOuts_[address].erase(tempUTxOs.begin() + i);
-        // break;
-        continue;
-      }
-      newUTxOs.push_back(u);
-    }
-    // tempUTxOs = uTxOuts_[address];
-    uTxOuts_.erase(address);
-    uTxOuts_[address] = newUTxOs;
+  map<string, size_t> toRemove;
+
+  for(auto tx: txIns)
+    toRemove.insert( make_pair<string, size_t>(tx.GetId(), tx.GetIndex()) );
+
+  vector<UnspentTxOut> tempUTxOs = uTxOuts_[address];
+  vector<UnspentTxOut> newUTxOs{};
+
+  for(auto tx: tempUTxOs) {
+    auto search = toRemove.find(tx.GetId());
+    if(search != toRemove.end() && search->second == tx.GetIndex())
+      continue;
+    newUTxOs.push_back(tx);
   }
+
+  uTxOuts_.erase(address);
+  uTxOuts_[address] = newUTxOs;
+
+}
+
+void UnspentTxOutPool:: AddTxOuts(const vector<TxOut>& txOuts, const string& hash) {
+  stringstream ss;
+
+  for(auto out: txOuts) {
+    ss.str("");
+    ss << hash << index_;
+    string newId = picosha2::hash256_hex_string(ss.str());
+    UnspentTxOut utxo(newId, out.GetAddress(), ++index_, out.GetAmount());
+    insert(utxo);
+  }
+
 }
 
 bool UnspentTxOutPool:: AddTxn(const Transaction& txn) {
@@ -70,22 +83,16 @@ bool UnspentTxOutPool:: AddTxn(const Transaction& txn) {
    }
   //  cout << "validated!!!" << endl;
 
-
   // by convention
   string address = txn.GetTxOuts().back().GetAddress();
 
-  for(auto& in: txn.GetTxIns())
-    RemoveFromIn(in, address);
+  // Remove txIns_
 
-  stringstream ss;
-  int i=0;
-  for(auto out: txn.GetTxOuts()) {
-    ss.str("");
-    ss << txn.hash() << i++;
-    string newId = picosha2::hash256_hex_string(ss.str());
-    UnspentTxOut utxo(newId, out.GetAddress(), ++index_, out.GetAmount());
-    insert(utxo);
-  }
+  RemoveTxIns(txn.GetTxIns(), address);
+
+  // Add txOuts_
+
+  AddTxOuts(txn.GetTxOuts(), txn.hash());
 
   return true;
 }

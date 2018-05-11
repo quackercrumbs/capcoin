@@ -194,9 +194,12 @@ void Wallet::send(double ccAmt, std::string toCCAddresses){
 
     Transaction* tx = createTransaction(toCCAddresses, ccAmt);
 
-    //todo:
-    //send to transaction pool
-    // if nullptr, alert user, transaction is invalid
+    if(tx == nullptr){
+      std::cerr << "error: failed to create transaction." << std::endl;
+      return;
+    }
+
+    UTXO_pool->AddTxn(*tx);
 
 }
 
@@ -214,7 +217,7 @@ Transaction * Wallet::createTransaction(std::string& ccAddress, double& ccAmt){
 
     if(0 == getUnspentTx(ccAmt, unspentOutputs, unspentBal)){
         // balance too low, or UTxOs unavailable
-
+        std::cerr << "error: funds currently unavailable for this transaction." << std::endl;
         return nullptr;
     }
 

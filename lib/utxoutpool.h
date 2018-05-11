@@ -13,7 +13,8 @@ public:
 	UnspentTxOutPool();
 	bool insert(UnspentTxOut& input);
 	bool AddTxn(const Transaction& txn);
-	void RemoveFromIn(const TxIn& in, std::string& address);
+	void RemoveTxIns(const std::vector<TxIn>& txIns, const std::string& address);
+	void AddTxOuts(const std::vector<TxOut>& txOuts, const std::string& hash);
 	UnspentTxOut* FindFromIn(const TxIn& input) const;
 	std::string GetHash(const TxIn& input) const;
 	double balance(const std::string& publicKey) const;
