@@ -13,6 +13,7 @@
 
 using namespace std;
 
+bool killMiner = false;
 
 int main(int argc, char *argv[]) {
 
@@ -42,9 +43,9 @@ int main(int argc, char *argv[]) {
     Transaction first(ins, outs);
     std::vector<Transaction> GenTxns{first};
 
+    
 
-
-    bc.GenerateNextBlock(GenTxns);
+    bc.GenerateNextBlock(killMiner, GenTxns);
 
     //create Network
     Network nw;

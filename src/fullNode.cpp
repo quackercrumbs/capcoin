@@ -155,7 +155,7 @@ void FullNode::run(){
           Block block = blockchain->GenerateNextBlock(data);
           */
           network->broadcastTransaction(*NewTxn);
-          txpool->AddTransaction(*NewTxn);
+          txpool->push(*NewTxn);
         }
       }
 
