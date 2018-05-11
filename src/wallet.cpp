@@ -39,6 +39,11 @@ std::string Wallet::GetAddress() {
   return myAddress;
 }
 
+double Wallet::Balance() {
+  updateWalletBalance();
+  return balance_;
+}
+
 bool Wallet::walletFileIsValid(){
 
   std::ifstream walletFile(WALLETDIR);
@@ -285,6 +290,43 @@ int Wallet::getUnspentTx(const double& ccAmt, std::vector<UnspentTxOut>& vtxOut,
     }
     //failed to find enough addrBals to fulfil order
     return 0;
+}
+
+void Wallet::test() {
+  UnspentTxOutPool * realPool, testPool;
+
+  realPool = UTXO_pool;
+  UTXO_pool = &testPool;
+
+  std::string seed = "";
+  std::string toAddress = picosha2::hash256_hex_string(seed);
+  double initial = 50.00;
+
+  UnspentTxOut u("0", myAddress, 0, initial);
+
+  UTXO_pool->insert(u);
+
+  for(int i=0; i<50; i++)
+    send(1.0, toAddress);
+
+  if(UTXO_pool->balance(toAddress) != initial)
+    std::cerr << "error: bulk transaction test failed" << std::endl;
+
+  for(int i=0; i<50; i++) {
+    std::stringstream ss;
+    ss << i+1;
+    UnspentTxOut u(ss.str(), myAddress, 0, 1.00);
+    UTXO_pool->insert(u);
+  }
+
+  send(initial, toAddress);
+
+  if(UTXO_pool->balance(toAddress) != initial*2)
+    std::cerr << "error: multi-input transaction test failed" << std::endl;
+
+  // clean up
+  UTXO_pool = realPool;
+
 }
 
 Wallet::~Wallet(){

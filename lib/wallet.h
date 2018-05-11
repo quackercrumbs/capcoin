@@ -22,12 +22,12 @@ public:
     void send(double ccAmt, std::string toCCAddresses);
     bool isWalletActive();
     std::string GetAddress();
+    double Balance();
     //void Wallet::shutdownWallet();
 
     // originally private
     Transaction * createTransaction(std::string& ccAddress, double& ccAmt);
-
-    std::string makeSignature(std::string hash);
+    void test();
 
 private:
 
@@ -39,7 +39,7 @@ private:
     void makeKeyPair();
     void validateKeyPairs();
 
-    // std::string makeSignature(std::string hash);
+    std::string makeSignature(std::string hash);
     bool        validateSignature(std::string publicKey, std::string hash, std::string sig);
 
 

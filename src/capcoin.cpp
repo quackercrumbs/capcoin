@@ -82,7 +82,6 @@ int main(int argc, char *argv[]) {
     UnspentTxOutPool utxoutpool;
     Wallet wa(&utxoutpool);
 
-
     // Initalize Full Node with:
     // Blockchain, Network, Wallet, Miner
     // TransactionPool
