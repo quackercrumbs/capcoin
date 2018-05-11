@@ -26,5 +26,11 @@ void Miner::mine(bool& killMiner, TransactionPool& pool){
       chain_->GenerateNextBlock(killMiner, txSupply);
     }
   }
+  if (killMiner){
+    for (int i = size; i > 1; i--){
+	  pool.push(txSupply[i]);
+	  txSupply.pop_back();
+    }
+  }
 }
 
