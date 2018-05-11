@@ -72,8 +72,10 @@ void Miner::mine_loop() {
                   chain_->GenerateNextBlock(killMiner_, txSupply);
             }
         }
-        //If there was a signal to kill the miner, put packaged transaction back into pool
-        if(*killMiner_) {
+        //If there was a signal to kill the miner and there are transactions 
+        //from the pool in the packaged transactions
+        //put packaged transaction back into pool
+        if(*killMiner_ && txSupply.size() > 1) {
             std::cout << "[miner]: Putting back transactions into mempool." << std::endl;
             for(int i = txSupply.size(); i > 1; i--) {
                 txpool_->push(txSupply[i]);
@@ -81,6 +83,7 @@ void Miner::mine_loop() {
             }
             std::cout << "[miner]: All transactions have been placed back into mempool.";
             std::cout << std::endl;
+            *killMiner_ = false;
         }
     }
 

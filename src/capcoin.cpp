@@ -17,7 +17,7 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 
-  bool killMinerSignal = false;
+  bool killMinerSignal = true;
   if((argc > 1) && (strncmp (argv[1], "server", 6) == 0)){
     //server
     std::cout << "[node]: Starting as server" << std::endl;
@@ -43,10 +43,10 @@ int main(int argc, char *argv[]) {
     Transaction first(ins, outs);
     std::vector<Transaction> GenTxns{first};
 
-    
+    killMinerSignal = false;
     std::cout << "[node]: Generating a new block." << std::endl;
     bc.GenerateNextBlock(&killMinerSignal, GenTxns);
-
+    
     //create Network
     Network nw;
     nw.runServer(&bc);
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
     // Initalize Full Node with:
     // Blockchain, Network, Wallet, Miner
     // TransactionPool
-    FullNode node (&bc, &nw, &wa, &txpool);
+    FullNode node (&bc, &nw, &wa, &txpool, &killMinerSignal);
 
     node.updateChain();
     node.welcome();
