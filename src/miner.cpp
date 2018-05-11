@@ -1,6 +1,6 @@
 #include "miner.h"
 
-Miner::Miner(Blockchain* chain, TransactionPool* txpool, bool* killMiner,  std::string address):chain_{chain}, txpool_{txpool}, killMiner_{killMiner}, address_{address}{};
+Miner::Miner(Blockchain* chain, TransactionPool* txpool, Network* nw, bool* killMiner,  std::string address):chain_{chain}, txpool_{txpool}, nw_{nw}, killMiner_{killMiner}, address_{address}{};
 
 
 void Miner::mine_loop() {
@@ -16,9 +16,12 @@ void Miner::mine_loop() {
         //Collection of transactions that will be placed in the mined block
         std::vector<Transaction> txSupply{coinbaseTx};
 
+        //A flag signaling whether mining was successful
+        bool success = false;
+        
         //start a timer
         time_t start = time(0);
-
+        
         //This loop packages transaction for the block
         //When packaging is completed, mining will commence
         //Loop runs when the signal to kill miner is off.
@@ -34,7 +37,14 @@ void Miner::mine_loop() {
                     txpool_->pop();
                   }
                   // Mine the block
-                  chain_->GenerateNextBlock(killMiner_, txSupply);
+                  success = chain_->GenerateNextBlock(killMiner_, txSupply);
+                  if(success) {
+                    //Broadcast block to network
+                      std::cout << "[miner]: Telling the network to broadcast block" << std::endl;
+                      Block b = chain_->GetLastBlock();
+                      nw_->broadcastBlock(b);
+                      success = false;
+                  }
             }
         }
         //If there was a signal to kill the miner and there are transactions 

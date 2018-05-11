@@ -26,7 +26,8 @@ int main(int argc, char *argv[]) {
     Blockchain bc;
     // Block genBlock = bc.GetLastBlock();
 
-
+    // create Transaction Pool
+    TransactionPool txpool;
 
     //Test input data for generating a new block
     TxIn in1("a", "asdasdasd", 1);
@@ -49,7 +50,7 @@ int main(int argc, char *argv[]) {
     
     //create Network
     Network nw;
-    nw.runServer(&bc);
+    nw.runServer(&bc, &txpool);
 
     //  network listen on seperate thread
 
@@ -85,22 +86,22 @@ int main(int argc, char *argv[]) {
     Wallet wa(&utxoutpool);
 
 
-    std::string address = "1232";
+    std::string address = "111111";
     // create Miner
-    Miner miner (&bc,&txpool,&killMinerSignal, address);
+    Miner miner (&bc,&txpool,&nw,&killMinerSignal,address);
     std::thread miner_thread = miner.mineThread();
    
-    double amt = 12354; 
+    double amt = 2222222; 
     TxIn dummyIn("", "", 0);
-    TxOut dummyOut("32ba5334aafcd8e7266e47076996b55", amt);
+    TxOut dummyOut("22222222222222222222222222222222", amt);
     std::vector<TxIn> TxIns{dummyIn};
     std::vector<TxOut> TxOuts{dummyOut};
 
     Transaction dummy = {TxIns, TxOuts};
     
-    double amt2 = 12354; 
+    double amt2 = 3333333; 
     TxIn dummyIn2("", "", 0);
-    TxOut dummyOut2("32ba5334aafcd8e7266e47076996b55", amt2);
+    TxOut dummyOut2("33333333333333333333333333333333", amt2);
     std::vector<TxIn> TxIns2{dummyIn2};
     std::vector<TxOut> TxOuts2{dummyOut2};
 

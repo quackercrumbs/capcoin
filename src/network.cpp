@@ -14,11 +14,11 @@ void Network::broadcastMessage(string msg){
 
 
 void Network::broadcastBlock(Block& block){
-
+  
+  std::cout << "[network]: Broadcasting a block" << std::endl;
   Serialize serializer(block);
 
   string str = serializer.toString();
-
   send(sock, str.c_str(), str.size(), 0);
 
 }
@@ -189,11 +189,12 @@ void Network::startClient(Blockchain * bc, TransactionPool * transaction_pool){
   txpool = transaction_pool;
 }
 
-void Network::runServer(Blockchain * bc) {
+void Network::runServer(Blockchain * bc, TransactionPool* pool) {
 
   TCPSocket* s;
 
   blockchain = bc;
+  txpool = pool;
 
   while(1)
   {
@@ -327,7 +328,7 @@ void Network::runServer(Blockchain * bc) {
                   blockchain->Push(block,txpool);
 
                   cout << "No blocks: " << blockchain->GetChain().size() << "\n";
-
+                    
                 }
                 else if(s.substr(1,11) == "TRANSACTION") {
                     server.broadcastAll(sd, string(buffer));

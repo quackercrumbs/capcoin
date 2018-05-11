@@ -41,5 +41,9 @@ std::ostream& operator<<(std::ostream& os, const TransactionPool& txpool) {
 }
 
 bool TransactionPool::remove(const Transaction& copy){
-	pool_.remove(copy);
+	//Check if the transaction exists
+    if(pool_.size() > 0 ) {
+        pool_.remove_if([copy](Transaction t) {return t == copy;});
+    }
+    return true;
 }
