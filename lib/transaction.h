@@ -10,7 +10,6 @@
 #include "txin.h"
 #include "txout.h"
 #include "utxout.h"
-#include "utxoutpool.h"
 
 // used for create & validating signatures
 std::string keyToHexString(uint8_t* key, size_t no_bytes);
