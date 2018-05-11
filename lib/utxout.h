@@ -14,7 +14,7 @@ public:
     std::string GetAddress() const;
     size_t GetIndex() const;
     double GetAmount() const;
-    std::string hash() const;
+    std::string Hash() const;
 
     UnspentTxOut& operator = (const UnspentTxOut&);
 
@@ -23,6 +23,9 @@ private:
     const std::string address_;
     const size_t txOutIndex_;
     const double amount_;
+    std::string hash_;
+
+    std::string hash() const;
 
     friend std::ostream& operator<<(std::ostream& os, const UnspentTxOut& u);
     friend class UnspentTxOutPool;
