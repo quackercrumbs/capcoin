@@ -106,10 +106,6 @@ void FullNode::run(){
         }
         else if(response == "Y" || response == "y"){
           correct = true;
-          std::cout << "***************************************************************************" << std::endl;
-          std::cout << "*    Transaction Sent!" << std::endl;
-          std::cout << "***************************************************************************" << std::endl;
-
           //Creating a fake transaction and send as a block
 
           //wallet->send(amt, address);
@@ -132,7 +128,9 @@ void FullNode::run(){
           if(NewTxn != nullptr) {
               network->broadcastTransaction(*NewTxn);
               txpool->push(*NewTxn);
-              std::cout << "Transaction Sent" << std::endl;
+          std::cout << "***************************************************************************" << std::endl;
+          std::cout << "*    Transaction Sent!" << std::endl;
+          std::cout << "***************************************************************************" << std::endl;
           }
           
           /*
