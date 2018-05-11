@@ -8,6 +8,7 @@
 #include "txin.h"
 #include "txout.h"
 #include "utxout.h"
+#include "utxoutpool.h"
 
 class UnspentTxOutPool;
 
@@ -31,5 +32,4 @@ private:
     std::vector<TxOut> txOuts_;
 };
 
-#include "utxoutpool.h"
 #endif

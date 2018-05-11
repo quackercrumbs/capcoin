@@ -2,6 +2,7 @@
 #define BLOCKCHAIN_H
 
 #include "transaction.h"
+#include "transactionpool.h"
 #include "block.h"
 #include "picosha2.h"
 #include <string>
@@ -32,7 +33,7 @@ public:
 	bool GenerateNextBlock(bool& killMiner, std::vector<Transaction>& data);
 
 	//Pushes the new block onto the blockchain
-	bool Push(Block& newBlock);
+	bool Push(Block& block, TransactionPool& pool);
 
 	//Returns the latest block on the chain
 	Block GetLastBlock();

@@ -29,10 +29,13 @@ std::vector<Block> Blockchain::GetChain(){
     return blocks_;
 }
 
-bool Blockchain::Push(Block& b){
-  //Needs to verify block eventually
-
-  blocks_.push_back(b);
+bool Blockchain::Push(Block& block, TransactionPool& pool){
+  //verify block
+  //if fails, return false
+  for (auto i : block.GetData()){
+	pool.remove(i);
+  }
+  blocks_.push_back(block);
 
   return true;
 }

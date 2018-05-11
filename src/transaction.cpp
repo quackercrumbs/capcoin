@@ -43,7 +43,7 @@ bool Transaction:: ValidTxIns(UnspentTxOutPool& source) const{
 
 
 bool Transaction:: OneToOne(UnspentTxOutPool& source) const{
-  double inAmt = 0.00, outAmt = 0.00;
+  double inAmt = 0, outAmt = 0;
   for (TxIn x: txIns_){
     UnspentTxOut* temp = source.FindFromIn(x);
     if (temp == nullptr) continue;
@@ -54,19 +54,16 @@ bool Transaction:: OneToOne(UnspentTxOutPool& source) const{
   return inAmt == outAmt ? true : false;
 }
 
-//todo: -hugo
-//rename GetVal GetAmt appropriately
 std::string Transaction:: CalcHash() const{
-//  std::string accuInTx = "", accuOutTx = "";
-//  //for each transaction in txIns_, append its id and index to accuInTx
-//  for (auto i : txIns_)
-//    accuInTx = accuInTx + i.GetAmt();
-//  //for each transaction in txOuts_, append its address and amount to accuOutTx
-//  for (auto i : txOuts_)
-//    accuOutTx = accuOutTx + i.GetVal();
-//  //add the two strings and hash them for the id
-//  return picosha2::hash256_hex_string(accuOutTx);
-  return "";
+  std::string accuInTx = "", accuOutTx = "";
+  //for each transaction in txIns_, append its id and index to accuInTx
+  for (auto i : txIns_)
+    accuInTx = accuInTx + i.GetVal();
+  //for each transaction in txOuts_, append its address and amount to accuOutTx
+  for (auto i : txOuts_)
+    accuOutTx = accuOutTx + i.GetVal();
+  //add the two strings and hash them for the id
+  return picosha2::hash256_hex_string(accuOutTx);
 }
 
 std::vector<TxIn> Transaction::GetTxIns(){

@@ -8,7 +8,7 @@ bool TransactionPool::push(Transaction& newTx) {
     // Check if transaction inputs and outputs matches
 
     //If all requirements pass, add transaction into pool
-    pool_.push(newTx);
+    pool_.push_back(newTx);
     return true;
 }
 
@@ -22,7 +22,7 @@ Transaction TransactionPool::front() const{
 
 bool TransactionPool::pop(){
 	if (!pool_.empty()){
-		pool_.pop();
+		pool_.pop_front();
 		return true;
 	}
 	else
@@ -30,12 +30,16 @@ bool TransactionPool::pop(){
 }
 
 std::ostream& operator<<(std::ostream& os, const TransactionPool& txpool) {
-    std::queue<Transaction> tmp_pool {txpool.pool_};
+    std::list<Transaction> tmp_pool {txpool.pool_};
 
     while(!tmp_pool.empty()) {
         os << tmp_pool.front()<< std::endl;
-        tmp_pool.pop();
+        tmp_pool.pop_front();
     }
 
     return os;
+}
+
+bool TransactionPool::remove(const Transaction& copy){
+	pool_.remove(copy);
 }
