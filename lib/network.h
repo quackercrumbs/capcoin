@@ -14,7 +14,7 @@ class Network{
 
 public:
   void startClient(Blockchain * bc, TransactionPool* txpool);
-  void runServer(Blockchain * bc);
+  void runServer(Blockchain * bc, TransactionPool* txpool);
 
   void listen();
   std::thread listenThread(){

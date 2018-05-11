@@ -29,35 +29,50 @@ std::vector<Block> Blockchain::GetChain(){
     return blocks_;
 }
 
-bool Blockchain::Push(Block& b){
-  //Needs to verify block eventually
-
-  blocks_.push_back(b);
+bool Blockchain::Push(Block& block, TransactionPool* pool){
+  //verify block
+  //if fails, return false
+  for (auto i : block.GetData()){
+	pool->remove(i);
+  }
+  blocks_.push_back(block);
 
   return true;
 }
 
-Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
+bool Blockchain::GenerateNextBlock(bool* killMiner, std::vector <Transaction>& data){
     size_t index = blocks_[blocks_.size()-1].GetIndex() + 1;
     time_t timestamp = time(0);
     size_t difficulty = GetDifficulty();
     size_t nonce = 0;
     std::string hash_;
     std::string prevHash = blocks_[blocks_.size()-1].GetHash();
+    std::cout << "[miner]: Mining operation started ..." << std::endl;
+    //Search for hash that matches difficulty, aka mining.
     while (true) {
+        // Stop all mining operations upon kill signal
+		if(*killMiner) {
+            std::cout << "[miner]: Mining operation halted. Due to kill signal." << std::endl;
+			return false;
+        }
         hash_ = CalculateHash(index, prevHash, timestamp, data, difficulty, nonce);
-        if (HashMatchesDifficulty(hash_, difficulty)){break;}
+        if (HashMatchesDifficulty(hash_, difficulty))
+			break;
         nonce++;
     }
     Block newBlock(index, timestamp, difficulty, nonce, prevHash, data);
 
     if(IsValidNewBlock(newBlock)) {
+        std::cout << "[miner]: Mining operation successful." << std::endl;
         blocks_.push_back(newBlock);
+    }
+    else {
+        std::cout << "[miner]: Mining operation failed." << std::endl;
+        return false;
     }
     //TODO : Broadcast new block
 
-    return newBlock;
-
+    return true;
 }
 
 
@@ -132,6 +147,10 @@ bool Blockchain::IsValidHash(const Block& newBlock){
         return false;
     //otherwise, return true
     return true;
+}
+
+size_t Blockchain::GetHeight() {
+    return blocks_.size();
 }
 
 std::ostream& operator<<(std::ostream& os, const Blockchain& bc) {

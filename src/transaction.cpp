@@ -51,11 +51,11 @@ bool Transaction:: SignaturesValid(UnspentTxOutPool& source) const{
 
 
 bool Transaction:: OneToOne(UnspentTxOutPool& source) const{
-  double inAmt = 0.00, outAmt = 0.00;
+  double inAmt = 0, outAmt = 0;
   for (TxIn x: txIns_){
     UnspentTxOut* temp = source.FindFromIn(x);
     if (temp == nullptr) continue;
-    
+
     UnspentTxOut t{*temp};
     double dt = t.GetAmount();
     inAmt = inAmt + dt;
@@ -72,6 +72,7 @@ bool Transaction:: OneToOne(UnspentTxOutPool& source) const{
 }
 
 std::string Transaction:: CalcHash() const{
+
   std::stringstream accuInTx, accuOutTx;
   std::string inHash, outHash;
  //for each transaction in txIns_, append its id (signature?) and index to accuInTx

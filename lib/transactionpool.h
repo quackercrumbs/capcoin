@@ -1,7 +1,7 @@
 #ifndef TRANSACTIONPOOL_H
 #define TRANSACTIONPOOL_H
 
-#include <queue>
+#include <list>
 #include <iostream>
 
 #include "transaction.h"
@@ -10,16 +10,16 @@ class TransactionPool {
 public:
 	//Initialize the transaction pool (loads data from pool)
 	TransactionPool();
+	bool push(Transaction& newTx);
+	size_t size() const;
+	Transaction front() const;
+	bool pop();
+	bool remove(const Transaction& copy);
 
-    //Pushes the newTx into the memory pool
-    bool AddTransaction(const Transaction& newTx);
-		size_t size() const;
-
-    friend std::ostream& operator<<(std::ostream& os, const TransactionPool& txpool);
+	friend std::ostream& operator<<(std::ostream& os, const TransactionPool& txpool);
 
 private:
-
-	std::queue<Transaction> pool_;
+	std::list<Transaction> pool_;
 };
 
 
