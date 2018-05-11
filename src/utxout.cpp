@@ -1,10 +1,11 @@
 #include "utxout.h"
 
 UnspentTxOut::UnspentTxOut(std::string txOutId, std::string address, size_t txOutIndex, double amount):
-                txOutId_{txOutId}, address_{address}, txOutIndex_{txOutIndex}, amount_{amount}{}
+                txOutId_{txOutId}, address_{address}, txOutIndex_{txOutIndex}, amount_{amount}, hash_{hash()} {}
 
 UnspentTxOut::UnspentTxOut(const UnspentTxOut& utxo):
-                txOutId_{utxo.GetId()}, address_{utxo.GetAddress()}, txOutIndex_{utxo.GetIndex()}, amount_{utxo.GetAmount()}{}
+                txOutId_{utxo.GetId()}, address_{utxo.GetAddress()}, txOutIndex_{utxo.GetIndex()}, amount_{utxo.GetAmount()},
+                hash_{utxo.Hash()} {}
 
 std::string UnspentTxOut::GetId() const {
     return txOutId_;
@@ -20,6 +21,10 @@ size_t UnspentTxOut::GetIndex() const {
 
 double UnspentTxOut::GetAmount() const {
     return amount_;
+}
+
+std::string UnspentTxOut::Hash() const {
+  return hash_;
 }
 
 std::string UnspentTxOut::hash() const {
