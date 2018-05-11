@@ -328,6 +328,7 @@ void Network::runServer(Blockchain * bc, TransactionPool* pool) {
                   blockchain->Push(block,txpool);
 
                   cout << "No blocks: " << blockchain->GetChain().size() << "\n";
+                  server.broadcastAll(sd, string(buffer));
                     
                 }
                 else if(s.substr(1,11) == "TRANSACTION") {
