@@ -23,8 +23,6 @@ public:
    */
   Miner(Blockchain* chain, TransactionPool* txpool, bool* killMiner, std::string address);
 
-  void mine(bool& killMiner, TransactionPool& pool);
-  
   /**
    *
    * @brief:             A routine for mining blocks, designed to be used in a thread.
