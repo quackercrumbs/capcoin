@@ -8,7 +8,7 @@
 class FullNode{
 public:
 
-  FullNode(Blockchain * bc, Network * nw, Wallet * wa, TransactionPool* txpool);
+  FullNode(Blockchain * bc, Network * nw, Wallet * wa, TransactionPool* txpool, bool* killMiner);
 
   void welcome();
 
@@ -30,6 +30,7 @@ private:
   Network * network = new Network();
   Wallet * wallet;
   TransactionPool * txpool = new TransactionPool();
+  bool* killMiner_;
 
 };
 

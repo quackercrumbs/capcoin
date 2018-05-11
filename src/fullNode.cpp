@@ -3,10 +3,11 @@
 
 
 
-FullNode::FullNode(Blockchain * bc, Network * nw, Wallet * wa, TransactionPool * transactionpool):wallet(wa){
+FullNode::FullNode(Blockchain * bc, Network * nw, Wallet * wa, TransactionPool * transactionpool, bool* killMiner):wallet(wa){
   blockchain = bc;
   network = nw;
   txpool = transactionpool;
+  killMiner_ = killMiner;
 }
 
 bool FullNode::updateChain(){
@@ -27,6 +28,7 @@ void FullNode::displayMenu(){
   std::cout << "O - Overview     S - Send     ";
   std::cout << "T - Transactions     H - Help     ";
   std::cout << "BC - Blockchain     LB - Last Block" << std::endl;
+  std::cout << "TKM - Toggle Kill Miner Signal" << std::endl;
 }
 
 void FullNode::run(){
@@ -154,6 +156,9 @@ void FullNode::run(){
     }
     else if(selection == "LB" || selection == "lb") {
       displayLastBlock();
+    }
+    else if(selection == "TKM" || selection == "tkm") {
+      *killMiner_ = !*killMiner_;
     }
     else{
       std::cout << "input not valid" << std::endl;
