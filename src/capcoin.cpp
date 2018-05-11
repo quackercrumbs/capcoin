@@ -5,6 +5,7 @@
 #include "wallet.h"
 #include "utxoutpool.h"
 #include "transactionpool.h"
+#include "miner.h"
 
 #include <string.h>
 #include <iostream>
@@ -13,14 +14,13 @@
 
 using namespace std;
 
-bool killMiner = false;
 
 int main(int argc, char *argv[]) {
 
-
+  bool killMinerSignal = false;
   if((argc > 1) && (strncmp (argv[1], "server", 6) == 0)){
     //server
-
+    std::cout << "[node]: Starting as server" << std::endl;
 
     // create Blockchain
     Blockchain bc;
@@ -44,8 +44,8 @@ int main(int argc, char *argv[]) {
     std::vector<Transaction> GenTxns{first};
 
     
-
-    bc.GenerateNextBlock(killMiner, GenTxns);
+    std::cout << "[node]: Generating a new block." << std::endl;
+    bc.GenerateNextBlock(&killMinerSignal, GenTxns);
 
     //create Network
     Network nw;
@@ -70,6 +70,9 @@ int main(int argc, char *argv[]) {
     // create Transaction Pool
     TransactionPool txpool;
 
+    // create UTxOutPool
+    UnspentTxOutPool utxoutpool;
+
     // create Network
     Network nw;
     //connect as client
@@ -77,12 +80,35 @@ int main(int argc, char *argv[]) {
     //start listening for incoming messages, on another thread
     std::thread listenThread = nw.listenThread();
 
-    // create Miner
 
     // create Wallet
-    UnspentTxOutPool utxoutpool;
     Wallet wa(&utxoutpool);
 
+
+    std::string address = "1232";
+    // create Miner
+    Miner miner (&bc,&txpool,&killMinerSignal, address);
+    std::thread miner_thread = miner.mineThread();
+   
+    double amt = 12354; 
+    TxIn dummyIn("", "", 0);
+    TxOut dummyOut("32ba5334aafcd8e7266e47076996b55", amt);
+    std::vector<TxIn> TxIns{dummyIn};
+    std::vector<TxOut> TxOuts{dummyOut};
+
+    Transaction dummy = {TxIns, TxOuts};
+    
+    double amt2 = 12354; 
+    TxIn dummyIn2("", "", 0);
+    TxOut dummyOut2("32ba5334aafcd8e7266e47076996b55", amt2);
+    std::vector<TxIn> TxIns2{dummyIn2};
+    std::vector<TxOut> TxOuts2{dummyOut2};
+
+    Transaction dummy2 = {TxIns2, TxOuts2};
+ 
+
+    txpool.push(dummy);
+    txpool.push(dummy2);
     // Initalize Full Node with:
     // Blockchain, Network, Wallet, Miner
     // TransactionPool

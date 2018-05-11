@@ -139,7 +139,7 @@ void Network::listen(){
         //   blockchain->Push(block);
         // }
 
-        blockchain->Push(block);
+        blockchain->Push(block,txpool);
         broadcastMessage("GOT" + idx);
 
       }
@@ -324,7 +324,7 @@ void Network::runServer(Blockchain * bc) {
                   Block block = JSONtoBlock(s);
 
                   // Push
-                  blockchain->Push(block);
+                  blockchain->Push(block,txpool);
 
                   cout << "No blocks: " << blockchain->GetChain().size() << "\n";
 

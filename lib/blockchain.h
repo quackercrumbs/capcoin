@@ -30,10 +30,10 @@ public:
 	bool HashMatchesDifficulty(std::string hash, size_t difficulty);
 
 	//Generates a new block
-	bool GenerateNextBlock(bool& killMiner, std::vector<Transaction>& data);
+	bool GenerateNextBlock(bool* killMiner, std::vector<Transaction>& data);
 
 	//Pushes the new block onto the blockchain
-	bool Push(Block& block, TransactionPool& pool);
+	bool Push(Block& block, TransactionPool* pool);
 
 	//Returns the latest block on the chain
 	Block GetLastBlock();
