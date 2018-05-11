@@ -5,6 +5,7 @@
 #include "wallet.h"
 #include "utxoutpool.h"
 #include "transactionpool.h"
+#include "miner.h"
 
 #include <string.h>
 #include <iostream>
@@ -16,16 +17,17 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 
-
+  bool killMinerSignal = true;
   if((argc > 1) && (strncmp (argv[1], "server", 6) == 0)){
     //server
-
+    std::cout << "[node]: Starting as server" << std::endl;
 
     // create Blockchain
     Blockchain bc;
     // Block genBlock = bc.GetLastBlock();
 
-
+    // create Transaction Pool
+    TransactionPool txpool;
 
     //Test input data for generating a new block
     TxIn in1("a", "asdasdasd", 1);
@@ -42,13 +44,13 @@ int main(int argc, char *argv[]) {
     Transaction first(ins, outs);
     std::vector<Transaction> GenTxns{first};
 
-
-
-    bc.GenerateNextBlock(GenTxns);
-
+    killMinerSignal = false;
+    std::cout << "[node]: Generating a new block." << std::endl;
+    bc.GenerateNextBlock(&killMinerSignal, GenTxns);
+    
     //create Network
     Network nw;
-    nw.runServer(&bc);
+    nw.runServer(&bc, &txpool);
 
     //  network listen on seperate thread
 
@@ -69,6 +71,9 @@ int main(int argc, char *argv[]) {
     // create Transaction Pool
     TransactionPool txpool;
 
+    // create UTxOutPool
+    UnspentTxOutPool utxoutpool;
+
     // create Network
     Network nw;
     //connect as client
@@ -76,16 +81,39 @@ int main(int argc, char *argv[]) {
     //start listening for incoming messages, on another thread
     std::thread listenThread = nw.listenThread();
 
-    // create Miner
 
     // create Wallet
-    UnspentTxOutPool utxoutpool;
     Wallet wa(&utxoutpool);
 
+
+    std::string address = "111111";
+    // create Miner
+    Miner miner (&bc,&txpool,&nw,&killMinerSignal,address);
+    std::thread miner_thread = miner.mineThread();
+   
+    double amt = 2222222; 
+    TxIn dummyIn("", "", 0);
+    TxOut dummyOut("22222222222222222222222222222222", amt);
+    std::vector<TxIn> TxIns{dummyIn};
+    std::vector<TxOut> TxOuts{dummyOut};
+
+    Transaction dummy = {TxIns, TxOuts};
+    
+    double amt2 = 3333333; 
+    TxIn dummyIn2("", "", 0);
+    TxOut dummyOut2("33333333333333333333333333333333", amt2);
+    std::vector<TxIn> TxIns2{dummyIn2};
+    std::vector<TxOut> TxOuts2{dummyOut2};
+
+    Transaction dummy2 = {TxIns2, TxOuts2};
+ 
+
+    txpool.push(dummy);
+    txpool.push(dummy2);
     // Initalize Full Node with:
     // Blockchain, Network, Wallet, Miner
     // TransactionPool
-    FullNode node (&bc, &nw, &wa, &txpool);
+    FullNode node (&bc, &nw, &wa, &txpool, &killMinerSignal);
 
     node.updateChain();
     node.welcome();

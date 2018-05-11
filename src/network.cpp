@@ -14,11 +14,11 @@ void Network::broadcastMessage(string msg){
 
 
 void Network::broadcastBlock(Block& block){
-
+  
+  std::cout << "[network]: Broadcasting a block" << std::endl;
   Serialize serializer(block);
 
   string str = serializer.toString();
-
   send(sock, str.c_str(), str.size(), 0);
 
 }
@@ -139,15 +139,15 @@ void Network::listen(){
         //   blockchain->Push(block);
         // }
 
-        blockchain->Push(block);
+        blockchain->Push(block,txpool);
         broadcastMessage("GOT" + idx);
 
       }
       else if(s.substr(1,11) == "TRANSACTION") {
         //Deserialize transaction
-        Transaction * newTx = JSONtoDynamicTx(s);
+        Transaction newTx = JSONtoTx(s);
         //Push transaction into pool
-        bool result = txpool->AddTransaction(*newTx);
+        bool result = txpool->push(newTx);
       }
       if(s.substr(0, 3) == "END")
       {
@@ -189,11 +189,12 @@ void Network::startClient(Blockchain * bc, TransactionPool * transaction_pool){
   txpool = transaction_pool;
 }
 
-void Network::runServer(Blockchain * bc) {
+void Network::runServer(Blockchain * bc, TransactionPool* pool) {
 
   TCPSocket* s;
 
   blockchain = bc;
+  txpool = pool;
 
   while(1)
   {
@@ -324,10 +325,11 @@ void Network::runServer(Blockchain * bc) {
                   Block block = JSONtoBlock(s);
 
                   // Push
-                  blockchain->Push(block);
+                  blockchain->Push(block,txpool);
 
                   cout << "No blocks: " << blockchain->GetChain().size() << "\n";
-
+                  server.broadcastAll(sd, string(buffer));
+                    
                 }
                 else if(s.substr(1,11) == "TRANSACTION") {
                     server.broadcastAll(sd, string(buffer));
