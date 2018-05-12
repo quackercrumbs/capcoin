@@ -149,7 +149,9 @@ void Network::listen(){
             std::cout << "[network]: Rejected block" << std::endl;
         }
         broadcastMessage("GOT " + idx);
-        *killMiner_ = false;
+
+        // kill miner after getting a block
+        *killMiner_ = true;
       }
       else if(s.substr(1,11) == "TRANSACTION") {
         //Deserialize transaction
