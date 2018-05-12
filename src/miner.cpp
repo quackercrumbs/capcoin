@@ -49,19 +49,19 @@ void Miner::mine_loop() {
                       start = time(0);
                   }
             }
-        }
-        //If there was a signal to kill the miner and there are transactions
-        //from the pool in the packaged transactions
-        //put packaged transaction back into pool
-        if(*killMiner_ && txSupply.size() > 1 || !success) {
-            std::cout << "[miner]: Putting back transactions into mempool." << std::endl;
-            for(int i = txSupply.size()-1; i > 1; i--) {
-                txpool_->push(txSupply[i]);
-                txSupply.pop_back();
-            }
-            std::cout << "[miner]: All transactions have been placed back into mempool.";
-            std::cout << std::endl;
-            *killMiner_ = false;
+			//If there was a signal to kill the miner and there are transactions
+			//from the pool in the packaged transactions
+			//put packaged transaction back into pool
+			if(*killMiner_ && txSupply.size() > 1 || !success) {
+				std::cout << "[miner]: Putting back transactions into mempool." << std::endl;
+				for(int i = txSupply.size()-1; i > 1; i--) {
+					txpool_->push(txSupply[i]);
+					txSupply.pop_back();
+				}
+				std::cout << "[miner]: All transactions have been placed back into mempool.";
+				std::cout << std::endl;
+				*killMiner_ = false;
+			}
         }
     }
 
