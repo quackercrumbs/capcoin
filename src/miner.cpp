@@ -18,19 +18,19 @@ void Miner::mine_loop() {
 
         //A flag signaling whether mining was successful
         bool success = false;
-        
+
         //start a timer
         time_t start = time(0);
-        
+
         //This loop packages transaction for the block
         //When packaging is completed, mining will commence
         //Loop runs when the signal to kill miner is off.
         while(!*killMiner_){
             //if > 20 txns in pool, package 20 and generate a block
-            //if 20 > n > 0 txns in pool, and 200 seconds pass, package 
+            //if 20 > n > 0 txns in pool, and 200 seconds pass, package
             //however many there are into a block.
             int size = txpool_->size() > 20 ? 20 : txpool_->size();
-            if(size == 20 || (time(0)-5 > start && size > 0)){
+            if(size == 20 || time(0)-60 > start){
                   //Package transactions into txSupply
                   for(int i = 0; i < size; i++){
                     txSupply.push_back(txpool_->front());
@@ -47,7 +47,7 @@ void Miner::mine_loop() {
                   }
             }
         }
-        //If there was a signal to kill the miner and there are transactions 
+        //If there was a signal to kill the miner and there are transactions
         //from the pool in the packaged transactions
         //put packaged transaction back into pool
         if(*killMiner_ && txSupply.size() > 1) {
