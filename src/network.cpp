@@ -14,7 +14,7 @@ void Network::broadcastMessage(string msg){
 
 
 void Network::broadcastBlock(Block& block){
-  
+
   std::cout << "[network]: Broadcasting a block" << std::endl;
   Serialize serializer(block);
 
@@ -140,7 +140,7 @@ void Network::listen(){
         // else{
         //   blockchain->Push(block);
         // }
-        
+
         bool success = blockchain->Push(block,txpool);
         if(success) {
             std::cout << "[network]: Accepted block" << std::endl;
@@ -348,7 +348,7 @@ void Network::runServer(Blockchain * bc, TransactionPool* pool, bool* killMiner)
                   //Broadcast recieved block
                   server.broadcastAll(sd, string(buffer));
                   *killMiner_ = true;
-                    
+
                 }
                 else if(s.substr(1,11) == "TRANSACTION") {
                     server.broadcastAll(sd, string(buffer));

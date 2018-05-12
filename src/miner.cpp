@@ -64,9 +64,9 @@ void Miner::mine_loop() {
         //put packaged transaction back into pool
         if(*killMiner_ && txSupply.size() > 1) {
             std::cout << "[miner]: Putting back transactions into mempool." << std::endl;
-            for(int i = txSupply.size()-1; i > 1; i--) {
+            // push back all but the coinbase transaction
+            for(int i = txSupply.size()-1; i > 0; i--) {
                 txpool_->push(txSupply[i]);
-                txSupply.pop_back();
             }
             std::cout << "[miner]: All transactions have been placed back into mempool.";
             std::cout << std::endl;
@@ -81,5 +81,3 @@ std::thread Miner::mineThread() {
                 mine_loop();
             });
 }
-
-
