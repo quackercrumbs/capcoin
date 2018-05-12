@@ -30,7 +30,7 @@ void Miner::mine_loop() {
             //if 20 > n > 0 txns in pool, and 200 seconds pass, package
             //however many there are into a block.
             int size = txpool_->size() > 20 ? 20 : txpool_->size();
-            if(size == 20 || time(0)-60 > start){
+            if(size == 20 || time(0)-30 > start){
                   //Package transactions into txSupply
                   for(int i = 0; i < size; i++){
                     txSupply.push_back(txpool_->front());
@@ -44,6 +44,7 @@ void Miner::mine_loop() {
                       Block b = chain_->GetLastBlock();
                       nw_->broadcastBlock(b);
                       success = false;
+                      start = time(0);
                   }
             }
         }
