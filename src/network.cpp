@@ -125,6 +125,8 @@ void Network::listen(){
 
       if(s.substr(1, 5) == "BLOCK")
       {
+        std::cout << "[network]: Got a block message" << std::endl;
+        *killMiner_ = true;
         //
         Block block = JSONtoBlock(s);
 
@@ -138,10 +140,16 @@ void Network::listen(){
         // else{
         //   blockchain->Push(block);
         // }
-
-        blockchain->Push(block,txpool);
-        broadcastMessage("GOT" + idx);
-
+        
+        bool success = blockchain->Push(block,txpool);
+        if(success) {
+            std::cout << "[network]: Accepted block" << std::endl;
+        }
+        else {
+            std::cout << "[network]: Rejected block" << std::endl;
+        }
+        broadcastMessage("GOT " + idx);
+        *killMiner_ = false;
       }
       else if(s.substr(1,11) == "TRANSACTION") {
         //Deserialize transaction
@@ -163,7 +171,7 @@ void Network::listen(){
   }
 }
 
-void Network::startClient(Blockchain * bc, TransactionPool * transaction_pool){
+void Network::startClient(Blockchain * bc, TransactionPool * transaction_pool, bool* killMiner){
 
   if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0){
     cout << "\n Socket creation error \n";
@@ -187,15 +195,16 @@ void Network::startClient(Blockchain * bc, TransactionPool * transaction_pool){
 
   blockchain = bc;
   txpool = transaction_pool;
+  killMiner_ = killMiner;
 }
 
-void Network::runServer(Blockchain * bc, TransactionPool* pool) {
+void Network::runServer(Blockchain * bc, TransactionPool* pool, bool* killMiner) {
 
   TCPSocket* s;
 
   blockchain = bc;
   txpool = pool;
-
+  killMiner_ = killMiner;
   while(1)
   {
 
@@ -320,15 +329,24 @@ void Network::runServer(Blockchain * bc, TransactionPool* pool) {
                 }
                 //if the incoming message is a new block
                 else if(s.substr(1, 5) == "BLOCK"){
-
+                  *killMiner_ = true;
+                  std::cout << "[network]: Got a block" << std::endl;
                   // Parse block
                   Block block = JSONtoBlock(s);
-
+                  std::cout << "[network]: The block is index " << block.GetIndex() << std::endl;
                   // Push
-                  blockchain->Push(block,txpool);
+                  bool success = blockchain->Push(block,txpool);
+                  if (success) {
+                    std::cout << "[network]: Accepted block" << std::endl;
+                  }
+                  else {
+                    std::cout << "[network]: Rejected block" << std::endl;
+                  }
+                  //cout << "No blocks: " << blockchain->GetChain().size() << "\n";
 
-                  cout << "No blocks: " << blockchain->GetChain().size() << "\n";
+                  //Broadcast recieved block
                   server.broadcastAll(sd, string(buffer));
+                  *killMiner_ = true;
                     
                 }
                 else if(s.substr(1,11) == "TRANSACTION") {

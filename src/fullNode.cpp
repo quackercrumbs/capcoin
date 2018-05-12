@@ -159,6 +159,7 @@ void FullNode::run(){
     }
     else if(selection == "TKM" || selection == "tkm") {
       *killMiner_ = !*killMiner_;
+      std::cout << "kill Miner " << *killMiner_ << std::endl;
     }
     else{
       std::cout << "input not valid" << std::endl;
