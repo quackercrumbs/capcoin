@@ -34,7 +34,7 @@ void Miner::mine_loop() {
             //however many there are into a block.
             int size = txpool_->size() > 20 ? 20 : txpool_->size();
             if(size == 20 || time(0)-30 > start){
-                  std::cout << "[miner-test]: entered, tx_size: " << size << std::endl;
+                  std::cout << "[miner-test]: entered, txpool_size: " << size << std::endl;
                   //Package transactions into txSupply
                   for(int i = 0; i < size; i++){
                     txSupply.push_back(txpool_->front());
@@ -70,8 +70,9 @@ void Miner::mine_loop() {
             }
             std::cout << "[miner]: All transactions have been placed back into mempool.";
             std::cout << std::endl;
-            *killMiner_ = false;
         }
+
+      *killMiner_ = false;
     }
 
 }
