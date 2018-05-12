@@ -25,6 +25,7 @@ void Miner::mine_loop() {
         //This loop packages transaction for the block
         //When packaging is completed, mining will commence
         //Loop runs when the signal to kill miner is off.
+        //Exits when mining fails
         while(!*killMiner_ && !success){
             //if > 20 txns in pool, package 20 and generate a block
             //if 20 > n > 0 txns in pool, and 200 seconds pass, package
@@ -48,13 +49,16 @@ void Miner::mine_loop() {
                       std::cout << "[miner-test]: block index:" << b.GetIndex() << std::endl;
                       nw_->broadcastBlock(b);
                       start = time(0);
+
+                      //empty txSupply
+                      txSupply.clear();
                   }
             }
         }
         //If there was a signal to kill the miner and there are transactions
         //from the pool in the packaged transactions
         //put packaged transaction back into pool
-        if(*killMiner_ && txSupply.size() > 1 || !success) {
+        if(*killMiner_ && txSupply.size() > 1) {
             std::cout << "[miner]: Putting back transactions into mempool." << std::endl;
             for(int i = txSupply.size()-1; i > 1; i--) {
                 txpool_->push(txSupply[i]);

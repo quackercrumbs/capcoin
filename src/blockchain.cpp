@@ -32,7 +32,7 @@ std::vector<Block> Blockchain::GetChain(){
 bool Blockchain::Push(Block& block, TransactionPool* pool){
   //verify block
   //if fails, return false
-  if (block.GetIndex() != blocks_[blocks_.size()-1].GetIndex() ||
+  if (block.GetIndex() != blocks_[blocks_.size()-1].GetIndex()+1 && 
   block.GetPreviousHash() != blocks_[blocks_.size()-1].GetHash())
     return false;
   for (auto i : block.GetData()){
