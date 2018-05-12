@@ -17,7 +17,7 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 
-  bool killMinerSignal = true;
+  bool killMinerSignal = false;
   if((argc > 1) && (strncmp (argv[1], "server", 6) == 0)){
     //server
     std::cout << "[node]: Starting as server" << std::endl;
@@ -44,10 +44,10 @@ int main(int argc, char *argv[]) {
     Transaction first(ins, outs);
     std::vector<Transaction> GenTxns{first};
 
-    killMinerSignal = false;
+    killMinerSignal = true;
     std::cout << "[node]: Generating a new block." << std::endl;
     bc.GenerateNextBlock(&killMinerSignal, GenTxns);
-    
+
     //create Network
     Network nw;
     nw.runServer(&bc, &txpool);
@@ -90,23 +90,23 @@ int main(int argc, char *argv[]) {
     // create Miner
     Miner miner (&bc,&txpool,&nw,&killMinerSignal,address);
     std::thread miner_thread = miner.mineThread();
-   
-    double amt = 2222222; 
+
+    double amt = 2222222;
     TxIn dummyIn("", "", 0);
     TxOut dummyOut("22222222222222222222222222222222", amt);
     std::vector<TxIn> TxIns{dummyIn};
     std::vector<TxOut> TxOuts{dummyOut};
 
     Transaction dummy = {TxIns, TxOuts};
-    
-    double amt2 = 3333333; 
+
+    double amt2 = 3333333;
     TxIn dummyIn2("", "", 0);
     TxOut dummyOut2("33333333333333333333333333333333", amt2);
     std::vector<TxIn> TxIns2{dummyIn2};
     std::vector<TxOut> TxOuts2{dummyOut2};
 
     Transaction dummy2 = {TxIns2, TxOuts2};
- 
+
 
     txpool.push(dummy);
     txpool.push(dummy2);
