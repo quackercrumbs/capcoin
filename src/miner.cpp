@@ -6,6 +6,16 @@ Miner::Miner(Blockchain* chain, TransactionPool* txpool, UnspentTxOutPool* utxou
 void Miner::mine_loop() {
     std::cout << "[miner]: Miner listener activated." << std::endl;
     while(true) {
+        //Create a coinbase transaction for the miner, aka the reward
+        TxIn coinbaseIn("","",chain_->GetHeight());
+        TxOut coinbaseOut(address_, 50);
+        std::vector<TxIn> ins{coinbaseIn};
+        std::vector<TxOut> outs{coinbaseOut};
+        Transaction coinbaseTx{ins,outs};
+
+        //Collection of transactions that will be placed in the mined block
+        std::vector<Transaction> txSupply{coinbaseTx};
+
         //A flag signaling whether mining was successful
         bool success = false;
 
@@ -16,15 +26,6 @@ void Miner::mine_loop() {
         //When packaging is completed, mining will commence
         //Loop runs when the signal to kill miner is off.
         while(!*killMiner_ && !success){
-			//Create a coinbase transaction for the miner, aka the reward
-			TxIn coinbaseIn("","",chain_->GetHeight());
-			TxOut coinbaseOut(address_, 50);
-			std::vector<TxIn> ins{coinbaseIn};
-			std::vector<TxOut> outs{coinbaseOut};
-			Transaction coinbaseTx{ins,outs};
-
-			//Collection of transactions that will be placed in the mined block
-			std::vector<Transaction> txSupply{coinbaseTx};
             //if > 20 txns in pool, package 20 and generate a block
             //if 20 > n > 0 txns in pool, and 200 seconds pass, package
             //however many there are into a block.
