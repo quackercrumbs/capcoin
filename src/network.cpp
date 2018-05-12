@@ -332,6 +332,7 @@ void Network::runServer(Blockchain * bc, TransactionPool* pool, bool* killMiner)
                   *killMiner_ = true;
                   std::cout << "[network]: Got a block" << std::endl;
                   // Parse block
+                  std::cout << "[network-data]: " << s << std::endl;
                   Block block = JSONtoBlock(s);
                   std::cout << "[network]: The block is index " << block.GetIndex() << std::endl;
                   // Push
@@ -357,7 +358,7 @@ void Network::runServer(Blockchain * bc, TransactionPool* pool, bool* killMiner)
             	}
 
             		// print out all incoming messages
-                cout << string(buffer) << endl;
+                //cout << string(buffer) << endl;
 
                 strcpy(buffer, "");
             }
