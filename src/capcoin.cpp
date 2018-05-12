@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
 
     //create Network
     Network nw;
-    nw.runServer(&bc, &txpool);
+    nw.runServer(&bc, &txpool, &killMinerSignal);
 
     //  network listen on seperate thread
 
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
     // create Network
     Network nw;
     //connect as client
-    nw.startClient(&bc, &txpool);
+    nw.startClient(&bc, &txpool, &killMinerSignal);
     //start listening for incoming messages, on another thread
     std::thread listenThread = nw.listenThread();
 
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 
     std::string address = "111111";
     // create Miner
-    Miner miner (&bc,&txpool,&nw,&killMinerSignal,address);
+    Miner miner (&bc,&txpool,&utxoutpool,&nw,&killMinerSignal,address);
     std::thread miner_thread = miner.mineThread();
 
     double amt = 2222222;
