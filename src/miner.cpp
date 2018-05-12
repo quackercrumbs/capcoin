@@ -22,6 +22,8 @@ void Miner::mine_loop() {
         //start a timer
         time_t start = time(0);
 
+        size_t beforeMiningHeight = chain_->GetHeight(); // Retrieve current size
+
         //This loop packages transaction for the block
         //When packaging is completed, mining will commence
         //Loop runs when the signal to kill miner is off.
@@ -42,16 +44,18 @@ void Miner::mine_loop() {
                   // Mine the block
                   success = chain_->GenerateNextBlock(killMiner_, txSupply);
                   if(success) {
-                    //Broadcast block to network
-                      std::cout << "[miner]: Telling the network to broadcast block" << std::endl;
-                      Block b = chain_->GetLastBlock();
-                      std::cout << "[miner-test]: block tx size: " << b.GetData().size() << std::endl;
-                      std::cout << "[miner-test]: block index:" << b.GetIndex() << std::endl;
-                      nw_->broadcastBlock(b);
-                      start = time(0);
+                      if(chain_->GetHeight() == beforeMiningHeight) {
+                        //Broadcast block to network
+                          std::cout << "[miner]: Telling the network to broadcast block" << std::endl;
+                          Block b = chain_->GetLastBlock();
+                          std::cout << "[miner-test]: block tx size: " << b.GetData().size() << std::endl;
+                          std::cout << "[miner-test]: block index:" << b.GetIndex() << std::endl;
+                          nw_->broadcastBlock(b);
+                          start = time(0);
 
-                      //empty txSupply
-                      txSupply.clear();
+                          //empty txSupply
+                          txSupply.clear();
+                      }
                   }
             }
         }
