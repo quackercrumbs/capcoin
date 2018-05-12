@@ -1,6 +1,6 @@
 #include "miner.h"
 
-Miner::Miner(Blockchain* chain, TransactionPool* txpool, Network* nw, bool* killMiner,  std::string address):chain_{chain}, txpool_{txpool}, nw_{nw}, killMiner_{killMiner}, address_{address}{};
+Miner::Miner(Blockchain* chain, TransactionPool* txpool, UnspentTxOutPool* utxoutpool, Network* nw, bool* killMiner,  std::string address):chain_{chain}, txpool_{txpool}, utxopool_{utxoutpool}, nw_{nw}, killMiner_{killMiner}, address_{address}{};
 
 
 void Miner::mine_loop() {
@@ -31,6 +31,7 @@ void Miner::mine_loop() {
             //however many there are into a block.
             int size = txpool_->size() > 20 ? 20 : txpool_->size();
             if(size == 20 || time(0)-30 > start){
+                  std::cout << "[miner-test]: entered, tx_size: " << size << std::endl;
                   //Package transactions into txSupply
                   for(int i = 0; i < size; i++){
                     txSupply.push_back(txpool_->front());
@@ -42,6 +43,7 @@ void Miner::mine_loop() {
                     //Broadcast block to network
                       std::cout << "[miner]: Telling the network to broadcast block" << std::endl;
                       Block b = chain_->GetLastBlock();
+                      std::cout << "[miner-test]: block index:" << b.GetIndex() << std::endl;
                       nw_->broadcastBlock(b);
                       success = false;
                       start = time(0);
@@ -53,7 +55,7 @@ void Miner::mine_loop() {
         //put packaged transaction back into pool
         if(*killMiner_ && txSupply.size() > 1) {
             std::cout << "[miner]: Putting back transactions into mempool." << std::endl;
-            for(int i = txSupply.size(); i > 1; i--) {
+            for(int i = txSupply.size()-1; i > 1; i--) {
                 txpool_->push(txSupply[i]);
                 txSupply.pop_back();
             }

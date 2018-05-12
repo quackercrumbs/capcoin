@@ -1,6 +1,7 @@
 #ifndef MINER_H
 #define MINER_H
 
+#include "utxoutpool.h"
 #include "transactionpool.h"
 #include "blockchain.h"
 #include "network.h"
@@ -22,7 +23,7 @@ public:
    * @param: address    The address where the reward of a mined block are sent to.
    *
    */
-  Miner(Blockchain* chain, TransactionPool* txpool, Network* nw, bool* killMiner, std::string address);
+  Miner(Blockchain* chain, TransactionPool* txpool, UnspentTxOutPool* utxoutpool, Network* nw, bool* killMiner, std::string address);
 
   /**
    *
@@ -55,6 +56,9 @@ private:
 
   //A reference to the transaction pool (mempool)
   TransactionPool* txpool_;
+
+  // A reference to the UTxOut pool
+  UnspentTxOutPool* utxopool_;
 
   //A reference to the network
   Network* nw_;
