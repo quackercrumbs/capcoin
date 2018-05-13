@@ -308,14 +308,34 @@ int Wallet::getUnspentTx(const double& ccAmt, std::vector<UnspentTxOut>& vtxOut,
     if(balance_ < ccAmt)
       return 0;
 
-    if(utxopool_->operator[](myAddress)!= nullptr) {
-      vtxOut = *(utxopool_->operator[](myAddress));
-      for(auto tx: vtxOut)
-        unSpentBal += tx.GetAmount();
-      unSpentBal -= ccAmt;
-      return 1;
+    std::map<unsigned int, bool> usedTxns;
+
+    TransactionPool tmp_pool(*txpool_);
+    while(tmp_pool.size() != 0) {
+      Transaction t = tmp_pool.front();
+      tmp_pool.pop();
+      if(t.GetTxOuts().back().GetAddress() == myAddress)
+        for(auto in: t.GetTxIns())
+          usedTxns[in.GetIndex()] = true;
     }
-    //failed to find enough addrBals to fulfil order
+
+    std::vector<unsigned int> unusedTxns;
+
+    if(utxopool_->operator[](myAddress) != nullptr) {
+      auto uTxOuts = *(utxopool_->operator[](myAddress));
+      for(auto tx: uTxOuts) {
+        auto search = usedTxns.find(tx.GetIndex());
+        if(search == usedTxns.end()) {
+          unSpentBal += tx.GetAmount();
+          vtxOut.push_back(tx);
+        }
+        if(unSpentBal > ccAmt){
+          unSpentBal -= ccAmt;
+          return 1;
+        }
+      }
+    }
+    //failed to find enough addrBals to fulfill order
     return 0;
 }
 

@@ -111,7 +111,7 @@ bool UnspentTxOutPool:: insert(UnspentTxOut& input){
   }
 
   vector<UnspentTxOut> uTxs{input};
-  auto res = uTxOuts_.insert(
+  uTxOuts_.insert(
     pair<string, vector<UnspentTxOut> >(address, uTxs)
   );
   if(input.GetIndex() > index_)
