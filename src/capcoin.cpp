@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
 
 
     // create Wallet
-    Wallet wa(&utxoutpool);
+    Wallet wa(&txpool, &utxoutpool);
 
 
     std::string address = wa.GetAddress();

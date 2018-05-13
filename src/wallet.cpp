@@ -6,7 +6,7 @@
  * privatekey - > publickey
 */
 
-Wallet::Wallet(UnspentTxOutPool* UTXO):UTXO_pool(UTXO) {
+Wallet::Wallet(TransactionPool* txpool, UnspentTxOutPool* UTXO): txpool_(txpool), utxopool_(UTXO) {
 
 
     if( !walletFileIsValid() ){
@@ -204,7 +204,7 @@ void Wallet::send(double ccAmt, std::string toCCAddresses){
       return;
     }
 
-    UTXO_pool->AddTxn(*tx);
+    utxopool_->AddTxn(*tx);
 
 }
 
@@ -271,7 +271,7 @@ void Wallet::setTxOutput(std::vector<TxOut> &txoutputs, std::string& ccAddress, 
 //sets balances
 void Wallet::updateWalletBalance(){
 
-  balance_ = UTXO_pool->balance(myAddress);
+  balance_ = utxopool_->balance(myAddress);
 
 }
 
@@ -281,8 +281,8 @@ int Wallet::getUnspentTx(const double& ccAmt, std::vector<UnspentTxOut>& vtxOut,
     if(balance_ < ccAmt)
       return 0;
 
-    if(UTXO_pool->operator[](myAddress)!= nullptr) {
-      vtxOut = *(UTXO_pool->operator[](myAddress));
+    if(utxopool_->operator[](myAddress)!= nullptr) {
+      vtxOut = *(utxopool_->operator[](myAddress));
       for(auto tx: vtxOut)
         unSpentBal += tx.GetAmount();
       unSpentBal -= ccAmt;
@@ -295,8 +295,8 @@ int Wallet::getUnspentTx(const double& ccAmt, std::vector<UnspentTxOut>& vtxOut,
 void Wallet::test() {
   UnspentTxOutPool * realPool, testPool;
 
-  realPool = UTXO_pool;
-  UTXO_pool = &testPool;
+  realPool = utxopool_;
+  utxopool_ = &testPool;
 
   std::string seed = "";
   std::string toAddress = picosha2::hash256_hex_string(seed);
@@ -304,28 +304,28 @@ void Wallet::test() {
 
   UnspentTxOut u("0", myAddress, 0, initial);
 
-  UTXO_pool->insert(u);
+  utxopool_->insert(u);
 
   for(int i=0; i<50; i++)
     send(1.0, toAddress);
 
-  if(UTXO_pool->balance(toAddress) != initial)
+  if(utxopool_->balance(toAddress) != initial)
     std::cerr << "error: bulk transaction test failed" << std::endl;
 
   for(int i=0; i<50; i++) {
     std::stringstream ss;
     ss << i+1;
     UnspentTxOut u(ss.str(), myAddress, 0, 1.00);
-    UTXO_pool->insert(u);
+    utxopool_->insert(u);
   }
 
   send(initial, toAddress);
 
-  if(UTXO_pool->balance(toAddress) != initial*2)
+  if(utxopool_->balance(toAddress) != initial*2)
     std::cerr << "error: multi-input transaction test failed" << std::endl;
 
   // clean up
-  UTXO_pool = realPool;
+  utxopool_ = realPool;
 
 }
 

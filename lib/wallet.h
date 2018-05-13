@@ -11,6 +11,7 @@
 
 #include "picosha2.h"
 #include "transaction.h"
+#include "transactionpool.h"
 #include "utxoutpool.h"
 
 class Wallet{
@@ -18,7 +19,7 @@ class Wallet{
 public:
 
     ~Wallet();
-    Wallet(UnspentTxOutPool* UTXO);
+    Wallet(TransactionPool* txpool, UnspentTxOutPool* UTXO);
     void send(double ccAmt, std::string toCCAddresses);
     bool isWalletActive();
     std::string GetAddress();
@@ -49,12 +50,15 @@ private:
     // returns 1 if unspentBal >= 0, and enough vtxOut were found to send ccAmt; returns 0 otherwise
     int getUnspentTx(const double& ccAmt, std::vector<UnspentTxOut>& vtxOut, double& unspentBal);
 
+    // helper functions for createTransaction
     void setTxInput(std::vector<TxIn> &txinputs, std::vector<UnspentTxOut> &txoutput);
     void setTxOutput(std::vector<TxOut> &txoutputs, std::string& ccAddress, double& ccAmt, double& unspentBal);
 
     void updateWalletBalance();
     void writeWalletToDisk();
-    UnspentTxOutPool* UTXO_pool;
+
+    TransactionPool* txpool_;
+    UnspentTxOutPool* utxopool_;
 
     std::pair<std::string, std::string> keyPair;
     double balance_;
