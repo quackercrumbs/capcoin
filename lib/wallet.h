@@ -55,12 +55,18 @@ private:
     void setTxOutput(std::vector<TxOut> &txoutputs, std::string& ccAddress, double& ccAmt, double& unspentBal);
 
     void updateWalletBalance();
+    void updatePending();
+
     void writeWalletToDisk();
 
     TransactionPool* txpool_;
     UnspentTxOutPool* utxopool_;
 
     std::pair<std::string, std::string> keyPair;
+
+    // amount of outgoing capcoin in the txpool associated with this account
+    double pending_;
+    // balance of the account associated with this account
     double balance_;
 
 };

@@ -226,6 +226,13 @@ Transaction * Wallet::createTransaction(std::string& ccAddress, double& ccAmt){
         return nullptr;
     }
 
+    updatePending();
+    if((ccAmt + pending_) > balance_){
+      // not enough with outgoing pending transactions in the pool
+      std::cerr << "error: funds present, but not enough including pending transactions." << std::endl;
+      return nullptr;
+    }
+
     setTxInput(tx_inputs, unspentOutputs);
 
     setTxOutput(tx_outputs, ccAddress, ccAmt, unspentBal);
@@ -273,6 +280,26 @@ void Wallet::updateWalletBalance(){
 
   balance_ = utxopool_->balance(myAddress);
 
+}
+
+void Wallet::updatePending(){
+  TransactionPool tp(*txpool_);
+
+  double spent = 0;
+  while(tp.size() != 0){
+    Transaction t = tp.front();
+    tp.pop();
+
+    std::string address = t.GetTxOuts().back().GetAddress();
+    if(address != myAddress)
+      continue;
+
+    std::vector<TxOut> txouts{t.GetTxOuts()};
+    // ignore the change returned in last TxOut
+    for(int i=0; i<txouts.size()-1; i++)
+      spent += txouts[i].GetAmount();
+  }
+  pending_ = spent;
 }
 
 int Wallet::getUnspentTx(const double& ccAmt, std::vector<UnspentTxOut>& vtxOut, double& unSpentBal){
