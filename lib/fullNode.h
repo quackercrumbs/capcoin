@@ -26,10 +26,10 @@ public:
 
 private:
 
-  Blockchain * blockchain = new Blockchain();
-  Network * network = new Network();
+  Blockchain * blockchain;
+  Network * network;
   Wallet * wallet;
-  TransactionPool * txpool = new TransactionPool();
+  TransactionPool * txpool;
   bool* killMiner_;
 
 };
