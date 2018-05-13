@@ -18,7 +18,7 @@ public:
 	UnspentTxOut* FindFromIn(const TxIn& input) const;
 	std::string GetHash(const TxIn& input) const;
 	size_t GetIndex() const;
-	size_t Size() const;
+	size_t size() const;
 	double balance(const std::string& publicKey) const;
 	std::vector<UnspentTxOut>* operator[] (std::string&);
 

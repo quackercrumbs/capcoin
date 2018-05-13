@@ -97,7 +97,6 @@ bool UnspentTxOutPool:: AddTxn(const Transaction& txn) {
   return true;
 }
 
-// returns true on successful insert, false if UtxOut already exists
 bool UnspentTxOutPool:: insert(UnspentTxOut& input){
 
   string address = input.GetAddress();
@@ -115,9 +114,9 @@ bool UnspentTxOutPool:: insert(UnspentTxOut& input){
   auto res = uTxOuts_.insert(
     pair<string, vector<UnspentTxOut> >(address, uTxs)
   );
-  if(!res.second && input.GetIndex() > index_)
+  if(input.GetIndex() > index_)
     index_ = input.GetIndex();
-  return res.second;
+  return true;
 }
 
 double UnspentTxOutPool:: balance(const string& publicKey) const {
@@ -139,7 +138,7 @@ size_t UnspentTxOutPool:: GetIndex() const {
   return index_;
 }
 
-size_t UnspentTxOutPool:: Size() const {
+size_t UnspentTxOutPool:: size() const {
   return uTxOuts_.size();
 }
 
