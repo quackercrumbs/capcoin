@@ -114,7 +114,7 @@ void Network::listen(){
 
     // receive message
     if(FD_ISSET(sock, &readfds)){
-      valread = read(sock, buffer, 1024);
+      valread = read(sock, buffer, BUFF_SIZE);
       if(valread == 0){
         close(sock);
         cout << "\nConnection closed by host\n";
@@ -290,7 +290,7 @@ void Network::runServer() {
           {
             //Check if it was for closing , and also read the
             //incoming message
-            if ((valread = read( sd , buffer, 1024)) == 0)
+            if ((valread = read( sd , buffer, BUFF_SIZE)) == 0)
             {
                 // maybe add index to reduce time complexity
                 server.closeConnection(sd);

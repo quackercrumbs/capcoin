@@ -9,6 +9,7 @@
 #include <string>
 #include <thread>
 
+#define BUFF_SIZE 4096
 
 class Network{
 
@@ -44,7 +45,7 @@ private:
   std::string strMessage = "Established Network Connection \r\n";
   const char *message = strMessage.c_str();
   TCPSocket* client_socket;
-  char buffer[1025];
+  char buffer[BUFF_SIZE+1];
   fd_set readfds;
   std::string lastReceived = "";
 
