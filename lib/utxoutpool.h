@@ -17,6 +17,8 @@ public:
 	void AddTxOuts(const std::vector<TxOut>& txOuts, const std::string& hash);
 	UnspentTxOut* FindFromIn(const TxIn& input) const;
 	std::string GetHash(const TxIn& input) const;
+	size_t GetIndex() const;
+	size_t Size() const;
 	double balance(const std::string& publicKey) const;
 	std::vector<UnspentTxOut>* operator[] (std::string&);
 

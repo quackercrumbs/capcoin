@@ -29,21 +29,36 @@ std::vector<Block> Blockchain::GetChain(){
     return blocks_;
 }
 
-bool Blockchain::Push(Block& block, TransactionPool* pool){
+bool Blockchain::Push(Block& block, TransactionPool* pool, UnspentTxOutPool* utxopool){
   //verify block
   //if fails, return false
-  if (block.GetIndex() != blocks_[blocks_.size()-1].GetIndex()+1 && 
+  if (block.GetIndex() != blocks_[blocks_.size()-1].GetIndex()+1 &&
   block.GetPreviousHash() != blocks_[blocks_.size()-1].GetHash())
     return false;
   for (auto i : block.GetData()){
-	pool->remove(i);
+	   pool->remove(i);
   }
+
+  size_t noTxns = block.GetData().size();
+  for(int i=1; i<noTxns; i++){
+    Transaction t = block.GetData()[i];
+    utxopool->AddTxn(t);
+  }
+
+  //process coinbase last
+  Transaction coinbaseTx = block.GetData().front();
+  std::string minerAddress = coinbaseTx.GetTxOuts().back().GetAddress();
+  double amount = coinbaseTx.GetTxOuts().back().GetAmount();
+
+  UnspentTxOut u(coinbaseTx.hash(), minerAddress, utxopool->GetIndex()+1, amount);
+  utxopool->insert(u);
+
   blocks_.push_back(block);
 
   return true;
 }
 
-bool Blockchain::GenerateNextBlock(bool* killMiner, std::vector <Transaction>& data){
+bool Blockchain::GenerateNextBlock(bool* killMiner, std::vector <Transaction>& data, TransactionPool* pool, UnspentTxOutPool* utxopool){
     size_t index = blocks_[blocks_.size()-1].GetIndex() + 1;
     time_t timestamp = time(0);
     size_t difficulty = GetDifficulty();
@@ -67,7 +82,8 @@ bool Blockchain::GenerateNextBlock(bool* killMiner, std::vector <Transaction>& d
 
     if(IsValidNewBlock(newBlock)) {
         std::cout << "[miner]: Mining operation successful." << std::endl;
-        blocks_.push_back(newBlock);
+        // blocks_.push_back(newBlock);
+        Push(newBlock, pool, utxopool);
     }
     else {
         std::cout << "[miner]: Mining operation failed." << std::endl;

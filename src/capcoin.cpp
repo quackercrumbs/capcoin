@@ -29,6 +29,9 @@ int main(int argc, char *argv[]) {
     // create Transaction Pool
     TransactionPool txpool;
 
+    // create UTxOutPool
+    UnspentTxOutPool utxoutpool;
+
     //Test input data for generating a new block
     TxIn in1("a", "asdasdasd", 1);
     TxOut out1("b", 50);
@@ -46,11 +49,11 @@ int main(int argc, char *argv[]) {
 
     killMinerSignal = true;
     std::cout << "[node]: Generating a new block." << std::endl;
-    bc.GenerateNextBlock(&killMinerSignal, GenTxns);
+    bc.GenerateNextBlock(&killMinerSignal, GenTxns, &txpool, &utxoutpool);
 
     //create Network
     Network nw;
-    nw.runServer(&bc, &txpool, &killMinerSignal);
+    nw.runServer(&bc, &txpool, &utxoutpool, &killMinerSignal);
 
     //  network listen on seperate thread
 
@@ -77,7 +80,7 @@ int main(int argc, char *argv[]) {
     // create Network
     Network nw;
     //connect as client
-    nw.startClient(&bc, &txpool, &killMinerSignal);
+    nw.startClient(&bc, &txpool, &utxoutpool, &killMinerSignal);
     //start listening for incoming messages, on another thread
     std::thread listenThread = nw.listenThread();
 
@@ -86,7 +89,7 @@ int main(int argc, char *argv[]) {
     Wallet wa(&utxoutpool);
 
 
-    std::string address = "111111";
+    std::string address = wa.GetAddress();
     // create Miner
     Miner miner (&bc,&txpool,&utxoutpool,&nw,&killMinerSignal,address);
     std::thread miner_thread = miner.mineThread();

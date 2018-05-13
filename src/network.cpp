@@ -141,7 +141,7 @@ void Network::listen(){
         //   blockchain->Push(block);
         // }
 
-        bool success = blockchain->Push(block,txpool);
+        bool success = blockchain->Push(block,txpool_,utxopool_);
         if(success) {
             std::cout << "[network]: Accepted block" << std::endl;
         }
@@ -155,7 +155,7 @@ void Network::listen(){
         //Deserialize transaction
         Transaction newTx = JSONtoTx(s);
         //Push transaction into pool
-        bool result = txpool->push(newTx);
+        bool result = txpool_->push(newTx);
       }
       if(s.substr(0, 3) == "END")
       {
@@ -171,7 +171,7 @@ void Network::listen(){
   }
 }
 
-void Network::startClient(Blockchain * bc, TransactionPool * transaction_pool, bool* killMiner){
+void Network::startClient(Blockchain * bc, TransactionPool * transaction_pool, UnspentTxOutPool * utxo_pool, bool* killMiner){
 
   if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0){
     cout << "\n Socket creation error \n";
@@ -194,16 +194,18 @@ void Network::startClient(Blockchain * bc, TransactionPool * transaction_pool, b
   }
 
   blockchain = bc;
-  txpool = transaction_pool;
+  txpool_ = transaction_pool;
+  utxopool_ = utxo_pool;
   killMiner_ = killMiner;
 }
 
-void Network::runServer(Blockchain * bc, TransactionPool* pool, bool* killMiner) {
+void Network::runServer(Blockchain * bc, TransactionPool* pool, UnspentTxOutPool* utxo_pool, bool* killMiner) {
 
   TCPSocket* s;
 
   blockchain = bc;
-  txpool = pool;
+  txpool_ = pool;
+  utxopool_ = utxo_pool;
   killMiner_ = killMiner;
   while(1)
   {
@@ -336,7 +338,7 @@ void Network::runServer(Blockchain * bc, TransactionPool* pool, bool* killMiner)
                   Block block = JSONtoBlock(s);
                   std::cout << "[network]: The block is index " << block.GetIndex() << std::endl;
                   // Push
-                  bool success = blockchain->Push(block,txpool);
+                  bool success = blockchain->Push(block,txpool_,utxopool_);
                   if (success) {
                     std::cout << "[network]: Accepted block" << std::endl;
                   }

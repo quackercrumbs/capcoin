@@ -42,7 +42,7 @@ void Miner::mine_loop() {
                   }
 
                   // Mine the block
-                  success = chain_->GenerateNextBlock(killMiner_, txSupply);
+                  success = chain_->GenerateNextBlock(killMiner_, txSupply, txpool_, utxopool_);
                   if(success) {
                       if(chain_->GetHeight() == beforeMiningHeight+1) {
                         //Broadcast block to network

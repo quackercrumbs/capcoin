@@ -13,8 +13,8 @@
 class Network{
 
 public:
-  void startClient(Blockchain * bc, TransactionPool* txpool, bool* killMiner);
-  void runServer(Blockchain * bc, TransactionPool* txpool, bool* killMiner);
+  void startClient(Blockchain * bc, TransactionPool* txpool, UnspentTxOutPool* utxopool, bool* killMiner);
+  void runServer(Blockchain * bc, TransactionPool* txpool, UnspentTxOutPool* utxopool, bool* killMiner);
 
   void listen();
   std::thread listenThread(){
@@ -48,7 +48,8 @@ private:
   std::string lastReceived = "";
 
   Blockchain * blockchain = nullptr;
-  TransactionPool * txpool = nullptr;
+  TransactionPool * txpool_ = nullptr;
+  UnspentTxOutPool * utxopool_ = nullptr;
 
   bool* killMiner_;
 };

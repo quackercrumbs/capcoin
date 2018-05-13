@@ -135,6 +135,14 @@ double UnspentTxOutPool:: balance(const string& publicKey) const {
   return -1.0;
 }
 
+size_t UnspentTxOutPool:: GetIndex() const {
+  return index_;
+}
+
+size_t UnspentTxOutPool:: Size() const {
+  return uTxOuts_.size();
+}
+
 std::vector<UnspentTxOut>* UnspentTxOutPool::operator[] (std::string& address) {
   auto search = uTxOuts_.find(address);
 
