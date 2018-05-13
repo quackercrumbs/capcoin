@@ -53,11 +53,9 @@ bool Transaction:: SignaturesValid(UnspentTxOutPool* source) const{
 bool Transaction:: OneToOne(UnspentTxOutPool* source) const{
   double inAmt = 0, outAmt = 0;
   for (TxIn x: txIns_){
-    UnspentTxOut* temp = source->FindFromIn(x);
-    if (temp == nullptr) continue;
-
-    UnspentTxOut t{*temp};
-    double dt = t.GetAmount();
+    UnspentTxOut* t = source->FindFromIn(x);
+    if (t == nullptr) continue;
+    double dt = t->GetAmount();
     inAmt = inAmt + dt;
   }
   for (TxOut y: txOuts_){
