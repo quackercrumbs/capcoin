@@ -2,7 +2,8 @@
 #include "../lib/socket.h"
 #include "../lib/network.h"
 
-Blockchain::Blockchain(){
+Blockchain::Blockchain(TransactionPool* pool, UnspentTxOutPool* utxopool)
+  :txpool_{pool}, utxopool_{utxopool} {
     //initialize the chain with the genesis block.
     //Change addresses and hashes in future
     TxIn GenIn("", "", 0);
@@ -29,20 +30,20 @@ std::vector<Block> Blockchain::GetChain(){
     return blocks_;
 }
 
-bool Blockchain::Push(Block& block, TransactionPool* pool, UnspentTxOutPool* utxopool){
+bool Blockchain::Push(Block& block){
   //verify block
   //if fails, return false
   if (block.GetIndex() != blocks_[blocks_.size()-1].GetIndex()+1 &&
   block.GetPreviousHash() != blocks_[blocks_.size()-1].GetHash())
     return false;
   for (auto i : block.GetData()){
-	   pool->remove(i);
+	   txpool_->remove(i);
   }
 
   size_t noTxns = block.GetData().size();
   for(int i=1; i<noTxns; i++){
     Transaction t = block.GetData()[i];
-    utxopool->AddTxn(t);
+    utxopool_->AddTxn(t);
   }
 
   //process coinbase last
@@ -50,15 +51,15 @@ bool Blockchain::Push(Block& block, TransactionPool* pool, UnspentTxOutPool* utx
   std::string minerAddress = coinbaseTx.GetTxOuts().back().GetAddress();
   double amount = coinbaseTx.GetTxOuts().back().GetAmount();
 
-  UnspentTxOut u(coinbaseTx.hash(), minerAddress, utxopool->GetIndex()+1, amount);
-  utxopool->insert(u);
+  UnspentTxOut u(coinbaseTx.hash(), minerAddress, utxopool_->GetIndex()+1, amount);
+  utxopool_->insert(u);
 
   blocks_.push_back(block);
 
   return true;
 }
 
-bool Blockchain::GenerateNextBlock(bool* killMiner, std::vector <Transaction>& data, TransactionPool* pool, UnspentTxOutPool* utxopool){
+bool Blockchain::GenerateNextBlock(bool* killMiner, std::vector <Transaction>& data){
     size_t index = blocks_[blocks_.size()-1].GetIndex() + 1;
     time_t timestamp = time(0);
     size_t difficulty = GetDifficulty();
@@ -83,7 +84,7 @@ bool Blockchain::GenerateNextBlock(bool* killMiner, std::vector <Transaction>& d
     if(IsValidNewBlock(newBlock)) {
         std::cout << "[miner]: Mining operation successful." << std::endl;
         // blocks_.push_back(newBlock);
-        Push(newBlock, pool, utxopool);
+        Push(newBlock);
     }
     else {
         std::cout << "[miner]: Mining operation failed." << std::endl;

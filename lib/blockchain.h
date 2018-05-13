@@ -14,7 +14,7 @@
 class Blockchain {
 public:
 	//Initalize the blockchain w/ a Genesis block
-	Blockchain ();
+	Blockchain (TransactionPool* pool, UnspentTxOutPool* utxopool);
 
 	//Initalize the blockchain by loading data
 	Blockchain (const std::vector<Block>& blocks);
@@ -31,10 +31,10 @@ public:
 	bool HashMatchesDifficulty(std::string hash, size_t difficulty);
 
 	//Generates a new block
-	bool GenerateNextBlock(bool* killMiner, std::vector<Transaction>& data, TransactionPool* pool, UnspentTxOutPool* utxopool);
+	bool GenerateNextBlock(bool* killMiner, std::vector<Transaction>& data);
 
 	//Pushes the new block onto the blockchain
-	bool Push(Block& block, TransactionPool* pool, UnspentTxOutPool* utxopool);
+	bool Push(Block& block);
 
 	//Returns the latest block on the chain
 	Block GetLastBlock();
@@ -50,6 +50,9 @@ public:
 private:
 	std::vector<Block> blocks_;
 	friend class Block;
+
+	TransactionPool * txpool_;
+	UnspentTxOutPool * utxopool_;
 };
 
 #endif

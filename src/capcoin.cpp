@@ -22,15 +22,15 @@ int main(int argc, char *argv[]) {
     //server
     std::cout << "[node]: Starting as server" << std::endl;
 
-    // create Blockchain
-    Blockchain bc;
-    // Block genBlock = bc.GetLastBlock();
-
     // create Transaction Pool
     TransactionPool txpool;
 
     // create UTxOutPool
     UnspentTxOutPool utxoutpool;
+
+    // create Blockchain
+    Blockchain bc(&txpool, &utxoutpool);
+    // Block genBlock = bc.GetLastBlock();
 
     //Test input data for generating a new block
     TxIn in1("a", "asdasdasd", 1);
@@ -49,11 +49,11 @@ int main(int argc, char *argv[]) {
 
     killMinerSignal = true;
     std::cout << "[node]: Generating a new block." << std::endl;
-    bc.GenerateNextBlock(&killMinerSignal, GenTxns, &txpool, &utxoutpool);
+    bc.GenerateNextBlock(&killMinerSignal, GenTxns);
 
     //create Network
-    Network nw;
-    nw.runServer(&bc, &txpool, &utxoutpool, &killMinerSignal);
+    Network nw(&bc, &txpool, &utxoutpool, &killMinerSignal);
+    nw.runServer();
 
     //  network listen on seperate thread
 
@@ -67,20 +67,20 @@ int main(int argc, char *argv[]) {
 
     // first, create all 4 parts of the node, Blockchain, Network, Miner and Wallet
 
-    // create Blockchain
-    Blockchain bc;
-    Block genBlock = bc.GetLastBlock();
-
     // create Transaction Pool
     TransactionPool txpool;
 
     // create UTxOutPool
     UnspentTxOutPool utxoutpool;
 
+    // create Blockchain
+    Blockchain bc(&txpool, &utxoutpool);
+    Block genBlock = bc.GetLastBlock();
+
     // create Network
-    Network nw;
+    Network nw(&bc, &txpool, &utxoutpool, &killMinerSignal);
     //connect as client
-    nw.startClient(&bc, &txpool, &utxoutpool, &killMinerSignal);
+    nw.startClient();
     //start listening for incoming messages, on another thread
     std::thread listenThread = nw.listenThread();
 

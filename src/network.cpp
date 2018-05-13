@@ -8,6 +8,9 @@
 
 using namespace std;
 
+Network::Network(Blockchain * bc, TransactionPool * tp, UnspentTxOutPool * up, bool * killMiner)
+  : blockchain(bc), txpool_(tp), utxopool_(up), killMiner_(killMiner) {}
+
 void Network::broadcastMessage(string msg){
   send(sock, msg.c_str(), msg.size(), 0);
 }
@@ -141,7 +144,7 @@ void Network::listen(){
         //   blockchain->Push(block);
         // }
 
-        bool success = blockchain->Push(block,txpool_,utxopool_);
+        bool success = blockchain->Push(block);
         if(success) {
             std::cout << "[network]: Accepted block" << std::endl;
         }
@@ -171,7 +174,7 @@ void Network::listen(){
   }
 }
 
-void Network::startClient(Blockchain * bc, TransactionPool * transaction_pool, UnspentTxOutPool * utxo_pool, bool* killMiner){
+void Network::startClient(){
 
   if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0){
     cout << "\n Socket creation error \n";
@@ -193,20 +196,12 @@ void Network::startClient(Blockchain * bc, TransactionPool * transaction_pool, U
     return;
   }
 
-  blockchain = bc;
-  txpool_ = transaction_pool;
-  utxopool_ = utxo_pool;
-  killMiner_ = killMiner;
 }
 
-void Network::runServer(Blockchain * bc, TransactionPool* pool, UnspentTxOutPool* utxo_pool, bool* killMiner) {
+void Network::runServer() {
 
   TCPSocket* s;
 
-  blockchain = bc;
-  txpool_ = pool;
-  utxopool_ = utxo_pool;
-  killMiner_ = killMiner;
   while(1)
   {
 
@@ -338,7 +333,7 @@ void Network::runServer(Blockchain * bc, TransactionPool* pool, UnspentTxOutPool
                   Block block = JSONtoBlock(s);
                   std::cout << "[network]: The block is index " << block.GetIndex() << std::endl;
                   // Push
-                  bool success = blockchain->Push(block,txpool_,utxopool_);
+                  bool success = blockchain->Push(block);
                   if (success) {
                     std::cout << "[network]: Accepted block" << std::endl;
                   }
