@@ -27,6 +27,7 @@ void Network::broadcastBlock(Block& block){
 }
 
 void Network::broadcastTransaction(Transaction& t) {
+    std::cout << "[network]: Broadcasting a transaction" << std::endl;
     Serialize serializer(t);
     string str = serializer.toString();
     send(sock, str.c_str(), str.size(), 0);
@@ -155,6 +156,7 @@ void Network::listen(){
 
       }
       else if(s.substr(1,11) == "TRANSACTION") {
+        std::cout << "[network]: Recieved transaction" << std::endl;
         //Deserialize transaction
         Transaction newTx = JSONtoTx(s);
         //Push transaction into pool
@@ -348,7 +350,10 @@ void Network::runServer() {
 
                 }
                 else if(s.substr(1,11) == "TRANSACTION") {
+                    std::cout << "[network]: Recieved transaction" << std::endl;
                     server.broadcastAll(sd, string(buffer));
+                    Transaction txn = JSONtoTx(s);
+                    txpool_->push(txn);
                 }
             	else{
             		  server.broadcastAll(sd, string(buffer));
