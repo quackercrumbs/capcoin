@@ -44,12 +44,14 @@ void Miner::mine_loop() {
                   // Mine the block
                   success = chain_->GenerateNextBlock(killMiner_, txSupply);
                   if(success) {
+                      std::cout << "[miner-succ]: Chain Height: " << chain_->GetHeight();
+                      std::cout << " Before Height: " << beforeMiningHeight << std::endl;
                       if(chain_->GetHeight() == beforeMiningHeight+1) {
                         //Broadcast block to network
-                          std::cout << "[miner]: Telling the network to broadcast block" << std::endl;
+                          std::cout << "[miner-succ]: Telling the network to broadcast block" << std::endl;
                           Block b = chain_->GetLastBlock();
-                          std::cout << "[miner-test]: block tx size: " << b.GetData().size() << std::endl;
-                          std::cout << "[miner-test]: block index:" << b.GetIndex() << std::endl;
+                          std::cout << "[miner-succ]: block tx size: " << b.GetData().size() << std::endl;
+                          std::cout << "[miner-succ]: block index:" << b.GetIndex() << std::endl;
                           nw_->broadcastBlock(b);
                           start = time(0);
 
