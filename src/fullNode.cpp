@@ -6,6 +6,7 @@
 FullNode::FullNode(Blockchain * bc, Network * nw, Wallet * wa, TransactionPool * transactionpool, bool* killMiner):wallet(wa){
   blockchain = bc;
   network = nw;
+  wallet = wa;
   txpool = transactionpool;
   killMiner_ = killMiner;
 }
@@ -44,7 +45,8 @@ void FullNode::run(){
       // this screen will display the current balance, and any recent transactions by this node
       std::cout << "***************************************************************************" << std::endl;
       std::cout << "*                                                                         *" << std::endl;
-      std::cout << "*    Balance:                                                             *" << std::endl;
+      std::cout << "*    Balance:                                               ";
+      std::cout<<std::fixed << std::setprecision(7) << std::setw(14) << wallet->Balance() << "*" << std::endl;
       std::cout << "*                                                                         *" << std::endl;
       std::cout << "*    Recent Transactions:                                                 *" << std::endl;
       std::cout << "*                                                                         *" << std::endl;
@@ -115,7 +117,7 @@ void FullNode::run(){
           std::cout << "isWalletActive: " << wallet->isWalletActive() << std::endl;
 
           // network->broadcastMessage(std::to_string(amt));
-            
+
           /*
           TxIn dummyIn("", "", 0);
           TxOut dummyOut("32ba5334aafcd8e7266e47076996b55", amt);
@@ -134,12 +136,12 @@ void FullNode::run(){
           std::cout << "*    Transaction Sent!" << std::endl;
           std::cout << "***************************************************************************" << std::endl;
           }
-          
+
           /*
           std::vector<Transaction> data{NewTxn};
           Block block = blockchain->GenerateNextBlock(data);
           */
-        } 
+        }
       }
 
     }
