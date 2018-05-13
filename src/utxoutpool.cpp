@@ -76,7 +76,7 @@ void UnspentTxOutPool:: AddTxOuts(const vector<TxOut>& txOuts, const string& has
 }
 
 bool UnspentTxOutPool:: AddTxn(const Transaction& txn) {
-  if(!txn.Validate(*this)){
+  if(!txn.Validate(this)){
       cerr<< "error: invalid transaction" << endl;
      return false;
 

@@ -24,20 +24,20 @@ bool Transaction:: operator == (const Transaction& beta) const{
   return id_ == beta.id_ ? true : false;
 }
 
-bool Transaction:: Validate(UnspentTxOutPool& source) const{
+bool Transaction:: Validate(UnspentTxOutPool* source) const{
   if(id_ != CalcHash() || !OneToOne(source) || !SignaturesValid(source))
     return false;
   return true;
 }
 
-bool Transaction:: SignaturesValid(UnspentTxOutPool& source) const{
+bool Transaction:: SignaturesValid(UnspentTxOutPool* source) const{
 
   // by convention: last txout is always to self
   std::string address = txOuts_.back().GetAddress();
 
   for (auto x: txIns_){
 
-    std::string hash {source.GetHash(x)};
+    std::string hash {source->GetHash(x)};
     std::string sig  = x.GetSignature();
 
     if(!validSignature(address, hash, sig)) {
@@ -50,10 +50,10 @@ bool Transaction:: SignaturesValid(UnspentTxOutPool& source) const{
 }
 
 
-bool Transaction:: OneToOne(UnspentTxOutPool& source) const{
+bool Transaction:: OneToOne(UnspentTxOutPool* source) const{
   double inAmt = 0, outAmt = 0;
   for (TxIn x: txIns_){
-    UnspentTxOut* temp = source.FindFromIn(x);
+    UnspentTxOut* temp = source->FindFromIn(x);
     if (temp == nullptr) continue;
 
     UnspentTxOut t{*temp};

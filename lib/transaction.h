@@ -25,14 +25,14 @@ public:
     std::vector<TxIn> GetTxIns() const;
     std::vector<TxOut> GetTxOuts() const;
     std::string hash() const;
-    bool Validate(UnspentTxOutPool& source) const;
+    bool Validate(UnspentTxOutPool* source) const;
     bool operator == (const Transaction& beta) const;
 
     friend std::ostream& operator<<(std::ostream& os, const Transaction& t);
 private:
     std::string CalcHash() const;
-    bool SignaturesValid(UnspentTxOutPool& source) const;
-    bool OneToOne(UnspentTxOutPool& source) const;
+    bool SignaturesValid(UnspentTxOutPool* source) const;
+    bool OneToOne(UnspentTxOutPool* source) const;
     std::string id_;
     std::vector<TxIn> txIns_;
     std::vector<TxOut> txOuts_;
