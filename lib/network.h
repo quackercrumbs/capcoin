@@ -40,7 +40,7 @@ private:
   int master_socket = server.getSockDesc();
   struct sockaddr_in serv_addr;
   struct sockaddr_in address;
-  std::string ip_addr =  "167.99.12.102";
+  std::string ip_addr =  "167.99.144.61";
   //std::string ip_addr =  "127.0.0.1";
   std::string strMessage = "Established Network Connection \r\n";
   const char *message = strMessage.c_str();

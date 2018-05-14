@@ -334,8 +334,8 @@ void TCPServerSocket::broadcastAll(int sd, const string &msg)
     if(s->getSockDesc() == sd)
       continue;
 
-    cout << "Sending to " << s->getSockDesc() << endl;
-
+    cout << "[network-socket] : Sending to " << s->getSockDesc() << endl;
+    cout << "[network-socket] : Message: " << msg << std::endl; 
     if(send(s->getSockDesc(), msg.c_str(), msg.length(), 0) != msg.length())
     {
       cout << "\n*send error*\n" << endl;

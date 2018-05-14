@@ -33,7 +33,7 @@ std::vector<Block> Blockchain::GetChain(){
 bool Blockchain::Push(Block& block){
   //verify block
   //if fails, return false
-  if (block.GetIndex() != blocks_[blocks_.size()-1].GetIndex()+1 &&
+  if (block.GetIndex() != blocks_[blocks_.size()-1].GetIndex()+1 || 
   block.GetPreviousHash() != blocks_[blocks_.size()-1].GetHash())
     return false;
   for (auto i : block.GetData()){
@@ -66,12 +66,12 @@ bool Blockchain::GenerateNextBlock(bool* killMiner, std::vector <Transaction>& d
     size_t nonce = 0;
     std::string hash_;
     std::string prevHash = blocks_[blocks_.size()-1].GetHash();
-    std::cout << "[miner]: Mining operation started ..." << std::endl;
+    std::cout << "[miner-bc]: Mining operation started ..." << std::endl;
     //Search for hash that matches difficulty, aka mining.
     while (true) {
         // Stop all mining operations upon kill signal
-		if(*killMiner) {
-            std::cout << "[miner]: Mining operation halted. Due to kill signal." << std::endl;
+        if(*killMiner) {
+            std::cout << "[miner-bc]: Mining operation halted. Due to kill signal." << std::endl;
 			return false;
         }
         hash_ = CalculateHash(index, prevHash, timestamp, data, difficulty, nonce);
@@ -82,12 +82,12 @@ bool Blockchain::GenerateNextBlock(bool* killMiner, std::vector <Transaction>& d
     Block newBlock(index, timestamp, difficulty, nonce, prevHash, data);
 
     if(IsValidNewBlock(newBlock)) {
-        std::cout << "[miner]: Mining operation successful." << std::endl;
+        std::cout << "[miner-bc]: Mining operation successful." << std::endl;
         // blocks_.push_back(newBlock);
         Push(newBlock);
     }
     else {
-        std::cout << "[miner]: Mining operation failed." << std::endl;
+        std::cout << "[miner-bc]: Mining operation failed." << std::endl;
         return false;
     }
     //TODO : Broadcast new block
@@ -174,7 +174,7 @@ size_t Blockchain::GetHeight() {
 }
 
 std::ostream& operator<<(std::ostream& os, const Blockchain& bc) {
-    for(auto i = bc.blocks_.rbegin(); i != bc.blocks_.rend(); ++i) {
+    for(auto i = bc.blocks_.begin(); i != bc.blocks_.end(); ++i) {
         os << *i << std::endl;
     }
     return os;
