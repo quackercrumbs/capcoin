@@ -58,6 +58,11 @@ void Miner::mine_loop() {
                           //empty txSupply
                           txSupply.clear();
                       }
+                      else {
+                        // if block was rejected, dump it's contents
+                        chain_->Dump();
+                        std::cout << "[miner-fail]: Block dumped" << std::endl;
+                      }
                   }
             }
         }

@@ -12,9 +12,12 @@ public:
 	//All unspent TxOuts are loaded through this constructor
 	UnspentTxOutPool();
 	bool insert(UnspentTxOut& input);
+	bool remove(std::string& address, std::string& id);
+	bool pop(std::string& address);
 	bool AddTxn(const Transaction& txn);
 	void RemoveTxIns(const std::vector<TxIn>& txIns, const std::string& address);
 	void AddTxOuts(const std::vector<TxOut>& txOuts, const std::string& hash);
+	void UndoTxn(const Transaction& txn);
 	UnspentTxOut* FindFromIn(const TxIn& input) const;
 	std::string GetHash(const TxIn& input) const;
 	size_t GetIndex() const;

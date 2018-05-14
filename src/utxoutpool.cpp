@@ -63,13 +63,9 @@ void UnspentTxOutPool:: RemoveTxIns(const vector<TxIn>& txIns, const string& add
 }
 
 void UnspentTxOutPool:: AddTxOuts(const vector<TxOut>& txOuts, const string& hash) {
-  stringstream ss;
 
   for(auto out: txOuts) {
-    ss.str("");
-    ss << hash << index_;
-    string newId = picosha2::hash256_hex_string(ss.str());
-    UnspentTxOut utxo(newId, out.GetAddress(), ++index_, out.GetAmount());
+    UnspentTxOut utxo(hash, out.GetAddress(), ++index_, out.GetAmount());
     insert(utxo);
   }
 
@@ -97,6 +93,29 @@ bool UnspentTxOutPool:: AddTxn(const Transaction& txn) {
   return true;
 }
 
+void UnspentTxOutPool:: UndoTxn(const Transaction& t){
+  string address = t.GetTxOuts().back().GetAddress();
+  string hash = t.hash();
+
+  double amountSpent = 0.0;
+  // remove a utxo for every txout
+  for(auto out: t.GetTxOuts()){
+    remove(address, hash);
+    amountSpent += out.GetAmount();
+  }
+
+  double interval = amountSpent / t.GetTxIns().size();
+  double amountLeft = amountSpent;
+
+  int i=0;
+  size_t noTxIns = t.GetTxIns().size();
+  for(auto in: t.GetTxIns()){
+    UnspentTxOut u(hash, address, in.GetIndex(), ((++i) == noTxIns) ? amountLeft : interval );
+    insert(u);
+    amountLeft -= interval;
+  }
+}
+
 bool UnspentTxOutPool:: insert(UnspentTxOut& input){
 
   string address = input.GetAddress();
@@ -119,9 +138,44 @@ bool UnspentTxOutPool:: insert(UnspentTxOut& input){
   return true;
 }
 
-double UnspentTxOutPool:: balance(const string& publicKey) const {
+bool UnspentTxOutPool:: remove(string& address, string& id) {
+  auto search = uTxOuts_.find(address);
 
-  auto search = uTxOuts_.find(publicKey);
+  if(search == uTxOuts_.end())
+    return false;
+
+  vector<UnspentTxOut> tempUTxOs = uTxOuts_[address];
+
+  for(auto it = tempUTxOs.begin(); it!=tempUTxOs.end(); it++) {
+    if(it->GetId() == id) {
+      tempUTxOs.erase(it);
+      break;
+    }
+  }
+
+  uTxOuts_.erase(address);
+  uTxOuts_[address] = tempUTxOs;
+
+  return true;
+}
+
+bool UnspentTxOutPool:: pop(string& address) {
+  auto search = uTxOuts_.find(address);
+
+  if(search == uTxOuts_.end())
+    return false;
+
+  vector<UnspentTxOut> tempUTxOs = uTxOuts_[address];
+  tempUTxOs.pop_back();
+  uTxOuts_.erase(address);
+  uTxOuts_[address] = tempUTxOs;
+
+  return true;
+}
+
+double UnspentTxOutPool:: balance(const string& address) const {
+
+  auto search = uTxOuts_.find(address);
 
   // if address is found in pool, sum all UnspentTxOut
   if(search != uTxOuts_.end()) {

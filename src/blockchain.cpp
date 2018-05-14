@@ -33,7 +33,7 @@ std::vector<Block> Blockchain::GetChain(){
 bool Blockchain::Push(Block& block){
   //verify block
   //if fails, return false
-  if (block.GetIndex() != blocks_[blocks_.size()-1].GetIndex()+1 || 
+  if (block.GetIndex() != blocks_[blocks_.size()-1].GetIndex()+1 ||
   block.GetPreviousHash() != blocks_[blocks_.size()-1].GetHash())
     return false;
   for (auto i : block.GetData()){
@@ -57,6 +57,24 @@ bool Blockchain::Push(Block& block){
   blocks_.push_back(block);
 
   return true;
+}
+
+void Blockchain::Dump(){
+  Block block = GetLastBlock();
+
+  std::string miner = block.GetData().front().GetTxOuts().back().GetAddress();
+  // pop the coinbase transaction, should be processed last
+  utxopool_->pop(miner);
+
+  // undo the rest, if any
+  for(int i=1; i<block.GetData().size(); i++){
+
+    Transaction t = block.GetData()[i];
+    txpool_->push(t);
+    utxopool_->UndoTxn(t);
+  }
+
+  blocks_.pop_back();
 }
 
 bool Blockchain::GenerateNextBlock(bool* killMiner, std::vector <Transaction>& data){
