@@ -166,10 +166,16 @@ void Network::listen(){
         //The broadcasted block was rejected by server
         std::cout << "[network]: Block was rejected!" << std::endl;
        
-        //Drop all blocks up to server blockchain height 
+        //Display server's last block index
         std::cout << "[network]: \"" << s.substr(15) << "\"" <<std::endl;
         size_t index = stol(s.substr(15));
         std::cout << "[network]: Server last block index: " << index <<   std::endl;
+
+        //Drop all blocks up to server blockchain height 
+
+
+        //send another request to server for entire chain
+
       }
       if(s.substr(0, 3) == "END")
       {
@@ -317,7 +323,7 @@ void Network::runServer() {
                 string s = string(buffer);
 
                 // if incoming message is REQUEST send out the chain
-                if(s == "REQUEST"){
+                if(s.substr(1,7) == "\"REQUEST\""){
                   strcpy(buffer, "");
 
                   // Block block = bc->GetLastBlock();
@@ -327,6 +333,10 @@ void Network::runServer() {
                   // string blockStr = serializer.toString();
                   //
                   // server.broadcastToOne(sd, blockStr);
+
+                  std::cout << "[network]: Recieved blockchain request with start index" << s.substr(9) << std::endl;
+                  size_t startIndex = stol(s.substr(9));
+                  std::cout << "startIndex:" << startIndex << std::endl;
 
                   sendChain(sd);
                   cout << "No blocks: " << blockchain->GetChain().size() << "\n";
