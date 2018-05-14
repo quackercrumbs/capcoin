@@ -18,7 +18,7 @@ bool FullNode::updateChain(){
   //Assuming that our chain height matches that of the server
   //send request with starting at the next index (which is the height)
   request += std::to_string(blockchain->GetHeight());
-  std::cout << "[fullnode-network]: Request: " << request << std::endl;
+  std::cout << "[fullnode-network]: Sending " << request << std::endl;
   network->broadcastMessage(request);
   
   return false;

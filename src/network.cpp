@@ -172,9 +172,14 @@ void Network::listen(){
         std::cout << "[network]: Server last block index: " << index <<   std::endl;
 
         //Drop all blocks up to server blockchain height 
-
+        while(blockchain->GetHeight() > index+1) {
+            blockchain->Dump();
+        }
 
         //send another request to server for entire chain
+        std::string bcRequest = "\"REQUEST\":";
+        bcRequest += blockchain->GetHeight();
+        broadcastMessage(bcRequest);
 
       }
       if(s.substr(0, 3) == "END")
