@@ -28,7 +28,7 @@ public:
   void broadcastBlock(Block& block);
   void broadcastTransaction(Transaction& t);
 // These functions are for the server to send to one node.
-  void sendChain(int to);
+  void sendChain(int to, size_t startIndex);
   bool sendBlock(int to, Block& block);
 
   std::string getLastReceived();
@@ -40,9 +40,8 @@ private:
   int master_socket = server.getSockDesc();
   struct sockaddr_in serv_addr;
   struct sockaddr_in address;
-
-  std::string ip_addr = "167.99.12.102";   //Orien
-  //std::string ip_addr =  "167.99.144.61";   //Robin
+  //std::string ip_addr = "167.99.12.102";   //Orien
+  std::string ip_addr =  "167.99.144.61";   //Robin
   //std::string ip_addr =  "127.0.0.1";
   std::string strMessage = "Established Network Connection \r\n";
   const char *message = strMessage.c_str();

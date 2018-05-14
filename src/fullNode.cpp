@@ -13,9 +13,14 @@ FullNode::FullNode(Blockchain * bc, Network * nw, Wallet * wa, TransactionPool *
 
 bool FullNode::updateChain(){
 
-
-  network->broadcastMessage("REQUEST");
-
+  std::cout << "[fullnode-network]: \"Broadcasting\" request to server for blockchain" << std::endl;
+  std::string request = "\"REQUEST\":";
+  //Assuming that our chain height matches that of the server
+  //send request with starting at the next index (which is the height)
+  request += std::to_string(blockchain->GetHeight());
+  std::cout << "[fullnode-network]: Sending " << request << std::endl;
+  network->broadcastMessage(request);
+  
   return false;
   /*
     //listen for responses, perhaps for a reply that states the size of the current chain
