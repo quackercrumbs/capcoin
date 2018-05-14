@@ -171,8 +171,9 @@ void Network::listen(){
         size_t index = stol(s.substr(15));
         std::cout << "[network]: Server last block index: " << index <<   std::endl;
 
-        //Drop all blocks up to server blockchain height 
-        while(blockchain->GetHeight() > index+1) {
+        //Drop all blocks up to server blockchain height - 1
+        //Because my top block =/= server top block (so have to drop my top block)
+        while(blockchain->GetHeight() >= index+1) {
             blockchain->Dump();
         }
 
