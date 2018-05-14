@@ -33,11 +33,11 @@ void Network::broadcastTransaction(Transaction& t) {
     send(sock, str.c_str(), str.size(), 0);
 }
 
-void Network::sendChain(int to)
+void Network::sendChain(int to, size_t startIndex)
 {
   vector<Block> chain = blockchain->GetChain();
 
-  int i = 1;
+  size_t i = startIndex;
 
   for(; i< chain.size(); i++)
   {
@@ -323,7 +323,7 @@ void Network::runServer() {
                 string s = string(buffer);
 
                 // if incoming message is REQUEST send out the chain
-                if(s.substr(1,7) == "\"REQUEST\""){
+                if(s.substr(1,7) == "REQUEST"){
                   strcpy(buffer, "");
 
                   // Block block = bc->GetLastBlock();
@@ -333,12 +333,12 @@ void Network::runServer() {
                   // string blockStr = serializer.toString();
                   //
                   // server.broadcastToOne(sd, blockStr);
+                    
+                  std::cout << "[network]: Recieved blockchain request with start index: " << s.substr(10) << std::endl;
+                  //Parse starting index from request
+                  size_t startIndex = stol(s.substr(10));
 
-                  std::cout << "[network]: Recieved blockchain request with start index" << s.substr(9) << std::endl;
-                  size_t startIndex = stol(s.substr(9));
-                  std::cout << "startIndex:" << startIndex << std::endl;
-
-                  sendChain(sd);
+                  sendChain(sd,startIndex);
                   cout << "No blocks: " << blockchain->GetChain().size() << "\n";
 
                   cout << "Blockchain Sent:\n";

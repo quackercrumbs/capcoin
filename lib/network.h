@@ -28,7 +28,7 @@ public:
   void broadcastBlock(Block& block);
   void broadcastTransaction(Transaction& t);
 // These functions are for the server to send to one node.
-  void sendChain(int to);
+  void sendChain(int to, size_t startIndex);
   bool sendBlock(int to, Block& block);
 
   std::string getLastReceived();
