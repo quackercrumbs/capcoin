@@ -36,6 +36,9 @@ public:
 	//Pushes the new block onto the blockchain
 	bool Push(Block& block);
 
+	//Reverts the changes make by Push
+	void Dump();
+
 	//Returns the latest block on the chain
 	Block GetLastBlock();
 
