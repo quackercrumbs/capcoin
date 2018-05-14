@@ -48,6 +48,9 @@ void FullNode::run(){
       std::cout << "*    Balance:                                               ";
       std::cout<<std::fixed << std::setprecision(7) << std::setw(14) << wallet->Balance() << "*" << std::endl;
       std::cout << "*                                                                         *" << std::endl;
+      std::cout << "*    Address:                                                             *" << std::endl;
+      std::cout << "*       "<<                     std::setw(66) << wallet->GetAddress() << "*" << std::endl;
+      std::cout << "*                                                                         *" << std::endl;
       std::cout << "*    Recent Transactions:                                                 *" << std::endl;
       std::cout << "*                                                                         *" << std::endl;
       std::cout << "***************************************************************************" << std::endl << std::endl;
