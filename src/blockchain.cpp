@@ -2,6 +2,9 @@
 #include "../lib/socket.h"
 #include "../lib/network.h"
 
+#define MIN_TIME 30
+#define MAX_TIME 120
+
 Blockchain::Blockchain(TransactionPool* pool, UnspentTxOutPool* utxopool)
   :txpool_{pool}, utxopool_{utxopool} {
     //initialize the chain with the genesis block.
@@ -147,10 +150,10 @@ size_t Blockchain::GetDifficulty(){
     if (blocks_.size() < 2)
         return blocks_[0].GetDifficulty();
     //if the time between the last two blocks is less than 10 min, increase difficulty
-    if (blocks_[blocks_.size()-1].GetTimestamp() - blocks_[blocks_.size()-2].GetTimestamp() < 600)
+    if (blocks_[blocks_.size()-1].GetTimestamp() - blocks_[blocks_.size()-2].GetTimestamp() < MIN_TIME)
         return blocks_[blocks_.size()-1].GetDifficulty() + 1;
     //if the time between the last two blocks is more than 15 min, decrease difficulty
-    else if (900 < blocks_[blocks_.size()-1].GetTimestamp() - blocks_[blocks_.size()-2].GetTimestamp())
+    else if (MAX_TIME < blocks_[blocks_.size()-1].GetTimestamp() - blocks_[blocks_.size()-2].GetTimestamp())
         return blocks_[blocks_.size()-1].GetDifficulty() - 1;
     //if in the 10-15 min range, keep difficulty
     else
