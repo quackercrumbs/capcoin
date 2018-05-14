@@ -167,9 +167,9 @@ void Network::listen(){
         std::cout << "[network]: Block was rejected!" << std::endl;
        
         //Drop all blocks up to server blockchain height 
-        std::cout << "[network]: \"" << s.substr(16,1) << "\"" <<std::endl;
-        //size_t index = stol(s.substr(16,1));
-        std::cout << "[network]: Server last block index: " <<  std::endl;
+        std::cout << "[network]: \"" << s.substr(16) << "\"" <<std::endl;
+        size_t index = stol(s.substr(16));
+        std::cout << "[network]: Server last block index: " << index <<   std::endl;
       }
       if(s.substr(0, 3) == "END")
       {
@@ -352,9 +352,8 @@ void Network::runServer() {
                     std::cout << "[network]: Rejected block" << std::endl;
                     //Tell the socket that sent this block, Server rejected
                     std::cout << "[network]: Tell socket" << sd << " block rejected" << std::endl; 
-                    std::string response = "\"REJECT_BLOCK\":\"";
+                    std::string response = "\"REJECT_BLOCK\":";
                     response += std::to_string(blockchain->GetLastBlock().GetIndex());
-                    response += "\"";
                     std::cout << "[network]: Sending: " << response << std::endl;
                     server.broadcastToOne(sd, response);
                   }
