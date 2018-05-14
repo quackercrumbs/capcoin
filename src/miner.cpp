@@ -22,7 +22,6 @@ void Miner::mine_loop() {
         //start a timer
         time_t start = time(0);
 
-        size_t beforeMiningHeight = chain_->GetHeight(); // Retrieve current size
 
         //This loop packages transaction for the block
         //When packaging is completed, mining will commence
@@ -40,6 +39,9 @@ void Miner::mine_loop() {
                     txSupply.push_back(txpool_->front());
                     txpool_->pop();
                   }
+                  
+                  // Retrieve current size
+                  size_t beforeMiningHeight = chain_->GetHeight(); 
 
                   // Mine the block
                   success = chain_->GenerateNextBlock(killMiner_, txSupply);
