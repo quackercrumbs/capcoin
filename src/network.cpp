@@ -23,7 +23,7 @@ void Network::broadcastBlock(Block& block){
 
   string str = serializer.toString();
   send(sock, str.c_str(), str.size(), 0);
-
+  std::cout << "[network]: Broadcast complete." << std::endl;
 }
 
 void Network::broadcastTransaction(Transaction& t) {
@@ -167,8 +167,8 @@ void Network::listen(){
         std::cout << "[network]: Block was rejected!" << std::endl;
        
         //Drop all blocks up to server blockchain height 
-        std::cout << "[network]: \"" << s.substr(16) << "\"" <<std::endl;
-        size_t index = stol(s.substr(16));
+        std::cout << "[network]: \"" << s.substr(15) << "\"" <<std::endl;
+        size_t index = stol(s.substr(15));
         std::cout << "[network]: Server last block index: " << index <<   std::endl;
       }
       if(s.substr(0, 3) == "END")
