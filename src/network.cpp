@@ -178,7 +178,7 @@ void Network::listen(){
 
         //send another request to server for entire chain
         std::string bcRequest = "\"REQUEST\":";
-        bcRequest += blockchain->GetHeight();
+        bcRequest += std::to_string(blockchain->GetHeight());
         broadcastMessage(bcRequest);
 
       }
@@ -338,7 +338,7 @@ void Network::runServer() {
                   // string blockStr = serializer.toString();
                   //
                   // server.broadcastToOne(sd, blockStr);
-                    
+                  std::cout << "[network]: in" << s << std::endl; 
                   std::cout << "[network]: Recieved blockchain request with start index: " << s.substr(10) << std::endl;
                   //Parse starting index from request
                   size_t startIndex = stol(s.substr(10));
