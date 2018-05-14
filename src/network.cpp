@@ -167,7 +167,7 @@ void Network::listen(){
         std::cout << "[network]: Block was rejected!" << std::endl;
        
         //Display server's last block index
-        std::cout << "[network]: \"" << s.substr(15) << "\"" <<std::endl;
+        //std::cout << "[network]: \"" << s.substr(15) << "\"" <<std::endl;
         size_t index = stol(s.substr(15));
         std::cout << "[network]: Server last block index: " << index <<   std::endl;
 
@@ -177,10 +177,11 @@ void Network::listen(){
         }
 
         //send another request to server for entire chain
+        std::cout << "[network]: Sending request for blockchain to the server at index: " << blockchain->GetHeight() <<  std::endl;
         std::string bcRequest = "\"REQUEST\":";
         bcRequest += std::to_string(blockchain->GetHeight());
         broadcastMessage(bcRequest);
-
+        std::cout << "[network]: Request sent!" << std::endl;
       }
       if(s.substr(0, 3) == "END")
       {
