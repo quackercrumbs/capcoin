@@ -345,10 +345,10 @@ void Network::runServer() {
                   size_t startIndex = stol(s.substr(10));
 
                   sendChain(sd,startIndex);
-                  cout << "No blocks: " << blockchain->GetChain().size() << "\n";
+                  //cout << "No blocks: " << blockchain->GetChain().size() << "\n";
 
-                  cout << "Blockchain Sent:\n";
-                  cout << *blockchain << endl;
+                  //cout << "Blockchain Sent:\n";
+                  //cout << *blockchain << endl;
 
                 }
                 //if the incoming message is a new block
