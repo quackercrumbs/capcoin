@@ -329,7 +329,7 @@ int Wallet::getUnspentTx(const double& ccAmt, std::vector<UnspentTxOut>& vtxOut,
           unSpentBal += tx.GetAmount();
           vtxOut.push_back(tx);
         }
-        if(unSpentBal > ccAmt){
+        if(unSpentBal >= ccAmt){
           unSpentBal -= ccAmt;
           return 1;
         }
