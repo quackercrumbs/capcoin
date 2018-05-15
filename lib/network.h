@@ -57,4 +57,6 @@ private:
   bool* killMiner_;
 };
 
+bool isComplete(const std::string&);
+
 #endif

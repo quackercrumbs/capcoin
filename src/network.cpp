@@ -23,6 +23,18 @@ void Network::broadcastBlock(Block& block){
 
   string str = serializer.toString();
   send(sock, str.c_str(), str.size(), 0);
+
+  read(sock, buffer, BUFF_SIZE);
+  string s = string(buffer);
+  while(!s.length()) {
+    usleep(50000);
+    read(sock, buffer, BUFF_SIZE);
+    s = string(buffer);
+    if(s.length() > 0 && s.substr(1,9) == "ACK_BLOCK")
+      break;
+    else
+      send(sock, str.c_str(), str.size(), 0);
+  }
   std::cout << "[network]: Broadcast complete." << std::endl;
 }
 
@@ -356,12 +368,16 @@ void Network::runServer() {
                   std::cout << "[network]: Got a block" << std::endl;
                   // Parse block
                   std::cout << "[network-data]: " << s << std::endl;
+                  if(!isComplete(s))
+                    break;
                   Block block = JSONtoBlock(s);
                   std::cout << "[network]: The block is index " << block.GetIndex() << std::endl;
                   // Push
                   bool success = blockchain->Push(block);
                   if (success) {
                     std::cout << "[network]: Accepted block" << std::endl;
+                    std::string response = "\"ACK_BLOCK\"";
+                    server.broadcastToOne(sd, response);
                   }
                   else {
                     std::cout << "[network]: Rejected block" << std::endl;
@@ -399,4 +415,16 @@ void Network::runServer() {
       }
   }
 
+}
+
+bool isComplete(const string& s) {
+  // counts left and right curly braces
+  int left = 0, right = 0;
+  for(auto c: s) {
+    if(c == '{')
+      left++;
+    if(c == '}')
+      right++;
+  }
+  return left == right;
 }
