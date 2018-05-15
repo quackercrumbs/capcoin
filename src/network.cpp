@@ -133,9 +133,13 @@ void Network::listen(){
 
       string s = string(buffer);
 
+      if(!isComplete(s))
+        continue;
+
       if(s.substr(1, 5) == "BLOCK")
       {
         std::cout << "[network]: Got a block message" << std::endl;
+
         *killMiner_ = true;
         //
         Block block = JSONtoBlock(s);
