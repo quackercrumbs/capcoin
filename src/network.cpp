@@ -30,8 +30,12 @@ void Network::broadcastBlock(Block& block){
     usleep(50000);
     read(sock, buffer, BUFF_SIZE);
     s = string(buffer);
-    if(s.length() > 0 && s.substr(1,9) == "ACK_BLOCK")
-      break;
+    if(s.length() > 0) {
+      if(s.substr(1,9) == "ACK_BLOCK")
+        break;
+      if(s.substr(1,12) == "REJECT_BLOCK")
+        return;
+    }
     else
       send(sock, str.c_str(), str.size(), 0);
   }
