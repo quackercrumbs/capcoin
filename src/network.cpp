@@ -22,22 +22,9 @@ void Network::broadcastBlock(Block& block){
   Serialize serializer(block);
 
   string str = serializer.toString();
-  send(sock, str.c_str(), str.size(), 0);
 
-  read(sock, buffer, BUFF_SIZE);
-  string s = string(buffer);
-  while(!s.length()) {
+  while(send(sock, str.c_str(), str.size(), 0) != str.size()) {
     usleep(50000);
-    read(sock, buffer, BUFF_SIZE);
-    s = string(buffer);
-    if(s.length() > 0) {
-      if(s.substr(1,9) == "ACK_BLOCK")
-        break;
-      if(s.substr(1,12) == "REJECT_BLOCK")
-        return;
-    }
-    else
-      send(sock, str.c_str(), str.size(), 0);
   }
   std::cout << "[network]: Broadcast complete." << std::endl;
 }
