@@ -165,7 +165,7 @@ void Network::listen(){
       else if(s.substr(1,12) == "REJECT_BLOCK") {
         //The broadcasted block was rejected by server
         std::cout << "[network]: Block was rejected!" << std::endl;
-       
+
         //Display server's last block index
         //std::cout << "[network]: \"" << s.substr(15) << "\"" <<std::endl;
         size_t index = stol(s.substr(15));
@@ -186,9 +186,7 @@ void Network::listen(){
       }
       if(s.substr(0, 3) == "END")
       {
-        broadcastMessage("EOC\n");
-
-        //cout << s << endl;
+        // end of chain recieved
 
       }
       lastReceived = s;
@@ -340,7 +338,7 @@ void Network::runServer() {
                   // string blockStr = serializer.toString();
                   //
                   // server.broadcastToOne(sd, blockStr);
-                  std::cout << "[network]: in" << s << std::endl; 
+                  std::cout << "[network]: in" << s << std::endl;
                   std::cout << "[network]: Recieved blockchain request with start index: " << s.substr(10) << std::endl;
                   //Parse starting index from request
                   size_t startIndex = stol(s.substr(10));
@@ -368,7 +366,7 @@ void Network::runServer() {
                   else {
                     std::cout << "[network]: Rejected block" << std::endl;
                     //Tell the socket that sent this block, Server rejected
-                    std::cout << "[network]: Tell socket" << sd << " block rejected" << std::endl; 
+                    std::cout << "[network]: Tell socket" << sd << " block rejected" << std::endl;
                     std::string response = "\"REJECT_BLOCK\":";
                     response += std::to_string(blockchain->GetLastBlock().GetIndex());
                     std::cout << "[network]: Sending: " << response << std::endl;
@@ -388,7 +386,8 @@ void Network::runServer() {
                     txpool_->push(txn);
                 }
             	else{
-            		  server.broadcastAll(sd, string(buffer));
+            		  // default: print to cout
+                  std::cout << s << std::endl;
             	}
 
             		// print out all incoming messages
