@@ -45,26 +45,37 @@ void Network::sendChain(int to, size_t startIndex)
 
   size_t i = startIndex;
 
+  //True if the entire blockchain was sent successfully to the socket
+  //False if socket does not send acknowledgement to a block sent to it.
+  bool success = true; 
+
   for(; i< chain.size(); i++)
   {
 
     Block block = chain[i];
-
-    if(!sendBlock(to, block)){
-      cout << "Block unacknowledged" << endl;
+    network_status::BlockSent status = sendBlock(to,block);
+    if(status == network_status::UNACKNOWLEDGED){
+      cout << "[network-sendChain]: Block unacknowledged" << endl;
       i--;
       continue;
     }
+    else if(status == network_status::ACKNOWLEDGED){
+      cout << "[network-sendChain]: Block ACKNOWLEDGED" << endl;
+    }
     else {
-      cout << "Block ACKNOWLEDGED" << endl;
+      cout << "[network-sendChain]: Socket has DIED" << std::endl;
+      success = false;
+      break;
     }
 
   }
-
-  server.broadcastToOne(to, "END");
+  if(success) {    
+    //if the entire chain has been sent, tell the socket that they have reached the end of chain
+    server.broadcastToOne(to, "END");
+  }
 }
 
-bool Network::sendBlock(int to, Block& block)
+network_status::BlockSent Network::sendBlock(int to, Block& block)
 {
 
   Serialize serializer(block);
@@ -83,17 +94,22 @@ bool Network::sendBlock(int to, Block& block)
   int bytes_read = recv(to, buffer, sizeof(buffer), 0);
   buffer[bytes_read] = '\0';
 
+  //Check if there was any response
   if( bytes_read > 0 ){
-
     string s = string(buffer);
     int idx = strtol(s.substr(3).c_str(), NULL, 10);
-
     if (idx == block.GetIndex())
     {
-      return true;
+      //if block index response matches the index of block sent, then block was acknowledged
+        return network_status::ACKNOWLEDGED;
+    }
+    else {
+      //if the block index response does not match, the block was not acknowledged
+      return network_status::UNACKNOWLEDGED;
     }
   }
-  return false;
+  //If there were no bytes read, then the socket was dead
+  return network_status::DEADSOCKET;
 }
 
 
