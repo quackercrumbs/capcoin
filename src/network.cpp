@@ -26,14 +26,17 @@ void Network::broadcastBlock(Block& block){
   while(send(sock, str.c_str(), str.size(), 0) != str.size()) {
     usleep(50000);
   }
-  std::cout << "[network]: Broadcast complete." << std::endl;
+  std::cout << "[network]: Block broadcast complete." << std::endl;
 }
 
 void Network::broadcastTransaction(Transaction& t) {
     std::cout << "[network]: Broadcasting a transaction" << std::endl;
     Serialize serializer(t);
     string str = serializer.toString();
-    send(sock, str.c_str(), str.size(), 0);
+    while(send(sock, str.c_str(), str.size(), 0) != str.size()) {
+      usleep(50000);
+    }
+    std::cout << "[network]: Transaction broadcast complete." << std::endl;
 }
 
 void Network::sendChain(int to, size_t startIndex)
@@ -389,6 +392,8 @@ void Network::runServer() {
                 else if(s.substr(1,11) == "TRANSACTION") {
                     std::cout << "[network]: Recieved transaction" << std::endl;
                     std::cout << "[network-data]: " << s << std:: endl;
+                    if(!isComplete(s))
+                      break;
                     server.broadcastAll(sd, string(buffer));
                     Transaction txn = JSONtoTx(s);
                     txpool_->push(txn);
