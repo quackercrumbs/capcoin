@@ -388,6 +388,7 @@ void Network::runServer() {
                 }
                 else if(s.substr(1,11) == "TRANSACTION") {
                     std::cout << "[network]: Recieved transaction" << std::endl;
+                    std::cout << "[network-data]: " << s << std:: endl;
                     server.broadcastAll(sd, string(buffer));
                     Transaction txn = JSONtoTx(s);
                     txpool_->push(txn);
