@@ -426,6 +426,10 @@ void Network::runServer() {
                 else if(s.substr(1,7) == "BALANCE") {
                   std::cout << "[network]: Recieved balance request" << std::endl;
                   std::cout << "[network-data]: " << s << std:: endl;
+                  std::cout << s.substr(11,77) << std::endl;
+                  // std::stringstream ss;
+                  // ss << "\"BALANCE\":" << utxopool_->balance(11, 77)
+                  // std::string response =
                 }
             	else{
             		  // default: print to cout
