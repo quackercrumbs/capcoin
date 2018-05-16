@@ -426,7 +426,7 @@ void Network::runServer() {
                   if(t != nullptr){
                     txpool_->push(*t);
                     Serialize serializer(*t);
-                    server.broadcastToOne(sd, serializer.toString());
+                    server.broadcastAll(sd, serializer.toString());
                   }
                 }
                 else if(s.substr(1,7) == "BALANCE") {
