@@ -424,12 +424,16 @@ void Network::runServer() {
                   server.broadcastToOne(sd, string(buffer));
                 }
                 else if(s.substr(1,7) == "BALANCE") {
+                  if(s.size() != 78)
+                    break;
                   std::cout << "[network]: Recieved balance request" << std::endl;
                   std::cout << "[network-data]: " << s << std:: endl;
-                  std::cout << s.substr(11,77) << std::endl;
-                  // std::stringstream ss;
-                  // ss << "\"BALANCE\":" << utxopool_->balance(11, 77)
-                  // std::string response =
+                  std::string pkey = s.substr(11,76);
+                  double balance = utxopool_->balance(pkey);
+                  std::stringstream ss;
+                  ss << "\"BALANCE\":" << "\"" << balance << "\"";
+                  std::string response = ss.str();
+                  server.broadcastToOne(sd, response);
                 }
             	else{
             		  // default: print to cout
