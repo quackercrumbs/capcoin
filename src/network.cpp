@@ -418,7 +418,7 @@ void Network::runServer() {
                     Transaction txn = JSONtoTx(s);
                     txpool_->push(txn);
                 }
-                else if(s.substr(1,7) == "SPV_TXN") {
+                else if(s.substr(1,7) == "SPV-TXN") {
                   std::cout << "[network]: Recieved spv txn" << std::endl;
                   std::cout << "[network-data]: " << s << std:: endl;
                   server.broadcastToOne(sd, string(buffer));
