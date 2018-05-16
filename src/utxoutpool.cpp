@@ -185,7 +185,7 @@ double UnspentTxOutPool:: balance(const string& address) const {
     return sum;
   }
 
-  return -1.0;
+  return 0.0;
 }
 
 size_t UnspentTxOutPool:: GetIndex() const {

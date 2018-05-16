@@ -1,5 +1,6 @@
 #include "../lib/socket.h"
 #include "../lib/network.h"
+#include "spv.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -47,7 +48,7 @@ void Network::sendChain(int to, size_t startIndex)
 
   //True if the entire blockchain was sent successfully to the socket
   //False if socket does not send acknowledgement to a block sent to it.
-  bool success = true; 
+  bool success = true;
 
   for(; i< chain.size(); i++)
   {
@@ -69,7 +70,7 @@ void Network::sendChain(int to, size_t startIndex)
     }
 
   }
-  if(success) {    
+  if(success) {
     //if the entire chain has been sent, tell the socket that they have reached the end of chain
     server.broadcastToOne(to, "END");
   }
@@ -353,6 +354,9 @@ void Network::runServer() {
 
                 string s = string(buffer);
 
+                if(!isComplete(s))
+                  break;
+
                 // if incoming message is REQUEST send out the chain
                 if(s.substr(1,7) == "REQUEST"){
                   strcpy(buffer, "");
@@ -382,8 +386,7 @@ void Network::runServer() {
                   std::cout << "[network]: Got a block" << std::endl;
                   // Parse block
                   std::cout << "[network-data]: " << s << std::endl;
-                  if(!isComplete(s))
-                    break;
+
                   Block block = JSONtoBlock(s);
                   std::cout << "[network]: The block is index " << block.GetIndex() << std::endl;
                   // Push
@@ -412,11 +415,34 @@ void Network::runServer() {
                 else if(s.substr(1,11) == "TRANSACTION") {
                     std::cout << "[network]: Recieved transaction" << std::endl;
                     std::cout << "[network-data]: " << s << std:: endl;
-                    if(!isComplete(s))
-                      break;
                     server.broadcastAll(sd, string(buffer));
                     Transaction txn = JSONtoTx(s);
                     txpool_->push(txn);
+                }
+                else if(s.substr(1,7) == "SPV-TXN") {
+                  std::cout << "[network]: Recieved spv txn" << std::endl;
+                  std::cout << "[network-data]: " << s << std:: endl;
+                  server.broadcastToOne(sd, s);
+                  Transaction * t = process_spv(s, txpool_, utxopool_);
+                  if(t != nullptr){
+                    txpool_->push(*t);
+                    Serialize serializer(*t);
+                    server.broadcastAll(sd, serializer.toString());
+                  }
+                }
+                else if(s.substr(1,7) == "BALANCE") {
+                  if(s.size() != 78)
+                    break;
+                  std::cout << "[network]: Recieved balance request" << std::endl;
+                  std::cout << "[network-data]: " << s << std:: endl;
+                  std::string pkey = s.substr(11,66);
+                  std::cout << "pkey: " << pkey << std::endl;
+                  double balance = utxopool_->balance(pkey);
+                  std::cout << "bal: " << balance << std::endl;
+                  std::stringstream ss;
+                  ss << "\"BALANCE\":" << "\"" << balance << "\"";
+                  std::string response = ss.str();
+                  server.broadcastToOne(sd, response);
                 }
             	else{
             		  // default: print to cout
