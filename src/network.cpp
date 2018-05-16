@@ -434,7 +434,9 @@ void Network::runServer() {
                   std::cout << "[network]: Recieved balance request" << std::endl;
                   std::cout << "[network-data]: " << s << std:: endl;
                   std::string pkey = s.substr(11,76);
+                  std::cout << "pkey: " << pkey << std::endl;
                   double balance = utxopool_->balance(pkey);
+                  std::cout << "bal: " << balance << std::endl;
                   std::stringstream ss;
                   ss << "\"BALANCE\":" << "\"" << balance << "\"";
                   std::string response = ss.str();
