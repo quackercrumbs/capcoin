@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include "wallet.h"
 
 class SPV_TXN {
 public:
@@ -10,3 +11,4 @@ public:
 };
 
 SPV_TXN JSONtoSPV(const std::string& txnString);
+Transaction* process_spv(const std::string& txnString, TransactionPool* txpool, UnspentTxOutPool* utxopool);

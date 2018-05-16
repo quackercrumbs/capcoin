@@ -1,5 +1,6 @@
 #include "../lib/socket.h"
 #include "../lib/network.h"
+#include "spv.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -421,7 +422,11 @@ void Network::runServer() {
                 else if(s.substr(1,7) == "SPV-TXN") {
                   std::cout << "[network]: Recieved spv txn" << std::endl;
                   std::cout << "[network-data]: " << s << std:: endl;
-                  server.broadcastToOne(sd, string(buffer));
+                  Transaction * t = process_spv(s, txpool_, utxopool_);
+                  if(t != nullptr){
+                    txpool_->push(*t);
+                    server.broadcastToOne(sd, s);
+                  }
                 }
                 else if(s.substr(1,7) == "BALANCE") {
                   if(s.size() != 78)

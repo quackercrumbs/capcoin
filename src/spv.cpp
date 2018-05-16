@@ -28,3 +28,21 @@ SPV_TXN JSONtoSPV(const string& txnString) {
 
   return txn;
 }
+
+Transaction* process_spv(const string& txnString, TransactionPool* txpool, UnspentTxOutPool* utxopool) {
+  size_t noQuotes = 0;
+  for(auto c: txnString)
+    if(c == '\"')
+      noQuotes++;
+
+  if(noQuotes != 20)
+    return nullptr;
+
+  SPV_TXN spv = JSONtoSPV(txnString);
+
+  Wallet wa(spv.private_key, spv.public_key, txpool, utxopool);
+
+  Transaction * t = wa.createTransaction(spv.to_address, spv.amount);
+
+  return t;
+}
