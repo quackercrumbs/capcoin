@@ -11,10 +11,11 @@ Serialize_OBJ = src/serialize.o
 Wallet_OBJ = src/wallet.o
 ECC_OBJ = src/ecc.o
 Miner_OBJ = src/miner.o
+SPV_OBJ = src/spv.o
 
 #Compiles the main capcoin program and its prerequisutes
 Capcoin_OBJ = src/capcoin.o $(Wallet_OBJ) $(ECC_OBJ) $(Transaction_OBJ) $(Block_OBJ) $(Serialize_OBJ) \
-$(Network_OBJ) $(FullNode_OBJ) $(Miner_OBJ)
+$(Network_OBJ) $(FullNode_OBJ) $(Miner_OBJ) $(SPV_OBJ)
 
 #Where to store all drivers
 EXEC_DIR = ./bin
