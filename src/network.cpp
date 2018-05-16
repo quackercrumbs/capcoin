@@ -47,7 +47,7 @@ void Network::sendChain(int to, size_t startIndex)
 
   //True if the entire blockchain was sent successfully to the socket
   //False if socket does not send acknowledgement to a block sent to it.
-  bool success = true; 
+  bool success = true;
 
   for(; i< chain.size(); i++)
   {
@@ -69,7 +69,7 @@ void Network::sendChain(int to, size_t startIndex)
     }
 
   }
-  if(success) {    
+  if(success) {
     //if the entire chain has been sent, tell the socket that they have reached the end of chain
     server.broadcastToOne(to, "END");
   }
@@ -353,6 +353,9 @@ void Network::runServer() {
 
                 string s = string(buffer);
 
+                if(!isComplete(s))
+                  break;
+
                 // if incoming message is REQUEST send out the chain
                 if(s.substr(1,7) == "REQUEST"){
                   strcpy(buffer, "");
@@ -382,8 +385,7 @@ void Network::runServer() {
                   std::cout << "[network]: Got a block" << std::endl;
                   // Parse block
                   std::cout << "[network-data]: " << s << std::endl;
-                  if(!isComplete(s))
-                    break;
+
                   Block block = JSONtoBlock(s);
                   std::cout << "[network]: The block is index " << block.GetIndex() << std::endl;
                   // Push
@@ -412,11 +414,18 @@ void Network::runServer() {
                 else if(s.substr(1,11) == "TRANSACTION") {
                     std::cout << "[network]: Recieved transaction" << std::endl;
                     std::cout << "[network-data]: " << s << std:: endl;
-                    if(!isComplete(s))
-                      break;
                     server.broadcastAll(sd, string(buffer));
                     Transaction txn = JSONtoTx(s);
                     txpool_->push(txn);
+                }
+                else if(s.substr(1,7) == "SPV_TXN") {
+                  std::cout << "[network]: Recieved spv txn" << std::endl;
+                  std::cout << "[network-data]: " << s << std:: endl;
+                  server.broadcastToOne(sd, string(buffer));
+                }
+                else if(s.substr(1,7) == "BALANCE") {
+                  std::cout << "[network]: Recieved balance request" << std::endl;
+                  std::cout << "[network-data]: " << s << std:: endl;
                 }
             	else{
             		  // default: print to cout
