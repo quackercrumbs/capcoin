@@ -425,7 +425,8 @@ void Network::runServer() {
                   Transaction * t = process_spv(s, txpool_, utxopool_);
                   if(t != nullptr){
                     txpool_->push(*t);
-                    server.broadcastToOne(sd, s);
+                    Serialize serializer(*t);
+                    server.broadcastToOne(sd, serializer.toString());
                   }
                 }
                 else if(s.substr(1,7) == "BALANCE") {
