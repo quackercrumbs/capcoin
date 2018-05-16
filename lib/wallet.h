@@ -20,6 +20,7 @@ public:
 
     ~Wallet();
     Wallet(TransactionPool* txpool, UnspentTxOutPool* UTXO);
+    Wallet(std::string&, std::string&, TransactionPool*, UnspentTxOutPool*);
     void send(double ccAmt, std::string toCCAddresses);
     bool isWalletActive();
     std::string GetAddress();

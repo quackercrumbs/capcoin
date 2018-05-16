@@ -35,6 +35,13 @@ Wallet::Wallet(TransactionPool* txpool, UnspentTxOutPool* UTXO): txpool_(txpool)
 
 }
 
+Wallet::Wallet(std::string& prk, std::string& pbk, TransactionPool* txpool, UnspentTxOutPool* UTXO)
+  :txpool_(txpool), utxopool_(UTXO) {
+    keyPair = std::make_pair(prk, pbk);
+    validateKeyPairs();
+    myAddress = keyPair.second;
+}
+
 std::string Wallet::GetAddress() {
   return myAddress;
 }
