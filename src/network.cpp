@@ -422,6 +422,7 @@ void Network::runServer() {
                 else if(s.substr(1,7) == "SPV-TXN") {
                   std::cout << "[network]: Recieved spv txn" << std::endl;
                   std::cout << "[network-data]: " << s << std:: endl;
+                  server.broadcastToOne(sd, s);
                   Transaction * t = process_spv(s, txpool_, utxopool_);
                   if(t != nullptr){
                     txpool_->push(*t);
