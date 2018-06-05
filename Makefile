@@ -64,7 +64,7 @@ Capcoin:
 #Removes all executable objects from root, bin, and tests
 clean:
 	(rm -f *.o;)
-	(rm -f bin/*;)
+	(rm -f bin/capcoin;)
 	(rm -f src/*.o;)
 	(rm -f test/*.o;)
 	(rm -f test/gtest.a test/gtest_main.a;)

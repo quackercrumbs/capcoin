@@ -1,5 +1,5 @@
 /bin/*.o
-/bin/*
+/bin/capcoin
 /src/*.o
 /test/*.o
 /test/*.a
