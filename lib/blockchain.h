@@ -2,6 +2,8 @@
 #define BLOCKCHAIN_H
 
 #include "transaction.h"
+#include "transactionpool.h"
+#include "utxoutpool.h"
 #include "block.h"
 #include "picosha2.h"
 #include <string>
@@ -12,7 +14,7 @@
 class Blockchain {
 public:
 	//Initalize the blockchain w/ a Genesis block
-	Blockchain ();
+	Blockchain (TransactionPool* pool, UnspentTxOutPool* utxopool);
 
 	//Initalize the blockchain by loading data
 	Blockchain (const std::vector<Block>& blocks);
@@ -29,25 +31,31 @@ public:
 	bool HashMatchesDifficulty(std::string hash, size_t difficulty);
 
 	//Generates a new block
-	Block GenerateNextBlock(std::vector<Transaction>& data);
+	bool GenerateNextBlock(bool* killMiner, std::vector<Transaction>& data);
 
 	//Pushes the new block onto the blockchain
-	bool Push(Block& newBlock);
+	bool Push(Block& block);
+
+	//Reverts the changes make by Push
+	void Dump();
 
 	//Returns the latest block on the chain
 	Block GetLastBlock();
 
-    //Return a copy of the block chain as a vector
-    std::vector<Block> GetChain();
+  //Return a copy of the block chain as a vector
+  std::vector<Block> GetChain();
 
-    //Returns the current height of the blockchain
-    size_t GetHeight();
+  //Returns the current height of the blockchain
+  size_t GetHeight();
 
-    friend std::ostream& operator<<(std::ostream& os, const Blockchain& b);
+  friend std::ostream& operator<<(std::ostream& os, const Blockchain& b);
 
 private:
 	std::vector<Block> blocks_;
 	friend class Block;
+
+	TransactionPool * txpool_;
+	UnspentTxOutPool * utxopool_;
 };
 
 #endif

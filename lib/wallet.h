@@ -1,37 +1,74 @@
 #ifndef WALLET_H
 #define WALLET_H
 
+#include <vector>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <memory>
 #include <string>
 #include <stdint.h>
-#include <vector>
 
-#include "ecc.h"
+#include "picosha2.h"
 #include "transaction.h"
+#include "transactionpool.h"
+#include "utxoutpool.h"
 
 class Wallet{
+
 public:
 
-    Wallet();
+    ~Wallet();
+    Wallet(TransactionPool* txpool, UnspentTxOutPool* UTXO);
+    Wallet(std::string&, std::string&, TransactionPool*, UnspentTxOutPool*);
+    void send(double ccAmt, std::string toCCAddresses);
+    bool isWalletActive();
+    std::string GetAddress();
+    double Balance();
+    //void Wallet::shutdownWallet();
 
-    Transaction *createTransaction(std::string address="test", double amount=0) {
-            std::vector<TxIn> in;
-            std::vector<TxOut> out;
-            in.push_back({"ADDRESSTEST0", "SIGNATURETEST0", 0});
-            out.push_back({address, amount});
-            auto a = new Transaction(in, out);
-            return a;
-    }
-
-    double getBal();
+    // originally private
+    Transaction * createTransaction(std::string& ccAddress, double& ccAmt);
+    void test();
 
 private:
 
-    void createWallet();
-    void getAddress();
-    void initAddresses();
-    void initKeyPair(uint8_t p_publicKey[ECC_BYTES+1], uint8_t p_privateKey[ECC_BYTES]);
-    std::string walletaddress;
-    double balance();
+    bool valid;
+    bool walletFileIsValid();
+
+    std::string myAddress;
+
+    void makeKeyPair();
+    void validateKeyPairs();
+
+    std::string makeSignature(std::string hash);
+    bool        validateSignature(std::string publicKey, std::string hash, std::string sig);
+
+
+    void initWallet();
+
+
+    // returns 1 if unspentBal >= 0, and enough vtxOut were found to send ccAmt; returns 0 otherwise
+    int getUnspentTx(const double& ccAmt, std::vector<UnspentTxOut>& vtxOut, double& unspentBal);
+
+    // helper functions for createTransaction
+    void setTxInput(std::vector<TxIn> &txinputs, std::vector<UnspentTxOut> &txoutput);
+    void setTxOutput(std::vector<TxOut> &txoutputs, std::string& ccAddress, double& ccAmt, double& unspentBal);
+
+    void updateWalletBalance();
+    void updatePending();
+
+    void writeWalletToDisk();
+
+    TransactionPool* txpool_;
+    UnspentTxOutPool* utxopool_;
+
+    std::pair<std::string, std::string> keyPair;
+
+    // amount of outgoing capcoin in the txpool associated with this account
+    double pending_;
+    // balance of the account associated with this account
+    double balance_;
 
 };
 

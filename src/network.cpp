@@ -1,5 +1,6 @@
 #include "../lib/socket.h"
 #include "../lib/network.h"
+#include "spv.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -8,6 +9,9 @@
 
 using namespace std;
 
+Network::Network(Blockchain * bc, TransactionPool * tp, UnspentTxOutPool * up, bool * killMiner)
+  : blockchain(bc), txpool_(tp), utxopool_(up), killMiner_(killMiner) {}
+
 void Network::broadcastMessage(string msg){
   send(sock, msg.c_str(), msg.size(), 0);
 }
@@ -15,46 +19,64 @@ void Network::broadcastMessage(string msg){
 
 void Network::broadcastBlock(Block& block){
 
+  std::cout << "[network]: Broadcasting a block" << std::endl;
   Serialize serializer(block);
 
   string str = serializer.toString();
 
-  send(sock, str.c_str(), str.size(), 0);
-
+  while(send(sock, str.c_str(), str.size(), 0) != str.size()) {
+    usleep(50000);
+  }
+  std::cout << "[network]: Block broadcast complete." << std::endl;
 }
 
 void Network::broadcastTransaction(Transaction& t) {
+    std::cout << "[network]: Broadcasting a transaction" << std::endl;
     Serialize serializer(t);
     string str = serializer.toString();
-    send(sock, str.c_str(), str.size(), 0);
+    while(send(sock, str.c_str(), str.size(), 0) != str.size()) {
+      usleep(50000);
+    }
+    std::cout << "[network]: Transaction broadcast complete." << std::endl;
 }
 
-void Network::sendChain(int to)
+void Network::sendChain(int to, size_t startIndex)
 {
   vector<Block> chain = blockchain->GetChain();
 
-  int i = 1;
+  size_t i = startIndex;
+
+  //True if the entire blockchain was sent successfully to the socket
+  //False if socket does not send acknowledgement to a block sent to it.
+  bool success = true;
 
   for(; i< chain.size(); i++)
   {
 
     Block block = chain[i];
-
-    if(!sendBlock(to, block)){
-      cout << "Block unacknowledged" << endl;
+    network_status::BlockSent status = sendBlock(to,block);
+    if(status == network_status::UNACKNOWLEDGED){
+      cout << "[network-sendChain]: Block unacknowledged" << endl;
       i--;
       continue;
     }
+    else if(status == network_status::ACKNOWLEDGED){
+      cout << "[network-sendChain]: Block ACKNOWLEDGED" << endl;
+    }
     else {
-      cout << "Block ACKNOWLEDGED" << endl;
+      cout << "[network-sendChain]: Socket has DIED" << std::endl;
+      success = false;
+      break;
     }
 
   }
-
-  server.broadcastToOne(to, "END");
+  if(success) {
+    //if the entire chain has been sent, tell the socket that they have reached the end of chain
+    server.broadcastToOne(to, "END");
+  }
 }
 
-bool Network::sendBlock(int to, Block& block)
+network_status::BlockSent Network::sendBlock(int to, Block& block)
 {
 
   Serialize serializer(block);
@@ -73,17 +95,22 @@ bool Network::sendBlock(int to, Block& block)
   int bytes_read = recv(to, buffer, sizeof(buffer), 0);
   buffer[bytes_read] = '\0';
 
+  //Check if there was any response
   if( bytes_read > 0 ){
-    
     string s = string(buffer);
     int idx = strtol(s.substr(3).c_str(), NULL, 10);
-
     if (idx == block.GetIndex())
     {
-      return true;
+      //if block index response matches the index of block sent, then block was acknowledged
+        return network_status::ACKNOWLEDGED;
+    }
+    else {
+      //if the block index response does not match, the block was not acknowledged
+      return network_status::UNACKNOWLEDGED;
     }
   }
-  return false;
+  //If there were no bytes read, then the socket was dead
+  return network_status::DEADSOCKET;
 }
 
 
@@ -111,7 +138,7 @@ void Network::listen(){
 
     // receive message
     if(FD_ISSET(sock, &readfds)){
-      valread = read(sock, buffer, 1024);
+      valread = read(sock, buffer, BUFF_SIZE);
       if(valread == 0){
         close(sock);
         cout << "\nConnection closed by host\n";
@@ -123,8 +150,14 @@ void Network::listen(){
 
       string s = string(buffer);
 
+      if(!isComplete(s))
+        continue;
+
       if(s.substr(1, 5) == "BLOCK")
       {
+        std::cout << "[network]: Got a block message" << std::endl;
+
+        *killMiner_ = true;
         //
         Block block = JSONtoBlock(s);
 
@@ -139,21 +172,48 @@ void Network::listen(){
         //   blockchain->Push(block);
         // }
 
-        blockchain->Push(block);
+        bool success = blockchain->Push(block);
+        if(success) {
+            std::cout << "[network]: Accepted block" << std::endl;
+        }
+        else {
+            std::cout << "[network]: Rejected block" << std::endl;
+        }
         broadcastMessage("GOT" + idx);
 
       }
       else if(s.substr(1,11) == "TRANSACTION") {
+        std::cout << "[network]: Recieved transaction" << std::endl;
         //Deserialize transaction
-        Transaction * newTx = JSONtoDynamicTx(s);
+        Transaction newTx = JSONtoTx(s);
         //Push transaction into pool
-        bool result = txpool->AddTransaction(newTx);
+        bool result = txpool_->push(newTx);
+      }
+      else if(s.substr(1,12) == "REJECT_BLOCK") {
+        //The broadcasted block was rejected by server
+        std::cout << "[network]: Block was rejected!" << std::endl;
+
+        //Display server's last block index
+        //std::cout << "[network]: \"" << s.substr(15) << "\"" <<std::endl;
+        size_t index = stol(s.substr(15));
+        std::cout << "[network]: Server last block index: " << index <<   std::endl;
+
+        //Drop all blocks up to server blockchain height - 1
+        //Because my top block =/= server top block (so have to drop my top block)
+        while(blockchain->GetHeight() >= index+1) {
+            blockchain->Dump();
+        }
+
+        //send another request to server for entire chain
+        std::cout << "[network]: Sending request for blockchain to the server at index: " << blockchain->GetHeight() <<  std::endl;
+        std::string bcRequest = "\"REQUEST\":";
+        bcRequest += std::to_string(blockchain->GetHeight());
+        broadcastMessage(bcRequest);
+        std::cout << "[network]: Request sent!" << std::endl;
       }
       if(s.substr(0, 3) == "END")
       {
-        broadcastMessage("EOC\n");
-
-        //cout << s << endl;
+        // end of chain recieved
 
       }
       lastReceived = s;
@@ -163,7 +223,7 @@ void Network::listen(){
   }
 }
 
-void Network::startClient(Blockchain * bc, TransactionPool * transaction_pool){
+void Network::startClient(){
 
   if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0){
     cout << "\n Socket creation error \n";
@@ -185,15 +245,11 @@ void Network::startClient(Blockchain * bc, TransactionPool * transaction_pool){
     return;
   }
 
-  blockchain = bc;
-  txpool = transaction_pool;
 }
 
-void Network::runServer(Blockchain * bc) {
+void Network::runServer() {
 
   TCPSocket* s;
-
-  blockchain = bc;
 
   while(1)
   {
@@ -283,7 +339,7 @@ void Network::runServer(Blockchain * bc) {
           {
             //Check if it was for closing , and also read the
             //incoming message
-            if ((valread = read( sd , buffer, 1024)) == 0)
+            if ((valread = read( sd , buffer, BUFF_SIZE)) == 0)
             {
                 // maybe add index to reduce time complexity
                 server.closeConnection(sd);
@@ -298,8 +354,11 @@ void Network::runServer(Blockchain * bc) {
 
                 string s = string(buffer);
 
+                if(!isComplete(s))
+                  break;
+
                 // if incoming message is REQUEST send out the chain
-                if(s == "REQUEST"){
+                if(s.substr(1,7) == "REQUEST"){
                   strcpy(buffer, "");
 
                   // Block block = bc->GetLastBlock();
@@ -309,35 +368,89 @@ void Network::runServer(Blockchain * bc) {
                   // string blockStr = serializer.toString();
                   //
                   // server.broadcastToOne(sd, blockStr);
+                  std::cout << "[network]: in" << s << std::endl;
+                  std::cout << "[network]: Recieved blockchain request with start index: " << s.substr(10) << std::endl;
+                  //Parse starting index from request
+                  size_t startIndex = stol(s.substr(10));
 
-                  sendChain(sd);
-                  cout << "No blocks: " << blockchain->GetChain().size() << "\n";
+                  sendChain(sd,startIndex);
+                  //cout << "No blocks: " << blockchain->GetChain().size() << "\n";
 
-                  cout << "Blockchain Sent:\n";
-                  cout << *blockchain << endl;
+                  //cout << "Blockchain Sent:\n";
+                  //cout << *blockchain << endl;
 
                 }
                 //if the incoming message is a new block
                 else if(s.substr(1, 5) == "BLOCK"){
-
+                  *killMiner_ = true;
+                  std::cout << "[network]: Got a block" << std::endl;
                   // Parse block
+                  std::cout << "[network-data]: " << s << std::endl;
+
                   Block block = JSONtoBlock(s);
-
+                  std::cout << "[network]: The block is index " << block.GetIndex() << std::endl;
                   // Push
-                  blockchain->Push(block);
+                  bool success = blockchain->Push(block);
+                  if (success) {
+                    std::cout << "[network]: Accepted block" << std::endl;
+                    std::string response = "\"ACK_BLOCK\"";
+                    server.broadcastToOne(sd, response);
+                  }
+                  else {
+                    std::cout << "[network]: Rejected block" << std::endl;
+                    //Tell the socket that sent this block, Server rejected
+                    std::cout << "[network]: Tell socket" << sd << " block rejected" << std::endl;
+                    std::string response = "\"REJECT_BLOCK\":";
+                    response += std::to_string(blockchain->GetLastBlock().GetIndex());
+                    std::cout << "[network]: Sending: " << response << std::endl;
+                    server.broadcastToOne(sd, response);
+                  }
+                  //cout << "No blocks: " << blockchain->GetChain().size() << "\n";
 
-                  cout << "No blocks: " << blockchain->GetChain().size() << "\n";
+                  //Broadcast recieved block
+                  server.broadcastAll(sd, string(buffer));
+                  *killMiner_ = true;
 
                 }
                 else if(s.substr(1,11) == "TRANSACTION") {
+                    std::cout << "[network]: Recieved transaction" << std::endl;
+                    std::cout << "[network-data]: " << s << std:: endl;
                     server.broadcastAll(sd, string(buffer));
+                    Transaction txn = JSONtoTx(s);
+                    txpool_->push(txn);
+                }
+                else if(s.substr(1,7) == "SPV-TXN") {
+                  std::cout << "[network]: Recieved spv txn" << std::endl;
+                  std::cout << "[network-data]: " << s << std:: endl;
+                  server.broadcastToOne(sd, s);
+                  Transaction * t = process_spv(s, txpool_, utxopool_);
+                  if(t != nullptr){
+                    txpool_->push(*t);
+                    Serialize serializer(*t);
+                    server.broadcastAll(sd, serializer.toString());
+                  }
+                }
+                else if(s.substr(1,7) == "BALANCE") {
+                  if(s.size() != 78)
+                    break;
+                  std::cout << "[network]: Recieved balance request" << std::endl;
+                  std::cout << "[network-data]: " << s << std:: endl;
+                  std::string pkey = s.substr(11,66);
+                  std::cout << "pkey: " << pkey << std::endl;
+                  double balance = utxopool_->balance(pkey);
+                  std::cout << "bal: " << balance << std::endl;
+                  std::stringstream ss;
+                  ss << "\"BALANCE\":" << "\"" << balance << "\"";
+                  std::string response = ss.str();
+                  server.broadcastToOne(sd, response);
                 }
             	else{
-            		  server.broadcastAll(sd, string(buffer));
+            		  // default: print to cout
+                  std::cout << s << std::endl;
             	}
 
             		// print out all incoming messages
-                cout << string(buffer) << endl;
+                //cout << string(buffer) << endl;
 
                 strcpy(buffer, "");
             }
@@ -345,4 +458,16 @@ void Network::runServer(Blockchain * bc) {
       }
   }
 
+}
+
+bool isComplete(const string& s) {
+  // counts left and right curly braces
+  int left = 0, right = 0;
+  for(auto c: s) {
+    if(c == '{')
+      left++;
+    if(c == '}')
+      right++;
+  }
+  return left == right;
 }

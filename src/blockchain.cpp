@@ -2,7 +2,11 @@
 //#include "../lib/socket.h"
 //#include "../lib/network.h"
 
-Blockchain::Blockchain(){
+#define MIN_TIME 30
+#define MAX_TIME 120
+
+Blockchain::Blockchain(TransactionPool* pool, UnspentTxOutPool* utxopool)
+  :txpool_{pool}, utxopool_{utxopool} {
     //initialize the chain with the genesis block.
     //Change addresses and hashes in future
     TxIn GenIn("", "", 0);
@@ -12,7 +16,7 @@ Blockchain::Blockchain(){
     Transaction GenTxn(TxIns, TxOuts);
     std::vector<Transaction> GenTxns{GenTxn};
 
-    Block Genesis(0, 1521001712, 0, 0, "", GenTxns);
+    Block Genesis(0, 1521001712, 8, 0, "", GenTxns);
 
     //Push genesis block onto blockchain
     blocks_.push_back(Genesis);
@@ -29,35 +33,87 @@ std::vector<Block> Blockchain::GetChain(){
     return blocks_;
 }
 
-bool Blockchain::Push(Block& b){
-  //Needs to verify block eventually
+bool Blockchain::Push(Block& block){
+  //verify block
+  //if fails, return false
+  if (block.GetIndex() != blocks_[blocks_.size()-1].GetIndex()+1 ||
+  block.GetPreviousHash() != blocks_[blocks_.size()-1].GetHash())
+    return false;
+  for (auto i : block.GetData()){
+	   txpool_->remove(i);
+  }
 
-  blocks_.push_back(b);
+  size_t noTxns = block.GetData().size();
+  for(int i=1; i<noTxns; i++){
+    Transaction t = block.GetData()[i];
+    utxopool_->AddTxn(t);
+  }
+
+  //process coinbase last
+  Transaction coinbaseTx = block.GetData().front();
+  std::string minerAddress = coinbaseTx.GetTxOuts().back().GetAddress();
+  double amount = coinbaseTx.GetTxOuts().back().GetAmount();
+
+  UnspentTxOut u(coinbaseTx.hash(), minerAddress, utxopool_->GetIndex()+1, amount);
+  utxopool_->insert(u);
+
+  blocks_.push_back(block);
 
   return true;
 }
 
-Block Blockchain::GenerateNextBlock(std::vector <Transaction>& data){
+void Blockchain::Dump(){
+  Block block = GetLastBlock();
+
+  std::string miner = block.GetData().front().GetTxOuts().back().GetAddress();
+  // pop the coinbase transaction, should be processed last
+  utxopool_->pop(miner);
+
+  // undo the rest, if any
+  for(int i=1; i<block.GetData().size(); i++){
+
+    Transaction t = block.GetData()[i];
+    txpool_->push(t);
+    utxopool_->UndoTxn(t);
+  }
+
+  blocks_.pop_back();
+}
+
+bool Blockchain::GenerateNextBlock(bool* killMiner, std::vector <Transaction>& data){
     size_t index = blocks_[blocks_.size()-1].GetIndex() + 1;
     time_t timestamp = time(0);
     size_t difficulty = GetDifficulty();
     size_t nonce = 0;
     std::string hash_;
     std::string prevHash = blocks_[blocks_.size()-1].GetHash();
+    std::cout << "[miner-bc]: Mining operation started ..." << std::endl;
+    //Search for hash that matches difficulty, aka mining.
     while (true) {
+        // Stop all mining operations upon kill signal
+        if(*killMiner) {
+            std::cout << "[miner-bc]: Mining operation halted. Due to kill signal." << std::endl;
+			return false;
+        }
         hash_ = CalculateHash(index, prevHash, timestamp, data, difficulty, nonce);
-        if (HashMatchesDifficulty(hash_, difficulty)){break;}
+        if (HashMatchesDifficulty(hash_, difficulty))
+			break;
         nonce++;
     }
     Block newBlock(index, timestamp, difficulty, nonce, prevHash, data);
 
     if(IsValidNewBlock(newBlock)) {
-        blocks_.push_back(newBlock);
+        std::cout << "[miner-bc]: Mining operation successful." << std::endl;
+        // blocks_.push_back(newBlock);
+        Push(newBlock);
+    }
+    else {
+        std::cout << "[miner-bc]: Mining operation failed." << std::endl;
+        return false;
     }
     //TODO : Broadcast new block
 
-    return newBlock;
-
+    return true;
 }
 
 
@@ -92,12 +148,12 @@ bool Blockchain::HashMatchesDifficulty(std::string hash, size_t difficulty){
 size_t Blockchain::GetDifficulty(){
     //to avoid error, if less than 2 blocks, return a difficulty of 1
     if (blocks_.size() < 2)
-        return 1;
+        return blocks_[0].GetDifficulty();
     //if the time between the last two blocks is less than 10 min, increase difficulty
-    if (blocks_[blocks_.size()-1].GetTimestamp() - blocks_[blocks_.size()-2].GetTimestamp() < 600)
+    if (blocks_[blocks_.size()-1].GetTimestamp() - blocks_[blocks_.size()-2].GetTimestamp() < MIN_TIME)
         return blocks_[blocks_.size()-1].GetDifficulty() + 1;
     //if the time between the last two blocks is more than 15 min, decrease difficulty
-    else if (900 < blocks_[blocks_.size()-1].GetTimestamp() - blocks_[blocks_.size()-2].GetTimestamp())
+    else if (MAX_TIME < blocks_[blocks_.size()-1].GetTimestamp() - blocks_[blocks_.size()-2].GetTimestamp())
         return blocks_[blocks_.size()-1].GetDifficulty() - 1;
     //if in the 10-15 min range, keep difficulty
     else
@@ -139,7 +195,7 @@ size_t Blockchain::GetHeight() {
 }
 
 std::ostream& operator<<(std::ostream& os, const Blockchain& bc) {
-    for(auto i = bc.blocks_.rbegin(); i != bc.blocks_.rend(); ++i) {
+    for(auto i = bc.blocks_.begin(); i != bc.blocks_.end(); ++i) {
         os << *i << std::endl;
     }
     return os;

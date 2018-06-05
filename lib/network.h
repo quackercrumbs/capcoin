@@ -9,12 +9,18 @@
 #include <string>
 #include <thread>
 
+#define BUFF_SIZE 4096
+
+namespace network_status {
+    enum BlockSent { DEADSOCKET, ACKNOWLEDGED, UNACKNOWLEDGED };
+}
 
 class Network{
 
 public:
-  void startClient(Blockchain * bc, TransactionPool* txpool);
-  void runServer(Blockchain * bc);
+  Network(Blockchain * bc, TransactionPool* txpool, UnspentTxOutPool* utxopool, bool* killMiner);
+  void startClient();
+  void runServer();
 
   void listen();
   std::thread listenThread(){
@@ -26,8 +32,8 @@ public:
   void broadcastBlock(Block& block);
   void broadcastTransaction(Transaction& t);
 // These functions are for the server to send to one node.
-  void sendChain(int to);
-  bool sendBlock(int to, Block& block);
+  void sendChain(int to, size_t startIndex);
+  network_status::BlockSent sendBlock(int to, Block& block);
 
   std::string getLastReceived();
 
@@ -38,17 +44,23 @@ private:
   int master_socket = server.getSockDesc();
   struct sockaddr_in serv_addr;
   struct sockaddr_in address;
-  std::string ip_addr =  "167.99.12.102";
+  std::string ip_addr = "167.99.12.102";   //Orien
+  //std::string ip_addr =  "167.99.144.61";   //Robin
   //std::string ip_addr =  "127.0.0.1";
   std::string strMessage = "Established Network Connection \r\n";
   const char *message = strMessage.c_str();
   TCPSocket* client_socket;
-  char buffer[1025];
+  char buffer[BUFF_SIZE+1];
   fd_set readfds;
   std::string lastReceived = "";
 
   Blockchain * blockchain = nullptr;
-  TransactionPool * txpool = nullptr;
+  TransactionPool * txpool_ = nullptr;
+  UnspentTxOutPool * utxopool_ = nullptr;
+
+  bool* killMiner_;
 };
+
+bool isComplete(const std::string&);
 
 #endif

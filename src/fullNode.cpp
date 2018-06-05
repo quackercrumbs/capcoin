@@ -3,19 +3,31 @@
 
 
 
-FullNode::FullNode(Blockchain * bc, NetworkManager * nw, Wallet * w, TransactionPool * transactionpool){
+FullNode::FullNode(Blockchain * bc, NetworkManager * nw, Wallet * wa, TransactionPool * transactionpool, bool* killMiner):wallet(wa){
   blockchain = bc;
   network = nw;
-  wallet = w;
+  wallet = wa;
   txpool = transactionpool;
+  killMiner_ = killMiner;
 }
 
 bool FullNode::updateChain(){
 
+<<<<<<< HEAD
   // Request the blockchain from one peer
   // Request BC starting from current BC index  
   network->RequestAndUpdateBlockchain();
 
+  /*
+  std::cout << "[fullnode-network]: \"Broadcasting\" request to server for blockchain" << std::endl;
+  std::string request = "\"REQUEST\":";
+  //Assuming that our chain height matches that of the server
+  //send request with starting at the next index (which is the height)
+  request += std::to_string(blockchain->GetHeight());
+  std::cout << "[fullnode-network]: Sending " << request << std::endl;
+  network->broadcastMessage(request);
+>>>>>>> master
+  */
   return false;
   /*
     //listen for responses, perhaps for a reply that states the size of the current chain
@@ -66,6 +78,7 @@ void FullNode::displayMenu(){
   std::cout << "|        CC - Connect to a peer                |" << std::endl;
   std::cout << "|        RBC - Request BC                      |" << std::endl;
   std::cout << "|        RTP - Request Transaction Pool        |" << std::endl;
+  std::cout << "|        TKM - Toggle Kill Miner Signal        |" << std::endl;
   std::cout << "------------------------------------------------" << std::endl;
 }
 
@@ -82,7 +95,11 @@ void FullNode::run(){
       // this screen will display the current balance, and any recent transactions by this node
       std::cout << "***************************************************************************" << std::endl;
       std::cout << "*                                                                         *" << std::endl;
-      std::cout << "*    Balance:                                                             *" << std::endl;
+      std::cout << "*    Balance:                                               ";
+      std::cout<<std::fixed << std::setprecision(7) << std::setw(14) << wallet->Balance() << "*" << std::endl;
+      std::cout << "*                                                                         *" << std::endl;
+      std::cout << "*    Address:                                                             *" << std::endl;
+      std::cout << "*       "<<                     std::setw(66) << wallet->GetAddress() << "*" << std::endl;
       std::cout << "*                                                                         *" << std::endl;
       std::cout << "*    Recent Transactions:                                                 *" << std::endl;
       std::cout << "*                                                                         *" << std::endl;
@@ -115,7 +132,7 @@ void FullNode::run(){
         std::cout << "*" << std::endl;
         std::cout << "***************************************************************************" << std::endl;
 
-        float amt;
+        double amt;
 
         std::cin >> amt;
 
@@ -146,18 +163,33 @@ void FullNode::run(){
         }
         else if(response == "Y" || response == "y"){
           correct = true;
-          std::cout << "***************************************************************************" << std::endl;
-          std::cout << "*    Transaction Sent!" << std::endl;
-          std::cout << "***************************************************************************" << std::endl;
-
           //Creating a fake transaction and send as a block
-          /* 
+
+          //wallet->send(amt, address);
+
+          std::cout << "isWalletActive: " << wallet->isWalletActive() << std::endl;
+
+          // network->broadcastMessage(std::to_string(amt));
+
+          /*
           TxIn dummyIn("", "", 0);
           TxOut dummyOut("32ba5334aafcd8e7266e47076996b55", amt);
           std::vector<TxIn> TxIns{dummyIn};
           std::vector<TxOut> TxOuts{dummyOut};
           */
+
+          //Use the wallet to create a transaction
           Transaction * NewTxn = wallet->createTransaction(address,amt);
+          //Check if the transaction generated is null
+          //If null, transaction was invalid
+          if(NewTxn != nullptr) {
+              network->broadcastTransaction(*NewTxn);
+              txpool->push(*NewTxn);
+          std::cout << "***************************************************************************" << std::endl;
+          std::cout << "*    Transaction Sent!" << std::endl;
+          std::cout << "***************************************************************************" << std::endl;
+          }
+
           /*
           std::vector<Transaction> data{NewTxn};
           Block block = blockchain->GenerateNextBlock(data);
@@ -214,6 +246,9 @@ void FullNode::run(){
     }
     else if(selection == "HI") {
         requestHeight();
+    else if(selection == "TKM" || selection == "tkm") {
+      *killMiner_ = !*killMiner_;
+      std::cout << "kill Miner " << *killMiner_ << std::endl;
     }
     else{
       std::cout << "input not valid" << std::endl;
@@ -243,4 +278,24 @@ void FullNode::displayBlockchain() {
     std::cout << "                -----------------" << std::endl;
     std::cout << *blockchain << std::endl;
 
+}
+
+void FullNode::welcome(){
+  std::cout << "***************************************************************************" << std::endl;
+  std::cout << "***************************************************************************" << std::endl;
+  std::cout << "***************************************************************************" << std::endl;
+  std::cout << "***************************************************************************" << std::endl;
+  std::cout << "***************************************************************************" << std::endl;
+  std::cout << "***************************************************************************" << std::endl;
+  std::cout << "***************************************************************************" << std::endl;
+  std::cout << "*************************                          ************************" << std::endl;
+  std::cout << "*************************    WELCOME TO CAPCOIN    ************************" << std::endl;
+  std::cout << "*************************                          ************************" << std::endl;
+  std::cout << "***************************************************************************" << std::endl;
+  std::cout << "***************************************************************************" << std::endl;
+  std::cout << "***************************************************************************" << std::endl;
+  std::cout << "***************************************************************************" << std::endl;
+  std::cout << "***************************************************************************" << std::endl;
+  std::cout << "***************************************************************************" << std::endl;
+  std::cout << "***************************************************************************" << std::endl << std::endl;
 }
