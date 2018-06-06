@@ -12,10 +12,6 @@ bool TransactionPool::push(Transaction& newTx) {
     return true;
 }
 
-std::queue<Transaction*> TransactionPool::GetTransactionPoolCopy() {
-    std::queue<Transaction*> tmp_pool {pool_};
-    return tmp_pool;
-
 size_t TransactionPool::size() const{
     return pool_.size();
 }

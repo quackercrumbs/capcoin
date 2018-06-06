@@ -210,7 +210,7 @@ void NetworkManager::message_recieved(breep::tcp::netdata_wrapper<Message>& dw) 
 bool NetworkManager::HandleTransactionMessage(breep::tcp::netdata_wrapper<Message>& dw) {
     std::cout << "Transaction recieved!" << std::endl;
     Transaction* newTx = JSONtoDynamicTx(dw.data.data_);
-    bool result = txpool_->AddTransaction(newTx);
+    bool result = txpool_->push(*newTx);
     return result;
 }
 
@@ -262,6 +262,7 @@ bool NetworkManager::HandleRequestBlockchainMessage(breep::tcp::netdata_wrapper<
 
 bool NetworkManager::HandleRequestTransactionPoolMessage(breep::tcp::netdata_wrapper<Message>& dw) {
     std::cout << "Processing TxPool Req" << std::endl;    
+    /*
     //Retrieve copy of transaction pool
     std::queue<Transaction*> tmp_pool = txpool_->GetTransactionPoolCopy();
     size_t pool_size = tmp_pool.size();
@@ -276,6 +277,7 @@ bool NetworkManager::HandleRequestTransactionPoolMessage(breep::tcp::netdata_wra
         Message m = {"TRANSACTION", s.toString()};
         network_->send_object_to(dw.source, m); //send transaction message to socket
     }
+    */
     std::cout << "REQUEST TRANSACTIONPOOL complete." << std::endl;
     return true;
 }

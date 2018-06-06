@@ -3,6 +3,7 @@
 
 #include <list>
 #include <iostream>
+#include <queue>
 
 #include "transaction.h"
 
@@ -15,10 +16,6 @@ public:
 	Transaction front() const;
 	bool pop();
 	bool remove(const Transaction& copy);
-    
-    //Returns a copy of the current transaction pool
-    std::queue<Transaction*> GetTransactionPoolCopy();
-
 
     friend std::ostream& operator<<(std::ostream& os, const TransactionPool& txpool);
 

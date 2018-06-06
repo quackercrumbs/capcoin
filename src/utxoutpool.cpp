@@ -107,7 +107,7 @@ void UnspentTxOutPool:: UndoTxn(const Transaction& t){
   double interval = amountSpent / t.GetTxIns().size();
   double amountLeft = amountSpent;
 
-  int i=0;
+  size_t i=0;
   size_t noTxIns = t.GetTxIns().size();
   for(auto in: t.GetTxIns()){
     UnspentTxOut u(hash, address, in.GetIndex(), ((++i) == noTxIns) ? amountLeft : interval );

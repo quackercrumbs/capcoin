@@ -4,7 +4,7 @@
 #include "utxoutpool.h"
 #include "transactionpool.h"
 #include "blockchain.h"
-#include "network.h"
+#include "networkmanager.h"
 #include <thread>
 
 class Miner{
@@ -23,7 +23,7 @@ public:
    * @param: address    The address where the reward of a mined block are sent to.
    *
    */
-  Miner(Blockchain* chain, TransactionPool* txpool, UnspentTxOutPool* utxoutpool, Network* nw, bool* killMiner, std::string address);
+  Miner(Blockchain* chain, TransactionPool* txpool, UnspentTxOutPool* utxoutpool, NetworkManager* nw, bool* killMiner, std::string address);
 
   /**
    *
@@ -61,7 +61,7 @@ private:
   UnspentTxOutPool* utxopool_;
 
   //A reference to the network
-  Network* nw_;
+  NetworkManager* nw_;
 
   //A reference to the killMiner signal
   bool* killMiner_;
@@ -69,5 +69,7 @@ private:
   //The miners address, where the reward is sent to.
   std::string address_;
 };
+
+#include "../src/miner.cpp"
 
 #endif

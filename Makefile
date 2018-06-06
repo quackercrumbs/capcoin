@@ -25,7 +25,7 @@ SPV_OBJ = src/spv.o
 
 #Compiles the main capcoin program and its prerequisutes
 Capcoin_OBJ = src/capcoin.o $(Transaction_OBJ) $(Block_OBJ) $(Serialize_OBJ) $(Wallet_OBJ)\
-			  $(ECC_OBJ) $(Miner_OBJ) $(SPV_OBJ)
+			  $(ECC_OBJ) $(SPV_OBJ)
 
 #Where to store all drivers
 EXEC_DIR = ./bin

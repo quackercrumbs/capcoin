@@ -1,6 +1,6 @@
 #include "miner.h"
 
-Miner::Miner(Blockchain* chain, TransactionPool* txpool, UnspentTxOutPool* utxoutpool, Network* nw, bool* killMiner,  std::string address):chain_{chain}, txpool_{txpool}, utxopool_{utxoutpool}, nw_{nw}, killMiner_{killMiner}, address_{address}{};
+Miner::Miner(Blockchain* chain, TransactionPool* txpool, UnspentTxOutPool* utxoutpool, NetworkManager* nw, bool* killMiner,  std::string address):chain_{chain}, txpool_{txpool}, utxopool_{utxoutpool}, nw_{nw}, killMiner_{killMiner}, address_{address}{};
 
 
 void Miner::mine_loop() {
@@ -54,9 +54,10 @@ void Miner::mine_loop() {
                           Block b = chain_->GetLastBlock();
                           std::cout << "[miner-succ]: block tx size: " << b.GetData().size() << std::endl;
                           std::cout << "[miner-succ]: block index:" << b.GetIndex() << std::endl;
-                          nw_->broadcastBlock(b);
+                          Serialize s(b);
+                          Message request = {"BLOCK", s.toString()};
+                          nw_->BroadcastMessage(request);
                           start = time(0);
-
                           //empty txSupply
                           txSupply.clear();
                       }

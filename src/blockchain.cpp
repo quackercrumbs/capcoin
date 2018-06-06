@@ -44,7 +44,7 @@ bool Blockchain::Push(Block& block){
   }
 
   size_t noTxns = block.GetData().size();
-  for(int i=1; i<noTxns; i++){
+  for(size_t i=1; i<noTxns; i++){
     Transaction t = block.GetData()[i];
     utxopool_->AddTxn(t);
   }
@@ -70,7 +70,7 @@ void Blockchain::Dump(){
   utxopool_->pop(miner);
 
   // undo the rest, if any
-  for(int i=1; i<block.GetData().size(); i++){
+  for(size_t i=1; i<block.GetData().size(); i++){
 
     Transaction t = block.GetData()[i];
     txpool_->push(t);
@@ -140,7 +140,7 @@ bool Blockchain::HashMatchesDifficulty(std::string hash, size_t difficulty){
     //binString takes entire binary form of hash
     output >> binString;
     //if the difficulty is x, find the first character in binString that is not 0
-    int firstNot0 = binString.find_first_not_of("0");
+    size_t firstNot0 = binString.find_first_not_of("0");
     //if the character has index < x, return false
     return firstNot0 < difficulty? false : true;
 }

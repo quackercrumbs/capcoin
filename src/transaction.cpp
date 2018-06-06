@@ -112,7 +112,7 @@ std::ostream& operator<<(std::ostream& os, const Transaction& t) {
 
 std::string keyToHexString(uint8_t* key, size_t no_bytes) {
   std::stringstream ss;
-  for(int i=0; i<no_bytes; i++) {
+  for(size_t i=0; i<no_bytes; i++) {
     ss << std::setfill('0') << std::setw(2) << std::hex << (unsigned int) key[i];
   }
   return ss.str();
@@ -122,7 +122,7 @@ void keyToBytes(const std::string& hexKey, uint8_t* key) {
   std::string hex_byte="";
   uint8_t x;
 
-  for(int i=0; i< hexKey.size(); i++) {
+  for(size_t i=0; i< hexKey.size(); i++) {
     hex_byte += hexKey[i];
 
     if(i%2 != 0) {

@@ -252,7 +252,7 @@ Transaction * Wallet::createTransaction(std::string& ccAddress, double& ccAmt){
 
 void Wallet::setTxInput(std::vector<TxIn> &txinputs, std::vector<UnspentTxOut> &txoutputs){
 
-    for(int i = 0; i < txoutputs.size(); i++){
+    for(size_t i = 0; i < txoutputs.size(); i++){
 
         UnspentTxOut txoutput = txoutputs.at(i);
 
@@ -303,7 +303,7 @@ void Wallet::updatePending(){
 
     std::vector<TxOut> txouts{t.GetTxOuts()};
     // ignore the change returned in last TxOut
-    for(int i=0; i<txouts.size()-1; i++)
+    for(size_t i=0; i<txouts.size()-1; i++)
       spent += txouts[i].GetAmount();
   }
   pending_ = spent;
